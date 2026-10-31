@@ -302,13 +302,13 @@ function updateHeaderTone() {
   header.classList.toggle("is-on-blocks", onBlock);
 }
 
-// Rotating headline word: each word holds for 2.2s, then the next slides up
-// into place as the old one slides up and out (400ms, ease-in-out). The
-// slot animates its width so nothing after it jumps; the static words
-// before it never move. Reduced motion: CSS turns this into a plain fade.
+// Rotating headline word: each word holds for 2.2s, then rolls like a reel
+// (see --roll-ease in style.css): the next word drops in from above while
+// the current one leaves below. The rows above never move. Reduced
+// motion: CSS turns this into a plain fade.
 function startRotator(slot) {
   const HOLD = 2200;
-  const SWAP = 400;
+  const SWAP = 620;
   const words = slot.dataset.words.split("|").map((word) => `${word}.`);
   let index = 0;
   let current = slot.querySelector(".hero-title__word");
@@ -337,6 +337,37 @@ function startRotator(slot) {
     setTimeout(swap, HOLD + SWAP);
   }, HOLD);
 }
+
+// Button hover roll: wrap each button label (and arrow) in a two-row track,
+// an identical copy above the original. CSS rolls the track down on hover.
+function addRoll(target, isIcon = false) {
+  if (target.querySelector(":scope > .roll")) return;
+  const original = isIcon ? target.querySelector("svg") : null;
+  const text = isIcon ? null : target.textContent.trim();
+  if (isIcon ? !original : !text) return;
+
+  const make = (hidden) => {
+    const item = document.createElement("span");
+    item.className = "roll__item";
+    if (isIcon) item.append(hidden ? original.cloneNode(true) : original);
+    else item.textContent = text;
+    if (hidden) item.setAttribute("aria-hidden", "true");
+    return item;
+  };
+
+  const roll = document.createElement("span");
+  const track = document.createElement("span");
+  roll.className = isIcon ? "roll roll--icon" : "roll";
+  track.className = "roll__track";
+  track.append(make(true), make(false));
+  roll.append(track);
+  target.replaceChildren(roll);
+}
+
+document
+  .querySelectorAll(".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip")
+  .forEach((el) => addRoll(el));
+document.querySelectorAll(".site-nav__circle, .pill-link__icon").forEach((el) => addRoll(el, true));
 
 let lastWidth = innerWidth;
 addEventListener("resize", () => {
