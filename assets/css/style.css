@@ -58,7 +58,8 @@
      shapes reference, with a light blue (the blue's hue at the pink's
      lightness) in place of its forest green. Every colour on the site
      comes from these. Text pairs all pass 4.5:1. */
-  --paper: #f2f0ec;               /* warm off-white page background */
+  --paper: #ffffff;               /* page background: pure white */
+  --paper-alt: #f2f0ec;           /* warm off-white band (introduction) */
   --ink: #1c1c1c;                 /* text */
   --ink-soft: #5c5c5c;
   --block-1: #fbbad4;             /* pink */
@@ -795,6 +796,7 @@ html.lenis body {
    Each row slides up out of its own mask as it scrolls into view. */
 .intro {
   padding: clamp(80px, 10vw, 180px) clamp(16px, 1.68vw, 32px);
+  background: var(--paper-alt);
 }
 
 .intro__label {
