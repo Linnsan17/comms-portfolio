@@ -328,8 +328,9 @@ a {
   cursor: pointer;
 }
 
+/* Nav text is the same size as the buttons (19px, 15px on phones) */
 .site-nav__label {
-  font-size: 16px;
+  font-size: 19px;
 }
 
 /* The nav is the warm beige (the introduction's off-white), no outline */
@@ -344,7 +345,7 @@ a {
   margin: 0;
   padding-inline: 29px;
   list-style: none;
-  font-size: 16px;
+  font-size: 19px;
 }
 
 .site-nav__links li,
@@ -376,7 +377,8 @@ a {
   }
 
   .site-header__cta,
-  .site-nav__label {
+  .site-nav__label,
+  .site-nav__links {
     font-size: 15px;
   }
 
