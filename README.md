@@ -28,6 +28,17 @@ python3 -m http.server 8796
 
 Then open http://localhost:8796.
 
+## Set up on a new computer
+
+1. **Get access.** The repo `Linnsan17/comms-portfolio` is private, so the owner first adds you as a collaborator on GitHub: Settings → Collaborators → Add people.
+2. **Clone.** Install GitHub Desktop, sign in, then choose File → Clone repository → `Linnsan17/comms-portfolio`.
+3. **Add the fonts.** PP Mori isn't in git (licence), so put your own copy of the free personal-use files in `assets/fonts/`. `CLAUDE.md` lists the exact file names.
+4. **Preview** as described above.
+
+`CLAUDE.md` has the project's decisions, specs and what's still placeholder content. Claude Code reads it automatically.
+
+Before you start, pull the latest changes (Fetch origin, then Pull, in GitHub Desktop). When you're done, push. That way you don't overwrite each other's work.
+
 ## Add a case
 
 1. Copy a folder in `work/`, for example `work/nilar/`, and give it a new name. The name becomes the URL.
