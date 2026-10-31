@@ -50,6 +50,27 @@ Each case card in `index.html` has a `data-tags` attribute with the filters it b
 
 You can link to a filtered list, for example `/?tag=social#work`.
 
+## Videos
+
+The work reels in the hero cards and service cards are in `assets/video/`. Each is a 960×540 H.264 file at about 1.5 Mbps, with no sound, plus a poster still. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
+
+To add or replace a reel, compress it first. This Mac has no ffmpeg, so use the Swift transcoder in `tools/`:
+
+```bash
+swiftc -O tools/transcode.swift -o /tmp/transcode
+/tmp/transcode "in.mp4" assets/video/name.mp4 assets/video/name.jpg 960 540 1500000
+```
+
+## Handwritten logo
+
+`assets/img/linn-logo-write.svg` is generated from the logo. If the logo changes:
+
+1. Render it at 1192×674.
+2. Run `tools/skeleton.py`, which traces the pen path.
+3. Run `tools/build_write.py`, which fixes up coverage, times the left-to-right sweep and writes the SVG.
+
+`tools/coverage.py` draws a check image.
+
 ## Before launch
 
 - Remove `<meta name="robots" content="noindex">` from every page.

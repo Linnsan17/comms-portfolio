@@ -629,10 +629,18 @@ p {
   transform: scale(0);
 }
 
+/* The card's colour frames its reel, so white-background reels still read
+   as cards (and the tunnel keeps its rings) on the white page */
+.stack-card:has(video, img) {
+  padding: 3%;
+}
+
 .stack-card img,
 .stack-card video {
+  display: block;
   width: 100%;
   height: 100%;
+  border-radius: calc(var(--w) * 0.03);
   object-fit: cover;
 }
 
@@ -839,6 +847,7 @@ html.lenis body {
 
 .service__media video,
 .service__media img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;

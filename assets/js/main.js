@@ -550,6 +550,28 @@ function startRotator(slot) {
   }, HOLD);
 }
 
+// Work reels: muted, looping, inline videos that only load and play while
+// near the screen, to save data and battery. On phones only the front hero
+// card plays; the cards behind it keep their poster. Reduced motion keeps
+// every video on its poster.
+const reels = [...document.querySelectorAll("video[data-autoplay]")].filter((video) => {
+  const card = video.closest(".stack-card");
+  return !(smallScreen.matches && card && card !== card.parentElement.firstElementChild);
+});
+
+if (reels.length && !reduceMotion && "IntersectionObserver" in window) {
+  const reelObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(({ target, isIntersecting }) => {
+        if (isIntersecting) target.play().catch(() => {});
+        else target.pause();
+      });
+    },
+    { rootMargin: "200px 0px" }
+  );
+  reels.forEach((video) => reelObserver.observe(video));
+}
+
 // Button hover roll: wrap each button label in a two-row track, an
 // identical copy above the original. CSS rolls the track down on hover.
 function addRoll(target) {

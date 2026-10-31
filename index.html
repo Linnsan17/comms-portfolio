@@ -32,15 +32,15 @@
 
   <main id="main">
     <!-- Hero: intro and pointer-following card stack, from the reference reel.
-         Cards are placeholder colours; drop an <img> or <video> in each later. -->
+         Each card plays a work reel; its colour shows while the video loads. -->
     <section class="hero-stack" data-hero aria-labelledby="hero-title">
       <div class="hero-stack__stage" aria-hidden="true">
         <div class="hero-stack__cards" data-hero-cards>
-          <div class="stack-card" style="--c: var(--block-2)"></div>
-          <div class="stack-card" style="--c: var(--block-1)"></div>
-          <div class="stack-card" style="--c: var(--block-4)"></div>
-          <div class="stack-card" style="--c: var(--block-3)"></div>
-          <div class="stack-card" style="--c: var(--hero-gradient)"></div>
+          <div class="stack-card" style="--c: var(--block-2)"><video src="/assets/video/work-3d.mp4" poster="/assets/video/work-3d.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+          <div class="stack-card" style="--c: var(--block-1)"><video src="/assets/video/work-globe-dark.mp4" poster="/assets/video/work-globe-dark.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+          <div class="stack-card" style="--c: var(--block-4)"><video src="/assets/video/work-gravity.mp4" poster="/assets/video/work-gravity.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+          <div class="stack-card" style="--c: var(--block-3)"><video src="/assets/video/work-grid.mp4" poster="/assets/video/work-grid.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+          <div class="stack-card" style="--c: var(--hero-gradient)"><video src="/assets/video/work-globe-light.mp4" poster="/assets/video/work-globe-light.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
         </div>
       </div>
       <div class="hero-stack__copy" data-hero-copy>
@@ -64,14 +64,14 @@
       </svg>
     </section>
 
-    <!-- Services: stacked cards, rebuilt from serious.business. Placeholder content. -->
+    <!-- Services: stacked cards, rebuilt from serious.business, each with a work reel. -->
     <section class="services" id="services" aria-labelledby="services-title">
       <h2 class="services__label" id="services-title">Section label</h2>
 
       <ul class="services__stack" data-stack>
         <li class="service service--block-1" data-card>
           <h3 class="service__title">Content</h3>
-          <div class="service__media" aria-hidden="true"><span>Video</span></div>
+          <div class="service__media" aria-hidden="true"><video src="/assets/video/work-globe-light.mp4" poster="/assets/video/work-globe-light.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
           <div class="service__text" data-reveal>
             <p class="service__desc" data-lines>Creating engaging content and compelling stories across channels.</p>
             <ul class="service__list">
@@ -86,7 +86,7 @@
         </li>
         <li class="service service--block-2" data-card>
           <h3 class="service__title">Social Media</h3>
-          <div class="service__media" aria-hidden="true"><span>Video</span></div>
+          <div class="service__media" aria-hidden="true"><video src="/assets/video/work-gravity.mp4" poster="/assets/video/work-gravity.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
           <div class="service__text" data-reveal>
             <p class="service__desc" data-lines>Building brand presence and engagement through creative content and strategic social media communication.</p>
             <ul class="service__list">
@@ -101,7 +101,7 @@
         </li>
         <li class="service service--block-3" data-card>
           <h3 class="service__title">Strategy</h3>
-          <div class="service__media" aria-hidden="true"><span>Video</span></div>
+          <div class="service__media" aria-hidden="true"><video src="/assets/video/work-grid.mp4" poster="/assets/video/work-grid.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
           <div class="service__text" data-reveal>
             <p class="service__desc" data-lines>Turning insights and communication goals into structured plans and meaningful results.</p>
             <ul class="service__list">
@@ -116,7 +116,7 @@
         </li>
         <li class="service service--block-4" data-card>
           <h3 class="service__title">Website</h3>
-          <div class="service__media" aria-hidden="true"><span>Video</span></div>
+          <div class="service__media" aria-hidden="true"><video src="/assets/video/work-3d.mp4" poster="/assets/video/work-3d.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
           <div class="service__text" data-reveal>
             <p class="service__desc" data-lines>Developing and maintaining digital platforms through relevant content and user-focused communication.</p>
             <ul class="service__list">
