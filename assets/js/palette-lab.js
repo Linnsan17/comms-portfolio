@@ -72,6 +72,47 @@
       },
       gradient: ["#c4c8ff", "#f0c4fa", "#ffd6b4"],
     },
+    // Three alternatives in the same band as Highlighters (saturation
+    // 70-100%, lightness 78-89%), with other hues
+    {
+      name: "Sorbet",
+      colours: {
+        paper: white, ink: black,
+        "block-1": "#ffc1b8", "block-1-ink": black, // coral
+        "block-2": "#a3f5ea", "block-2-ink": black, // aqua
+        "block-3": "#ffd699", "block-3-ink": black, // apricot
+        "block-4": "#b2dfff", "block-4-ink": black, // sky
+        pill: "#e9e9e9", "pill-ink": black,
+        "pill-on-blocks": white, "pill-on-blocks-ink": black,
+      },
+      gradient: ["#b2dfff", "#ffc1b8", "#ffd699"],
+    },
+    {
+      name: "Orchard",
+      colours: {
+        paper: white, ink: black,
+        "block-1": "#ffc2d6", "block-1-ink": black, // rose
+        "block-2": "#cef19d", "block-2-ink": black, // pistachio
+        "block-3": "#a8f0d6", "block-3-ink": black, // seafoam
+        "block-4": "#ffe799", "block-4-ink": black, // butter
+        pill: "#e9e9e9", "pill-ink": black,
+        "pill-on-blocks": white, "pill-on-blocks-ink": black,
+      },
+      gradient: ["#a8f0d6", "#ffe799", "#ffc2d6"],
+    },
+    {
+      name: "Candy",
+      colours: {
+        paper: white, ink: black,
+        "block-1": "#ffbde9", "block-1-ink": black, // bubblegum
+        "block-2": "#a8edfa", "block-2-ink": black, // ice
+        "block-3": "#ffc5a3", "block-3-ink": black, // tangerine
+        "block-4": "#dec7ff", "block-4-ink": black, // lavender
+        pill: "#e9e9e9", "pill-ink": black,
+        "pill-on-blocks": white, "pill-on-blocks-ink": black,
+      },
+      gradient: ["#dec7ff", "#ffbde9", "#ffc5a3"],
+    },
     {
       name: "Mono",
       colours: {
