@@ -351,6 +351,113 @@ p {
   aspect-ratio: 16 / 9;
 }
 
+/* Home page: the header floats over the full-screen hero */
+
+.site-header--overlay {
+  position: fixed;
+  inset: 0 0 auto;
+}
+
+/* Hero: card stack that grows in, then fans out toward the pointer.
+   Timings come from the reference reel; see the hero code in main.js. */
+
+.hero-stack {
+  --hero-lavender: #a77ee4;
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.js .hero-stack.is-intro {
+  background: var(--hero-lavender);
+}
+
+.hero-stack__stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1400px;
+  pointer-events: none;
+}
+
+.hero-stack__cards {
+  position: absolute;
+  inset: 0;
+}
+
+/* Cards are drawn at the back card's size (3.6x the front card) and only
+   ever scaled down, so they stay sharp. */
+.stack-card {
+  --w: clamp(432px, 46.8vw, 1008px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--w);
+  aspect-ratio: 1.45;
+  margin: calc(var(--w) / -2.9) 0 0 calc(var(--w) / -2);
+  overflow: hidden;
+  background: var(--c);
+  clip-path: url(#pillow);
+  will-change: transform;
+}
+
+.js .stack-card {
+  transform: scale(0);
+}
+
+.stack-card img,
+.stack-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-stack__title {
+  position: relative;
+  z-index: 2;
+  max-width: 8.4em;
+  margin: 0;
+  padding-inline: clamp(16px, 1.3vw, 28px);
+  color: #000000;
+  font-size: clamp(52px, 9vw, 190px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.hero-stack__title [data-lines] {
+  display: block;
+}
+
+/* Room for descenders inside each line's mask */
+.hero-stack__title .line {
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.hero-stack__title .line__inner {
+  transition-duration: 1000ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+.hero-stack__defs {
+  position: absolute;
+}
+
+@media (max-width: 760px) {
+  .stack-card {
+    --w: 86.4vw;
+  }
+
+  .hero-stack__title {
+    font-size: 13vw;
+  }
+}
+
 /* Smooth scroll (Lenis) */
 
 html.lenis,
