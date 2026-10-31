@@ -287,8 +287,10 @@ a {
   visibility: hidden;
 }
 
-/* Pen strokes in the logo's mask draw on one after another; each path
-   carries its own --delay and --dur (generated with the logo) */
+/* Pen strokes in the logo's mask draw on as a left-to-right sweep, top
+   line then bottom line. Each short piece carries its own --delay and
+   --dur (generated with the logo); the hard ease is in that timing, so
+   each piece itself draws linearly. */
 .logo-write .pen {
   visibility: hidden;
   stroke-dasharray: 1 1;
@@ -299,7 +301,7 @@ a {
   visibility: visible;
   stroke-dashoffset: 0;
   transition:
-    stroke-dashoffset var(--dur) cubic-bezier(0.35, 0, 0.65, 1) var(--delay),
+    stroke-dashoffset var(--dur) linear var(--delay),
     visibility 0s linear var(--delay);
 }
 
