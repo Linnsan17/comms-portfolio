@@ -535,9 +535,9 @@ p {
   object-fit: cover;
 }
 
-/* Headline: "Making brands matter through [word]." The word rotates;
-   the static part never moves. Sized so the longest version
-   ("…Social Media.", about 20.4em) stays on one line above 900px. */
+/* Headline: "Making brands / matter through / [word]." on three rows at
+   every size. The word rotates; the rows above it never move. The widest
+   row ("matter through") is about 7em, so 40-96px always fits. */
 .hero-stack__copy {
   position: relative;
   z-index: 2;
@@ -555,17 +555,20 @@ p {
   --swap: 400ms cubic-bezier(0.45, 0, 0.55, 1);
   margin: 0;
   color: var(--ink);
-  font-size: clamp(40px, 4.75vw, 96px);
+  font-size: clamp(40px, 6.2vw, 96px);
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
 
+.hero-title__row {
+  display: block;
+}
+
 .hero-title__slot {
   position: relative;
-  display: inline-block;
+  display: block;
   height: 1.05em;
-  vertical-align: top;
   transition: width var(--swap);
 }
 
@@ -588,10 +591,8 @@ p {
   opacity: 0;
 }
 
-.hero-subline {
-  margin: 0.9em 0 0;
-  color: var(--ink-soft);
-  font-size: clamp(16px, 1.4vw, 24px);
+.hero-stack__cta {
+  margin-top: clamp(24px, 2.6vw, 44px);
 }
 
 .visually-hidden {
@@ -604,12 +605,6 @@ p {
   white-space: nowrap;
 }
 
-/* The full line no longer fits: the rotating word gets its own line */
-@media (max-width: 900px) {
-  .hero-title__slot {
-    display: block;
-  }
-}
 
 .hero-stack__defs {
   position: absolute;
@@ -759,7 +754,7 @@ html.lenis body {
   display: inline-flex;
   align-items: stretch;
   gap: 2px;
-  color: var(--services-ink);
+  color: var(--ink);
   text-decoration: none;
   font-size: clamp(15px, 1.23vw, 21px);
 }
