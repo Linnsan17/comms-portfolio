@@ -1,0 +1,4 @@
+# Keeps search engines out while the site holds placeholder content.
+# At launch: change "Disallow: /" to "Allow: /" and add the sitemap line.
+User-agent: *
+Disallow: /
