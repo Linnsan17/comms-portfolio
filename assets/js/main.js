@@ -230,6 +230,47 @@ if (rowBlocks.length) {
   }
 }
 
+// Handwritten logo: the header's logo image is swapped for the "written"
+// version (assets/img/linn-logo-write.svg), where a mask of pen strokes
+// traced along the letters draws the signature in when the header appears.
+// The mask comes off at the end, so the finished logo is the original
+// artwork. Reduced motion keeps the plain image.
+const logoLink = document.querySelector(".site-header__logo");
+let logoSvg = null;
+let logoWanted = false;
+
+function writeLogo() {
+  logoWanted = true;
+  if (!logoSvg || logoSvg.classList.contains("is-writing")) return;
+  logoSvg.getBoundingClientRect(); // commit the hidden start state first
+  logoSvg.classList.add("is-writing");
+  const total = Number(logoSvg.dataset.writeDuration) || 2600;
+  setTimeout(() => logoSvg.classList.add("is-written"), total + 150);
+}
+
+if (logoLink) {
+  const img = logoLink.querySelector("img");
+  if (reduceMotion) {
+    logoLink.classList.add("is-ready");
+  } else {
+    fetch("/assets/img/linn-logo-write.svg")
+      .then((r) => (r.ok ? r.text() : Promise.reject(r.status)))
+      .then((text) => {
+        const parsed = new DOMParser().parseFromString(text, "image/svg+xml").documentElement;
+        const svg = document.importNode(parsed, true);
+        svg.classList.add("logo-write");
+        svg.setAttribute("role", "img");
+        svg.setAttribute("aria-label", img?.alt || "Linn Harrvik");
+        svg.setAttribute("focusable", "false");
+        logoLink.replaceChildren(svg);
+        logoSvg = svg;
+        logoLink.classList.add("is-ready");
+        if (logoWanted) writeLogo();
+      })
+      .catch(() => logoLink.classList.add("is-ready"));
+  }
+}
+
 // Hero card stack. Sequence from the reference reel, with every step on a
 // hard ease-in-out (the site's --roll-ease curve): the front card grows
 // from nothing and its edges pinch in, holds, then the cards behind grow
@@ -243,6 +284,7 @@ const renderHero = heroEl ? createHero(heroEl) : null;
 // there is no intro, and as a safety net if the animation never finishes
 function introDone() {
   document.documentElement.classList.add("intro-done");
+  writeLogo();
 }
 if (!heroEl || reduceMotion) introDone();
 else setTimeout(introDone, 6000);

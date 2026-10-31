@@ -187,11 +187,14 @@ a {
 }
 
 /* Buttons: one system everywhere, text pills with no icons, all the same
-   height. PP Mori's capitals sit 0.075em above the middle
-   of their line box (ascent 0.75, descent 0.2, cap height 0.7), so text
-   pills get 0.15em extra top padding to centre the capitals exactly. */
+   height, labels in PP Mori SemiBold. PP Mori's capitals sit 0.075em above
+   the middle of their line box (ascent 0.75, descent 0.2, cap height 0.7),
+   so text pills get 0.15em extra top padding to centre the capitals
+   exactly. Every element holding a label is a flex container, so no
+   inherited line height can push the label off centre. */
 :root {
   --pill-h: 42px;
+  --nav-outline: #c6c6c6;
 }
 
 .pill,
@@ -204,6 +207,7 @@ a {
   border-radius: 999px;
   background: var(--pill-bg, var(--pill));
   color: var(--pill-fg, var(--pill-ink));
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
   transition: background-color 200ms ease;
@@ -270,10 +274,38 @@ a {
   line-height: 0;
 }
 
-.site-header__logo img {
+.site-header__logo img,
+.site-header__logo svg {
   display: block;
   width: auto;
   height: var(--logo-h);
+}
+
+/* Until the written logo has loaded, keep the static image hidden so it
+   never flashes before being written in */
+.js .site-header__logo:not(.is-ready) img {
+  visibility: hidden;
+}
+
+/* Pen strokes in the logo's mask draw on one after another; each path
+   carries its own --delay and --dur (generated with the logo) */
+.logo-write .pen {
+  visibility: hidden;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+
+.logo-write.is-writing .pen {
+  visibility: visible;
+  stroke-dashoffset: 0;
+  transition:
+    stroke-dashoffset var(--dur) cubic-bezier(0.35, 0, 0.65, 1) var(--delay),
+    visibility 0s linear var(--delay);
+}
+
+/* Done: drop the mask so the logo is the original artwork, pixel for pixel */
+.logo-write.is-written > g {
+  mask: none;
 }
 
 .site-nav {
@@ -299,12 +331,26 @@ a {
   font-size: 16px;
 }
 
+/* The nav is outlined in grey on white, rather than a pink pill */
+.site-nav__links,
+.site-nav__label {
+  border: 1px solid var(--nav-outline);
+  background: var(--paper);
+  color: var(--ink);
+}
+
 .site-nav__links {
   gap: 20px;
   margin: 0;
   padding-inline: 29px;
   list-style: none;
   font-size: 16px;
+}
+
+.site-nav__links li,
+.site-nav__links a {
+  display: inline-flex;
+  align-items: center;
 }
 
 .site-nav__links a {
@@ -420,10 +466,12 @@ p {
 }
 
 .button {
-  display: inline-block;
-  padding: 0.7rem 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  padding: calc(0.7rem + 0.075em) 1.2rem calc(0.7rem - 0.075em);
   background: var(--ink);
   color: var(--paper);
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -444,12 +492,15 @@ p {
 }
 
 .chip {
-  padding: 0.45rem 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  padding: calc(0.45rem + 0.075em) 0.95rem calc(0.45rem - 0.075em);
   border: 0;
   border-radius: 999px;
   background: var(--tint);
   color: var(--pill-ink);
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
 }
 
