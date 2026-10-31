@@ -194,7 +194,6 @@ a {
    inherited line height can push the label off centre. */
 :root {
   --pill-h: 42px;
-  --nav-outline: #c6c6c6;
 }
 
 .pill,
@@ -333,11 +332,10 @@ a {
   font-size: 16px;
 }
 
-/* The nav is outlined in grey on white, rather than a pink pill */
+/* The nav is the warm beige (the introduction's off-white), no outline */
 .site-nav__links,
 .site-nav__label {
-  border: 1px solid var(--nav-outline);
-  background: var(--paper);
+  background: var(--paper-alt);
   color: var(--ink);
 }
 
