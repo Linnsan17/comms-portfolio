@@ -4,7 +4,7 @@
 // from every page before launch (see README).
 
 (() => {
-  const STORE = "palette-lab";
+  const STORE = "palette-lab-v2"; // bump when the preset list changes
 
   // [role, label, text-colour role for things placed on it]
   const ROLES = [
@@ -58,49 +58,7 @@
       gradient: ["#0e0eff", "#8a1dfc", "#ff29fa"],
     },
     {
-      // Pastel highlighter colours from the "We experiment." reference,
-      // judged by eye (the image wasn't available as a file to sample)
-      name: "Highlighters",
-      colours: {
-        paper: white, ink: black,
-        "block-1": "#c4c8ff", "block-1-ink": black,
-        "block-2": "#a7f59c", "block-2-ink": black,
-        "block-3": "#fcfb86", "block-3-ink": black,
-        "block-4": "#f0c4fa", "block-4-ink": black,
-        pill: "#e9e9e9", "pill-ink": black,
-        "pill-on-blocks": white, "pill-on-blocks-ink": black,
-      },
-      gradient: ["#c4c8ff", "#f0c4fa", "#ffd6b4"],
-    },
-    // Grown-up alternatives: saturation roughly halved (20-58%),
-    // lightness 74-86%, so the colours read chalky and dusty, not candy
-    {
-      name: "Clay",
-      colours: {
-        paper: white, ink: black,
-        "block-1": "#e4c2b4", "block-1-ink": black, // clay
-        "block-2": "#c0ceb6", "block-2-ink": black, // sage
-        "block-3": "#e6dac7", "block-3-ink": black, // oat
-        "block-4": "#bcccdc", "block-4-ink": black, // dusty blue
-        pill: "#ebe7e0", "pill-ink": black,
-        "pill-on-blocks": white, "pill-on-blocks-ink": black,
-      },
-      gradient: ["#bcccdc", "#e6dac7", "#e4c2b4"],
-    },
-    {
-      name: "Studio",
-      colours: {
-        paper: white, ink: black,
-        "block-1": "#cbd5e2", "block-1-ink": black, // fog
-        "block-2": "#c9ceab", "block-2-ink": black, // lichen
-        "block-3": "#d8d2ca", "block-3-ink": black, // stone
-        "block-4": "#d7c1cc", "block-4-ink": black, // mauve
-        pill: "#e8e6e3", "pill-ink": black,
-        "pill-on-blocks": white, "pill-on-blocks-ink": black,
-      },
-      gradient: ["#cbd5e2", "#d8d2ca", "#d7c1cc"],
-    },
-    {
+      // The pastel highlighters with saturation roughly halved
       name: "Soft highlighters",
       colours: {
         paper: white, ink: black,
@@ -114,30 +72,35 @@
       gradient: ["#c1c5eb", "#dfc9e3", "#e7dfa6"],
     },
     {
-      name: "Mono",
+      // Sampled from the geometric shapes reference (pink squares,
+      // rosewood circles, blue triangles, green dot) on warm off-white
+      name: "Geometric",
       colours: {
-        paper: white, ink: black,
-        "block-1": black, "block-1-ink": white,
-        "block-2": "#d9d9d9", "block-2-ink": black,
-        "block-3": "#9a9a9a", "block-3-ink": black,
-        "block-4": "#f1f1f1", "block-4-ink": black,
-        pill: "#f1f1f1", "pill-ink": black,
-        "pill-on-blocks": white, "pill-on-blocks-ink": black,
+        paper: "#f2f0ec", ink: "#1c1c1c",
+        "block-1": "#fbbad4", "block-1-ink": black, // pink
+        "block-2": "#a45b61", "block-2-ink": white, // rosewood
+        "block-3": "#486adc", "block-3-ink": white, // blue
+        "block-4": "#235539", "block-4-ink": white, // forest
+        pill: "#fbbad4", "pill-ink": black,
+        "pill-on-blocks": "#f2f0ec", "pill-on-blocks-ink": black,
       },
-      gradient: ["#000000", "#5c5c5c", "#d9d9d9"],
+      gradient: ["#486adc", "#a45b61", "#fbbad4"],
     },
     {
-      name: "Citrus",
+      // Sampled from the "Geometric System, colour edition" cover: citron,
+      // pink and deep green on warm off-white. It has no fourth colour, so
+      // block 4 is a deeper stone.
+      name: "Color edition",
       colours: {
-        paper: "#fbfaf5", ink: "#111111",
-        "block-1": "#d7ff3e", "block-1-ink": black,
-        "block-2": "#ff6b1a", "block-2-ink": black,
-        "block-3": "#1b4332", "block-3-ink": white,
-        "block-4": "#f1ece1", "block-4-ink": black,
-        pill: "#d7ff3e", "pill-ink": black,
-        "pill-on-blocks": white, "pill-on-blocks-ink": black,
+        paper: "#f2f0ec", ink: "#282824",
+        "block-1": "#e4d814", "block-1-ink": black, // citron
+        "block-2": "#f8b9d2", "block-2-ink": black, // pink
+        "block-3": "#1c5044", "block-3-ink": white, // deep green
+        "block-4": "#dcd8cf", "block-4-ink": black, // stone
+        pill: "#e4d814", "pill-ink": black,
+        "pill-on-blocks": "#f2f0ec", "pill-on-blocks-ink": black,
       },
-      gradient: ["#1b4332", "#7fa83a", "#ff6b1a"],
+      gradient: ["#1c5044", "#e4d814", "#f8b9d2"],
     },
   ];
 
