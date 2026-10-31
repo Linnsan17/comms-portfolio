@@ -54,23 +54,24 @@
 }
 
 :root {
-  /* Colour roles. Every colour on the site comes from these, so the colour
-     panel (assets/js/palette-lab.js) can swap them. Defaults: the Figma
-     palette ("Ny markus fil", node 974:6296) and the phone-photo gradient. */
-  --paper: #ffffff;               /* page background */
-  --ink: #000000;                 /* text */
+  /* Colour roles: the "Geometric" palette, sampled from the geometric
+     shapes reference, with a light blue (the blue's hue at the pink's
+     lightness) in place of its forest green. Every colour on the site
+     comes from these. Text pairs all pass 4.5:1. */
+  --paper: #f2f0ec;               /* warm off-white page background */
+  --ink: #1c1c1c;                 /* text */
   --ink-soft: #5c5c5c;
-  --block-1: #f865ac;             /* pink */
+  --block-1: #fbbad4;             /* pink */
   --block-1-ink: #000000;
-  --block-2: #fa2f30;             /* red */
-  --block-2-ink: #000000;
-  --block-3: #e4dacc;             /* beige */
-  --block-3-ink: #000000;
-  --block-4: #efd4d8;             /* blush */
+  --block-2: #a45b61;             /* rosewood */
+  --block-2-ink: #ffffff;
+  --block-3: #486adc;             /* blue */
+  --block-3-ink: #ffffff;
+  --block-4: #bfcef7;             /* light blue */
   --block-4-ink: #000000;
-  --pill: #efd4d8;                /* buttons */
+  --pill: #fbbad4;                /* buttons */
   --pill-ink: #000000;
-  --pill-on-blocks: #ffffff;      /* buttons over a colour block */
+  --pill-on-blocks: #f2f0ec;      /* buttons over a colour block */
   --pill-on-blocks-ink: #000000;
   --tint: var(--pill);            /* small fills: chips, quiet buttons */
   --accent: var(--ink);
@@ -81,15 +82,8 @@
   --roll-ease: cubic-bezier(0.76, 0, 0.24, 1);
   --roll-duration: 620ms;
 
-  /* Sampled from the hero photo, top to bottom, so the CSS matches it 1:1 */
-  --hero-gradient: linear-gradient(
-    180deg,
-    #2a2622 0%, #342b2b 5%, #3f3136 10%, #4e3842 15%, #604050 20%,
-    #744a5d 25%, #87516a 30%, #9a5a79 35%, #af6388 40%, #c66a97 45%,
-    #d5719e 50%, #e877a8 55%, #f57ab1 60%, #ff7db6 65%, #fe78b1 70%,
-    #ff75a8 75%, #ff719f 80%, #ff6c92 85%, #fe6383 90%, #ff596d 95%,
-    #fd4d5d 100%
-  );
+  /* Hero intro background and outer card: blue to rosewood to pink */
+  --hero-gradient: linear-gradient(180deg, #486adc 0%, #a45b61 50%, #fbbad4 100%);
 
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-body);
