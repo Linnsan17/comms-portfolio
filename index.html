@@ -140,6 +140,28 @@
       </div>
     </section>
 
+    <!-- Stats: numbers count up when they scroll into view. Placeholder content:
+         replace the labels and numbers (data-count is the number counted to). -->
+    <section class="stats" id="stats" aria-labelledby="stats-title">
+      <div class="stats__head">
+        <h2 class="stats__title" id="stats-title"><span class="stats__soft">Placeholder heading.</span> Second line.</h2>
+        <p class="stats__intro">A short line of supporting text about the numbers below.</p>
+      </div>
+      <dl class="stats__list">
+        <div class="stats__row">
+          <dt>Stat label</dt>
+          <dd><span data-count="120">120</span></dd>
+        </div>
+        <div class="stats__row">
+          <dt>Stat label</dt>
+          <dd>+<span data-count="40">40</span></dd>
+        </div>
+        <div class="stats__row">
+          <dt>Stat label</dt>
+          <dd>+<span data-count="300">300</span></dd>
+        </div>
+      </dl>
+    </section>
 
     <section class="section wrap" aria-labelledby="about-title">
       <h2 id="about-title">About</h2>

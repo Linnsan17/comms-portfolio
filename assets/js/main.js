@@ -230,6 +230,52 @@ if (rowBlocks.length) {
   }
 }
 
+// Stats: each number counts up from 0 when its row scrolls into view, fast
+// at first and settling into place (expo ease-out, 1.6s). Numbers already
+// scrolled past just show. Reduced motion shows the final numbers.
+const counters = [...document.querySelectorAll("[data-count]")];
+const pendingCounts = new Set();
+const COUNT_TIME = 1600;
+
+function runCount(el) {
+  pendingCounts.delete(el);
+  const target = Number(el.dataset.count);
+  const start = performance.now();
+  (function tick(now) {
+    const k = Math.min(1, (now - start) / COUNT_TIME);
+    const eased = k >= 1 ? 1 : 1 - Math.pow(2, -10 * k);
+    el.textContent = String(Math.round(target * eased));
+    if (k < 1) requestAnimationFrame(tick);
+  })(start);
+}
+
+function showPassedCounts() {
+  pendingCounts.forEach((el) => {
+    if (el.getBoundingClientRect().bottom < 0) {
+      pendingCounts.delete(el);
+      el.textContent = el.dataset.count;
+    }
+  });
+}
+
+if (counters.length && !reduceMotion && "IntersectionObserver" in window) {
+  const countObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        countObserver.unobserve(entry.target);
+        runCount(entry.target);
+      });
+    },
+    { rootMargin: "0px 0px -15% 0px" }
+  );
+  counters.forEach((el) => {
+    el.textContent = "0";
+    pendingCounts.add(el);
+    countObserver.observe(el);
+  });
+}
+
 // Handwritten logo: the header's logo image is swapped for the "written"
 // version (assets/img/linn-logo-write.svg), where a mask of pen strokes
 // traced along the letters draws the signature in when the header appears.
@@ -556,6 +602,7 @@ requestAnimationFrame(function frame(time) {
     updateStack();
     updateHeaderTone();
     if (pendingRows.size) showPassedRows();
+    if (pendingCounts.size) showPassedCounts();
   }
   renderHero?.(time);
   requestAnimationFrame(frame);
