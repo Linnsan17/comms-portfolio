@@ -39,17 +39,21 @@
     <section class="hero-stack is-intro" data-hero aria-labelledby="hero-title">
       <div class="hero-stack__stage" aria-hidden="true">
         <div class="hero-stack__cards" data-hero-cards>
-          <div class="stack-card" style="--c: #7b4dff"></div>
-          <div class="stack-card" style="--c: #ff5ca8"></div>
-          <div class="stack-card" style="--c: #ffd23f"></div>
-          <div class="stack-card" style="--c: #22d48a"></div>
-          <div class="stack-card" style="--c: #2fb4ff"></div>
-          <div class="stack-card" style="--c: #ff6a2b"></div>
+          <div class="stack-card" style="--c: var(--red)"></div>
+          <div class="stack-card" style="--c: var(--pink)"></div>
+          <div class="stack-card" style="--c: var(--blush)"></div>
+          <div class="stack-card" style="--c: var(--beige)"></div>
+          <div class="stack-card" style="--c: var(--hero-gradient)"></div>
         </div>
       </div>
-      <h1 class="hero-stack__title" id="hero-title" data-reveal data-reveal-manual>
-        <span data-lines>We make people care through Content</span>
-      </h1>
+      <div class="hero-stack__copy" data-hero-copy>
+        <h1 class="hero-title" id="hero-title">
+          <span class="hero-title__static">Making brands matter through</span>
+          <span class="hero-title__slot" data-rotator data-words="Content|Social Media|Strategy|Websites" aria-hidden="true"><span class="hero-title__word">Content.</span></span>
+          <span class="visually-hidden">content, social media, strategy and websites.</span>
+        </h1>
+        <p class="hero-subline">Built to connect, built to last.</p>
+      </div>
       <svg class="hero-stack__defs" width="0" height="0" aria-hidden="true" focusable="false">
         <!-- Rounded card with edges bowed slightly inwards, like the reel -->
         <clipPath id="pillow" clipPathUnits="objectBoundingBox">
@@ -63,7 +67,7 @@
       <h2 class="services__label" id="services-title">Section label</h2>
 
       <ul class="services__stack" data-stack>
-        <li class="service service--lavender" data-card>
+        <li class="service service--pink" data-card>
           <h3 class="service__title">Content</h3>
           <div class="service__media" aria-hidden="true"><span>Video</span></div>
           <div class="service__text" data-reveal>
@@ -78,7 +82,7 @@
             </ul>
           </div>
         </li>
-        <li class="service service--white" data-card>
+        <li class="service service--red" data-card>
           <h3 class="service__title">Social Media</h3>
           <div class="service__media" aria-hidden="true"><span>Video</span></div>
           <div class="service__text" data-reveal>
@@ -93,7 +97,7 @@
             </ul>
           </div>
         </li>
-        <li class="service service--yellow" data-card>
+        <li class="service service--beige" data-card>
           <h3 class="service__title">Strategy</h3>
           <div class="service__media" aria-hidden="true"><span>Video</span></div>
           <div class="service__text" data-reveal>
@@ -108,7 +112,7 @@
             </ul>
           </div>
         </li>
-        <li class="service service--dark" data-card>
+        <li class="service service--blush" data-card>
           <h3 class="service__title">Website</h3>
           <div class="service__media" aria-hidden="true"><span>Video</span></div>
           <div class="service__text" data-reveal>

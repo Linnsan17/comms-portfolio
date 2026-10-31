@@ -143,12 +143,11 @@ if (revealBlocks.length) {
     );
 
     // Wait for PP Mori so the lines break where they will finally sit.
-    // Blocks marked data-reveal-manual are revealed by their own code.
     const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
     Promise.race([fontsReady, new Promise((r) => setTimeout(r, 1500))]).then(() => {
       revealBlocks.forEach((block) => {
         splitBlock(block);
-        if (!block.hasAttribute("data-reveal-manual")) observer.observe(block);
+        observer.observe(block);
       });
       measureStack();
       updateStack();
@@ -157,7 +156,7 @@ if (revealBlocks.length) {
 }
 
 // Hero card stack. Timeline measured from the reference reel:
-// the front card pops in on lavender, holds, then the cards behind grow
+// the front card pops in on the gradient, holds, then the cards behind grow
 // out around it (expo ease-out, 1.1s) and the background cuts to white
 // 0.11s into the grow. At rest the stack is a tunnel: each card behind is
 // bigger than the one in front. The pointer then fans the stack toward it,
@@ -168,7 +167,8 @@ const renderHero = heroEl ? createHero(heroEl) : null;
 function createHero(hero) {
   const cards = [...hero.querySelectorAll(".stack-card")]; // front first
   const cardsWrap = hero.querySelector("[data-hero-cards]");
-  const title = hero.querySelector("[data-reveal-manual]");
+  const copy = hero.querySelector("[data-hero-copy]");
+  const rotator = hero.querySelector("[data-rotator]");
   const count = cards.length;
   const mid = (count - 1) / 2;
 
@@ -179,7 +179,7 @@ function createHero(hero) {
   const TITLE_AT = 1.35;
   const FOLLOW_AT = 1.6; // pointer takes over, fading in over 0.8s
 
-  const TUNNEL_STEP = 0.52; // each card behind is this much bigger at rest
+  const TUNNEL_STEP = 2.6 / (count - 1); // back card is 3.6x the front, as in the reel
   const MAX_SCALE = 1 + (count - 1) * TUNNEL_STEP; // cards are drawn at this size
   const GAP = 0.45; // gap between cards at full spread, in card widths
   const DRIFT = 0.12; // whole stack leans toward the pointer
@@ -224,8 +224,9 @@ function createHero(hero) {
     const dt = last === null ? 0 : Math.min(0.05, (time - last) / 1000);
     last = time;
 
-    if (!titleShown && t >= TITLE_AT && title?.classList.contains("is-split")) {
-      title.classList.add("is-in");
+    if (!titleShown && t >= TITLE_AT) {
+      copy?.classList.add("is-in");
+      if (rotator) startRotator(rotator);
       titleShown = true;
     }
     hero.classList.toggle("is-intro", t < WHITE_AT);
@@ -263,11 +264,11 @@ function createHero(hero) {
 }
 
 // Header: the arrow button folds the links into a "Menu" pill (folded by
-// default on phones), and the pills turn white over pink sections.
+// default on phones), and the pills turn white over the colour blocks.
 const header = document.querySelector("[data-header]");
 const nav = header?.querySelector("[data-nav]");
 const navToggle = header?.querySelector("[data-nav-toggle]");
-const pinkSections = [...document.querySelectorAll(".services")];
+const colourBlocks = [...document.querySelectorAll("[data-card]")];
 const smallScreen = matchMedia("(max-width: 760px)");
 
 function setNav(open) {
@@ -291,14 +292,50 @@ if (nav && navToggle) {
 }
 
 function updateHeaderTone() {
-  if (!header || !pinkSections.length) return;
+  if (!header || !colourBlocks.length) return;
   const pill = header.querySelector(".pill").getBoundingClientRect();
   const y = pill.top + pill.height / 2;
-  const onPink = pinkSections.some((section) => {
-    const r = section.getBoundingClientRect();
+  const onBlock = colourBlocks.some((block) => {
+    const r = block.getBoundingClientRect();
     return r.top <= y && r.bottom >= y;
   });
-  header.classList.toggle("is-on-pink", onPink);
+  header.classList.toggle("is-on-blocks", onBlock);
+}
+
+// Rotating headline word: each word holds for 2.2s, then the next slides up
+// into place as the old one slides up and out (400ms, ease-in-out). The
+// slot animates its width so nothing after it jumps; the static words
+// before it never move. Reduced motion: CSS turns this into a plain fade.
+function startRotator(slot) {
+  const HOLD = 2200;
+  const SWAP = 400;
+  const words = slot.dataset.words.split("|").map((word) => `${word}.`);
+  let index = 0;
+  let current = slot.querySelector(".hero-title__word");
+
+  const fit = () => (slot.style.width = `${current.offsetWidth}px`);
+  fit();
+  addEventListener("resize", fit);
+  document.fonts?.ready.then(fit);
+
+  setTimeout(function swap() {
+    index = (index + 1) % words.length;
+    const next = document.createElement("span");
+    next.className = "hero-title__word is-entering";
+    next.textContent = words[index];
+    slot.append(next);
+
+    // Reading the width also commits the start position, so the
+    // transitions below run without waiting for a frame.
+    slot.style.width = `${next.offsetWidth}px`;
+    next.classList.remove("is-entering");
+    const leaving = current;
+    leaving.classList.add("is-leaving");
+    setTimeout(() => leaving.remove(), SWAP);
+    current = next;
+
+    setTimeout(swap, HOLD + SWAP);
+  }, HOLD);
 }
 
 let lastWidth = innerWidth;
