@@ -804,10 +804,11 @@ html.lenis body {
   padding-top: var(--space-m);
 }
 
+/* One step up from the reference's sizes (22px / 14px at 1548px) */
 .service__desc {
-  max-width: 27.1vw;
+  max-width: 30.5vw;
   margin: 0;
-  font-size: clamp(17px, 1.42vw, 26px);
+  font-size: clamp(18px, 1.6vw, 29px);
   line-height: 1.3;
 }
 
@@ -815,7 +816,7 @@ html.lenis body {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: clamp(13px, 0.9vw, 17px);
+  font-size: clamp(14px, 1.05vw, 19px);
   line-height: 1.28;
 }
 
