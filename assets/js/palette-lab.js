@@ -72,46 +72,46 @@
       },
       gradient: ["#c4c8ff", "#f0c4fa", "#ffd6b4"],
     },
-    // Three alternatives in the same band as Highlighters (saturation
-    // 70-100%, lightness 78-89%), with other hues
+    // Grown-up alternatives: saturation roughly halved (20-58%),
+    // lightness 74-86%, so the colours read chalky and dusty, not candy
     {
-      name: "Sorbet",
+      name: "Clay",
       colours: {
         paper: white, ink: black,
-        "block-1": "#ffc1b8", "block-1-ink": black, // coral
-        "block-2": "#a3f5ea", "block-2-ink": black, // aqua
-        "block-3": "#ffd699", "block-3-ink": black, // apricot
-        "block-4": "#b2dfff", "block-4-ink": black, // sky
-        pill: "#e9e9e9", "pill-ink": black,
+        "block-1": "#e4c2b4", "block-1-ink": black, // clay
+        "block-2": "#c0ceb6", "block-2-ink": black, // sage
+        "block-3": "#e6dac7", "block-3-ink": black, // oat
+        "block-4": "#bcccdc", "block-4-ink": black, // dusty blue
+        pill: "#ebe7e0", "pill-ink": black,
         "pill-on-blocks": white, "pill-on-blocks-ink": black,
       },
-      gradient: ["#b2dfff", "#ffc1b8", "#ffd699"],
+      gradient: ["#bcccdc", "#e6dac7", "#e4c2b4"],
     },
     {
-      name: "Orchard",
+      name: "Studio",
       colours: {
         paper: white, ink: black,
-        "block-1": "#ffc2d6", "block-1-ink": black, // rose
-        "block-2": "#cef19d", "block-2-ink": black, // pistachio
-        "block-3": "#a8f0d6", "block-3-ink": black, // seafoam
-        "block-4": "#ffe799", "block-4-ink": black, // butter
-        pill: "#e9e9e9", "pill-ink": black,
+        "block-1": "#cbd5e2", "block-1-ink": black, // fog
+        "block-2": "#c9ceab", "block-2-ink": black, // lichen
+        "block-3": "#d8d2ca", "block-3-ink": black, // stone
+        "block-4": "#d7c1cc", "block-4-ink": black, // mauve
+        pill: "#e8e6e3", "pill-ink": black,
         "pill-on-blocks": white, "pill-on-blocks-ink": black,
       },
-      gradient: ["#a8f0d6", "#ffe799", "#ffc2d6"],
+      gradient: ["#cbd5e2", "#d8d2ca", "#d7c1cc"],
     },
     {
-      name: "Candy",
+      name: "Soft highlighters",
       colours: {
         paper: white, ink: black,
-        "block-1": "#ffbde9", "block-1-ink": black, // bubblegum
-        "block-2": "#a8edfa", "block-2-ink": black, // ice
-        "block-3": "#ffc5a3", "block-3-ink": black, // tangerine
-        "block-4": "#dec7ff", "block-4-ink": black, // lavender
+        "block-1": "#c1c5eb", "block-1-ink": black, // periwinkle
+        "block-2": "#bddab4", "block-2-ink": black, // pea
+        "block-3": "#e7dfa6", "block-3-ink": black, // straw
+        "block-4": "#dfc9e3", "block-4-ink": black, // orchid
         pill: "#e9e9e9", "pill-ink": black,
         "pill-on-blocks": white, "pill-on-blocks-ink": black,
       },
-      gradient: ["#dec7ff", "#ffbde9", "#ffc5a3"],
+      gradient: ["#c1c5eb", "#dfc9e3", "#e7dfa6"],
     },
     {
       name: "Mono",
