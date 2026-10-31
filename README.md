@@ -57,6 +57,10 @@ You can link to a filtered list, for example `/?tag=social#work`.
 - Add `sitemap.xml` with the real URLs, and a `Sitemap:` line in `robots.txt`.
 - Add Open Graph tags, `og-image.jpg` and a favicon.
 - Replace every placeholder: name, email, LinkedIn, `assets/cv.pdf`.
+- **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git. Before launch:
+  1. Buy a web licence at pangrampangram.com.
+  2. Put the licensed `.woff2` files in `assets/fonts/` and point the `@font-face` rules in `style.css` at them.
+  3. Remove `assets/fonts/` from `.gitignore`.
 
 ## Publish
 

@@ -1,2 +1,6 @@
 .DS_Store
 .claude/
+
+# PP Mori "Free for personal use" may not be uploaded online.
+# Remove this line once licensed web font files replace them.
+assets/fonts/
