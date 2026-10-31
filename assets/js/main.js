@@ -233,9 +233,9 @@ if (rowBlocks.length) {
 // Hero card stack. Sequence from the reference reel, with every step on a
 // hard ease-in-out (the site's --roll-ease curve): the front card grows
 // from nothing and its edges pinch in, holds, then the cards behind grow
-// out around it from a slight 3D angle that settles flat, hold, and the
-// stack swings into a fan toward the top right. Only then do the header,
-// headline and button appear, and the pointer takes over the fan.
+// out around it from a slight 3D angle that settles flat. The stack stays
+// perfectly centred while the header, headline and button appear; one
+// second later it swings straight to wherever the mouse is and follows it.
 const heroEl = document.querySelector("[data-hero]");
 const renderHero = heroEl ? createHero(heroEl) : null;
 
@@ -259,11 +259,9 @@ function createHero(hero) {
   const APPEAR = 0.6; // front card grows from nothing
   const GROW_AT = APPEAR + 0.3; // the cards behind start growing
   const GROW = 0.9;
-  const FAN_AT = GROW_AT + GROW + 0.2; // swing into the fan
-  const FAN = 0.5;
-  const DONE_AT = FAN_AT + FAN; // header, headline and button appear
-  const HANDOVER = 1; // blend from the scripted fan to the live pointer
-  const FAN_POS = { x: 0.72, y: -0.5 };
+  const DONE_AT = GROW_AT + GROW; // header, headline and button appear
+  const FOLLOW_AT = DONE_AT + 1; // centred until now, then follow the mouse
+  const SWING = 0.5; // swing straight to the mouse, hard eased
   const ENTRY_TILT = { x: 5, y: -9 }; // degrees, settles to flat with the grow
 
   const TUNNEL_STEP = 2.6 / (count - 1); // back card is 3.6x the front, as in the reel
@@ -331,7 +329,7 @@ function createHero(hero) {
       copy?.classList.add("is-in");
       if (rotator) startRotator(rotator);
     }
-    if (!inView && t > DONE_AT + HANDOVER) return;
+    if (!inView && t > FOLLOW_AT + SWING) return;
 
     const appear = hard(t / APPEAR);
     const growAll = hard((t - GROW_AT) / GROW);
@@ -344,10 +342,7 @@ function createHero(hero) {
       lastPinch = rounded;
     }
 
-    // Scripted fan, then the live target: the mouse, or a slow drift on touch screens
-    const fan = t >= FAN_AT ? hard((t - FAN_AT) / FAN) : 0;
-    const sx = FAN_POS.x * fan;
-    const sy = FAN_POS.y * fan;
+    // Live target: the mouse, or a slow drift on touch screens
     let tx = pointer.x;
     let ty = pointer.y;
     if (!canHover) {
@@ -355,18 +350,19 @@ function createHero(hero) {
       ty = Math.cos(t * 0.4) * 0.22;
     }
 
-    if (reduceMotion) {
+    if (reduceMotion || t < FOLLOW_AT) {
+      // Perfectly centred through the intro and the first second after it
       current.x = 0;
       current.y = 0;
-    } else if (t < DONE_AT) {
-      current.x = sx;
-      current.y = sy;
+    } else if (t < FOLLOW_AT + SWING) {
+      // Swing straight to where the mouse is now
+      const swing = hard((t - FOLLOW_AT) / SWING);
+      current.x = tx * swing;
+      current.y = ty * swing;
     } else {
-      const h = clamp((t - DONE_AT) / HANDOVER, 0, 1);
-      const blend = h * h * (3 - 2 * h);
       const ease = 1 - Math.exp(-dt * FOLLOW_EASE);
-      current.x += (sx + (tx - sx) * blend - current.x) * ease;
-      current.y += (sy + (ty - sy) * blend - current.y) * ease;
+      current.x += (tx - current.x) * ease;
+      current.y += (ty - current.y) * ease;
     }
 
     const spread = Math.min(1, Math.hypot(current.x, current.y));
