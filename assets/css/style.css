@@ -592,21 +592,28 @@ p {
   padding-inline: clamp(16px, 1.68vw, 32px);
 }
 
-/* Headline, then button, fade up once the intro animation is done */
-.hero-title,
+/* Once the intro animation is done, the headline rows slide up out of
+   their masks 90ms apart, exactly like the introduction section, and the
+   button fades up after the last row. */
+.hero-title__line {
+  display: block;
+  transition: transform 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-title__row:nth-child(2) .hero-title__line {
+  transition-delay: 90ms;
+}
+
+.js .hero-stack__copy:not(.is-in) .hero-title__line {
+  transform: translate3d(0, 120%, 0);
+}
+
 .hero-stack__cta {
   transition: opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 300ms;
 }
 
-.hero-title {
-  transition-delay: 100ms;
-}
-
-.hero-stack__cta {
-  transition-delay: 220ms;
-}
-
-.js .hero-stack__copy:not(.is-in) :is(.hero-title, .hero-stack__cta) {
+.js .hero-stack__copy:not(.is-in) .hero-stack__cta {
   visibility: hidden;
   transform: translate3d(0, 24px, 0);
   opacity: 0;
@@ -622,19 +629,24 @@ p {
   letter-spacing: -0.02em;
 }
 
+/* Each row is a mask, with room below for descenders */
 .hero-title__row {
   display: block;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+  overflow: hidden;
 }
 
 /* The word rolls like a reel: the next word drops in from above as the
    current one leaves below, clipped to its own row (sides left open so a
-   wider word isn't cut while the slot grows). */
+   wider word isn't cut while the slot grows). The slot is also the third
+   row's sliding line, so it carries both transitions. */
 .hero-title__slot {
   position: relative;
   display: block;
   height: 1.05em;
   clip-path: inset(0 -100vw);
-  transition: width var(--swap);
+  transition: width var(--swap), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) 180ms;
 }
 
 .hero-title__word {
