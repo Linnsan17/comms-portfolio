@@ -60,6 +60,16 @@
   --tint: #f2f2f0;         /* image slots only */
   --accent: #111111;
 
+  /* Sampled from the hero photo, top to bottom, so the CSS matches it 1:1 */
+  --hero-gradient: linear-gradient(
+    180deg,
+    #2a2622 0%, #342b2b 5%, #3f3136 10%, #4e3842 15%, #604050 20%,
+    #744a5d 25%, #87516a 30%, #9a5a79 35%, #af6388 40%, #c66a97 45%,
+    #d5719e 50%, #e877a8 55%, #f57ab1 60%, #ff7db6 65%, #fe78b1 70%,
+    #ff75a8 75%, #ff719f 80%, #ff6c92 85%, #fe6383 90%, #ff596d 95%,
+    #fd4d5d 100%
+  );
+
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-body);
 
@@ -341,15 +351,214 @@ p {
   aspect-ratio: 16 / 9;
 }
 
-/* Capabilities */
+/* Smooth scroll (Lenis) */
 
-.capabilities {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
-  gap: var(--space-m);
-  margin: var(--space-m) 0 0;
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Services: stacked cards. Sizes are measured from serious.business at a
+   1548px-wide window and scale with the viewport width from there. */
+
+.services {
+  --services-bg: #fab9cf;
+  --services-ink: #1c1c1c;
+  --services-pad-x: clamp(16px, 1.3vw, 28px);
+  --services-pad-y: clamp(18px, 1.68vw, 34px);
+  --services-gap: clamp(12px, 1.03vw, 20px);
+
+  padding-block: clamp(64px, 7.75vw, 160px);
+  background: var(--services-bg);
+  color: var(--services-ink);
+}
+
+.services__label {
+  margin: 0 0 clamp(18px, 1.75vw, 34px);
+  padding-inline: var(--services-pad-x);
+  font-size: clamp(18px, 1.6vw, 30px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.services__stack {
+  margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.service {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto 1fr;
+  column-gap: var(--services-gap);
+  padding: var(--services-pad-y) var(--services-pad-x);
+  background: var(--card-bg);
+  color: var(--card-ink, var(--services-ink));
+  will-change: transform;
+}
+
+.service:nth-child(1) { z-index: 1; }
+.service:nth-child(2) { z-index: 2; }
+.service:nth-child(3) { z-index: 3; }
+.service:nth-child(4) { z-index: 4; }
+
+.service--lavender { --card-bg: #bca1fe; }
+.service--white { --card-bg: #ffffff; }
+.service--yellow { --card-bg: #fdcd51; }
+.service--dark { --card-bg: #1c1c1c; --card-ink: #ffffff; }
+
+.service__title {
+  grid-column: 1 / 3;
+  grid-row: 1;
+  margin: 0;
+  font-size: clamp(56px, 8vw, 168px);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+}
+
+.service__media {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 2;
+  border-radius: 6px;
+  overflow: hidden;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  font-size: 0.875rem;
+}
+
+.service__media > span {
+  opacity: 0.6;
+}
+
+.service__media video,
+.service__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Description and list sit at the bottom of the card, top-aligned with
+   each other, so the taller of the two sets where the row starts. */
+.service__text {
+  grid-column: 1 / 3;
+  grid-row: 2;
+  align-self: end;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--services-gap);
+  align-items: start;
+  padding-top: var(--space-m);
+}
+
+.service__desc {
+  max-width: 27.1vw;
+  margin: 0;
+  font-size: clamp(17px, 1.42vw, 26px);
+  line-height: 1.3;
+}
+
+.service__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: clamp(13px, 0.9vw, 17px);
+  line-height: 1.28;
+}
+
+.services__more {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(40px, 4.2vw, 80px);
+}
+
+.pill-link {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  color: var(--services-ink);
+  text-decoration: none;
+  font-size: clamp(15px, 1.23vw, 21px);
+}
+
+.pill-link__text {
+  display: flex;
+  align-items: center;
+  padding: 0.55em 1.05em;
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.pill-link__icon {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Line reveal: each line slides up out of its own mask. Hidden until the
+   script has split the text, so nothing flashes before it animates. */
+.js [data-reveal]:not(.is-split) {
+  visibility: hidden;
+}
+
+[data-reveal] .line {
+  display: block;
+  overflow: hidden;
+}
+
+[data-reveal] .line__inner {
+  display: block;
+  transform: translate3d(0, 100%, 0);
+  transition: transform 600ms cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+[data-reveal].is-in .line__inner {
+  transform: none;
+}
+
+@media (max-width: 760px) {
+  .service {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: var(--space-m);
+  }
+
+  .service__title,
+  .service__media,
+  .service__text {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .service__title {
+    font-size: 15vw;
+  }
+
+  .service__text {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-m);
+    padding-top: 0;
+  }
+
+  .service__desc {
+    max-width: none;
+  }
 }
 
 /* Case page */
@@ -449,5 +658,9 @@ figcaption {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+
+  [data-reveal] .line__inner {
+    transform: none;
   }
 }
