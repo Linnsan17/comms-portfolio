@@ -82,8 +82,11 @@
   --roll-ease: cubic-bezier(0.76, 0, 0.24, 1);
   --roll-duration: 620ms;
 
-  /* Hero intro background and outer card: blue to rosewood to pink */
+  /* Hero outer card: blue to rosewood to pink */
   --hero-gradient: linear-gradient(180deg, #486adc 0%, #a45b61 50%, #fbbad4 100%);
+  /* Hero intro: a flat colour, as in the reference (its lavender with a
+     darker card of the same family; here pink behind the rosewood card) */
+  --hero-intro-bg: var(--block-1);
 
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-body);
@@ -182,8 +185,8 @@ a {
   --pill-fg: var(--pill-on-blocks-ink);
 }
 
-/* Buttons: one system everywhere. A text pill and a round arrow button
-   share the same height. PP Mori's capitals sit 0.075em above the middle
+/* Buttons: one system everywhere, text pills with no icons, all the same
+   height. PP Mori's capitals sit 0.075em above the middle
    of their line box (ascent 0.75, descent 0.2, cap height 0.7), so text
    pills get 0.15em extra top padding to centre the capitals exactly. */
 :root {
@@ -205,51 +208,22 @@ a {
   transition: background-color 200ms ease;
 }
 
-.pill-circle,
-.pill-link__icon,
-.site-nav__circle {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: var(--pill-h);
-  height: var(--pill-h);
-  border-radius: 50%;
-  background: var(--pill-bg, var(--pill));
-  color: var(--pill-fg, var(--pill-ink));
-  transition: background-color 200ms ease;
-}
-
-.pill-circle svg,
-.pill-link__icon svg,
-.site-nav__circle svg {
-  display: block;
-  transition: transform 300ms cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-
-/* Text pill plus arrow */
 .pill-link {
   display: inline-flex;
-  align-items: center;
-  gap: 2px;
   color: var(--ink);
   font-size: 19px;
   text-decoration: none;
 }
 
-/* Hover roll on every button: the label (and arrow) roll down and an
-   identical copy drops in from above, with the hero word's motion.
-   main.js wraps the labels; the copy is hidden from screen readers. */
+/* Hover roll on every button: the label rolls down and an identical
+   copy drops in from above, with the hero word's motion. main.js wraps
+   the labels; the copy is hidden from screen readers. */
 .roll {
   display: inline-block;
   height: 1.15em;
   overflow: hidden;
   line-height: 1.15;
   vertical-align: top;
-}
-
-.roll--icon {
-  height: 16px;
-  line-height: 0;
 }
 
 .roll__track {
@@ -307,10 +281,9 @@ a {
   gap: 2px;
 }
 
+/* "Menu" button: only on phones, where the links fold away */
 .site-nav__toggle {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  display: none;
   padding: 0;
   border: 0;
   background: none;
@@ -320,7 +293,6 @@ a {
 }
 
 .site-nav__label {
-  display: none;
   font-size: 16px;
 }
 
@@ -345,20 +317,15 @@ a {
   text-underline-offset: 3px;
 }
 
-/* Folded: "Menu" and a left-pointing arrow, like the reference when scrolled */
 .site-nav.is-collapsed .site-nav__links {
   display: none;
 }
 
-.site-nav.is-collapsed .site-nav__label {
-  display: inline-flex;
-}
-
-.site-nav.is-collapsed .site-nav__circle svg {
-  transform: rotate(180deg);
-}
-
 @media (max-width: 760px) {
+  .site-nav__toggle {
+    display: flex;
+  }
+
   .site-header__cta,
   .site-nav__label {
     font-size: 15px;
@@ -566,9 +533,9 @@ p {
   background: var(--paper);
 }
 
-/* The intro plays on the gradient from the phone photo, then cuts to white */
+/* The intro plays on a flat colour, then cuts to the page background */
 .js .hero-stack.is-intro {
-  background: var(--hero-gradient);
+  background: var(--hero-intro-bg);
 }
 
 .hero-stack__stage {

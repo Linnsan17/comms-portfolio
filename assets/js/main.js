@@ -155,38 +155,52 @@ if (revealBlocks.length) {
   }
 }
 
-// Hero card stack. Timeline measured from the reference reel:
-// the front card pops in on the gradient, holds, then the cards behind grow
-// out around it (expo ease-out, 1.1s) and the background cuts to white
-// 0.11s into the grow. At rest the stack is a tunnel: each card behind is
-// bigger than the one in front. The pointer then fans the stack toward it,
-// with wider gaps the further the pointer is from the centre.
+// Hero card stack. Timeline matched frame by frame to the reference reel:
+// the front card cuts in at full size on a flat colour and its edges pinch
+// inwards (~0.15s), it holds for 0.66s, then the cards behind grow out
+// around it (expo ease-out, 1.1s) from a slight 3D angle that settles flat,
+// while the background cuts to white 0.1s into the grow. At rest the stack
+// is a tunnel: each card behind is bigger than the one in front. The
+// pointer then fans the stack gently toward it.
 const heroEl = document.querySelector("[data-hero]");
 const renderHero = heroEl ? createHero(heroEl) : null;
 
 function createHero(hero) {
   const cards = [...hero.querySelectorAll(".stack-card")]; // front first
   const cardsWrap = hero.querySelector("[data-hero-cards]");
+  const pillow = hero.querySelector("#pillow path");
   const copy = hero.querySelector("[data-hero-copy]");
   const rotator = hero.querySelector("[data-rotator]");
   const count = cards.length;
   const mid = (count - 1) / 2;
 
-  const POP = 0.5; // front card pops in
-  const GROW_AT = 1.1; // the cards behind start growing
+  const PINCH_IN = 0.15; // edges pinch inwards as the card appears
+  const GROW_AT = 0.66; // the cards behind start growing
   const GROW = 1.1; // grow duration
-  const WHITE_AT = GROW_AT + 0.11; // background cuts to white
-  const TITLE_AT = 1.35;
-  const FOLLOW_AT = 1.6; // pointer takes over, fading in over 0.8s
+  const WHITE_AT = GROW_AT + 0.1; // background cuts to white
+  const TITLE_AT = GROW_AT + 0.45;
+  const FOLLOW_AT = GROW_AT + 0.9; // pointer takes over, fading in over 1s
+  const ENTRY_TILT = { x: 5, y: -9 }; // degrees, settles to flat with the grow
 
   const TUNNEL_STEP = 2.6 / (count - 1); // back card is 3.6x the front, as in the reel
   const MAX_SCALE = 1 + (count - 1) * TUNNEL_STEP; // cards are drawn at this size
-  const GAP = 0.45; // gap between cards at full spread, in card widths
-  const DRIFT = 0.12; // whole stack leans toward the pointer
-  const TILT = 10; // degrees
+  const GAP = 0.3; // gap between cards at full spread, in card widths
+  const DRIFT = 0.05; // whole stack leans toward the pointer
+  const TILT = 6; // degrees
+  const FOLLOW_EASE = 3; // how quickly the stack catches up with the pointer
 
   const expoOut = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  const cubicOut = (t) => 1 - Math.pow(1 - Math.min(1, t), 3);
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+  // Rounded card with edges bowed inwards; pinch 1 is the resting shape
+  const pillowPath = (pinch) => {
+    const y = (0.05 * pinch).toFixed(4);
+    const x = (0.035 * pinch).toFixed(4);
+    return `M0.06 0 Q0.5 ${y} 0.94 0 Q1 0 1 0.087 Q${1 - x} 0.5 1 0.913 Q1 1 0.94 1 ` +
+      `Q0.5 ${1 - y} 0.06 1 Q0 1 0 0.913 Q${x} 0.5 0 0.087 Q0 0 0.06 0 Z`;
+  };
+  let lastPinch = null;
 
   const pointer = { x: 0, y: 0 };
   const current = { x: 0, y: 0 };
@@ -232,39 +246,51 @@ function createHero(hero) {
     hero.classList.toggle("is-intro", t < WHITE_AT);
     if (!inView && t > FOLLOW_AT + 1) return;
 
+    // Card shape: pinch in as the front card appears, relax to rest with the grow
+    const growAll = expoOut(clamp((t - GROW_AT) / GROW, 0, 1));
+    const pinch = (0.2 + 1.2 * cubicOut(t / PINCH_IN)) * (1 - growAll) + 1 * growAll;
+    const rounded = Math.round(pinch * 100) / 100;
+    if (pillow && rounded !== lastPinch) {
+      pillow.setAttribute("d", pillowPath(rounded));
+      lastPinch = rounded;
+    }
+
     // Where the stack is heading: the mouse, or a slow drift on touch screens
     let tx = pointer.x;
     let ty = pointer.y;
     if (!canHover) {
-      tx = Math.sin(t * 0.6) * 0.45;
-      ty = Math.cos(t * 0.45) * 0.35;
+      tx = Math.sin(t * 0.5) * 0.3;
+      ty = Math.cos(t * 0.4) * 0.22;
     }
-    const follow = reduceMotion ? 0 : clamp((t - FOLLOW_AT) / 0.8, 0, 1);
-    const ease = 1 - Math.exp(-dt * 5);
+    const follow = reduceMotion ? 0 : clamp((t - FOLLOW_AT) / 1, 0, 1);
+    const ease = 1 - Math.exp(-dt * FOLLOW_EASE);
     current.x += (tx * follow - current.x) * ease;
     current.y += (ty * follow - current.y) * ease;
 
     const spread = Math.min(1, Math.hypot(current.x, current.y));
-    const step = TUNNEL_STEP * (1 - 0.85 * spread);
+    const step = TUNNEL_STEP * (1 - 0.6 * spread);
     const gap = GAP * cardWidth;
     const driftX = current.x * DRIFT * (heroWidth / 2);
     const driftY = current.y * DRIFT * (heroHeight / 2);
-    const pop = expoOut(t / POP);
 
     cards.forEach((card, i) => {
       const grow = expoOut(clamp((t - GROW_AT - i * 0.03) / GROW, 0, 1));
-      const scale = (pop * (1 + i * step * grow)) / MAX_SCALE;
+      const scale = (1 + i * step * grow) / MAX_SCALE;
       const x = driftX + (mid - i) * gap * current.x;
       const y = driftY + (mid - i) * gap * current.y;
       card.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
       card.style.visibility = i === 0 || t >= GROW_AT ? "" : "hidden";
     });
-    cardsWrap.style.transform = `rotateX(${-current.y * TILT}deg) rotateY(${current.x * TILT}deg)`;
+
+    const settle = 1 - growAll;
+    const rotX = ENTRY_TILT.x * settle - current.y * TILT;
+    const rotY = ENTRY_TILT.y * settle + current.x * TILT;
+    cardsWrap.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
   };
 }
 
-// Header: the arrow button folds the links into a "Menu" pill (folded by
-// default on phones), and the pills turn white over the colour blocks.
+// Header: on phones the links fold behind a "Menu" pill, and the pills
+// change colour over the colour blocks.
 const header = document.querySelector("[data-header]");
 const nav = header?.querySelector("[data-nav]");
 const navToggle = header?.querySelector("[data-nav-toggle]");
@@ -338,26 +364,24 @@ function startRotator(slot) {
   }, HOLD);
 }
 
-// Button hover roll: wrap each button label (and arrow) in a two-row track,
-// an identical copy above the original. CSS rolls the track down on hover.
-function addRoll(target, isIcon = false) {
+// Button hover roll: wrap each button label in a two-row track, an
+// identical copy above the original. CSS rolls the track down on hover.
+function addRoll(target) {
   if (target.querySelector(":scope > .roll")) return;
-  const original = isIcon ? target.querySelector("svg") : null;
-  const text = isIcon ? null : target.textContent.trim();
-  if (isIcon ? !original : !text) return;
+  const text = target.textContent.trim();
+  if (!text) return;
 
   const make = (hidden) => {
     const item = document.createElement("span");
     item.className = "roll__item";
-    if (isIcon) item.append(hidden ? original.cloneNode(true) : original);
-    else item.textContent = text;
+    item.textContent = text;
     if (hidden) item.setAttribute("aria-hidden", "true");
     return item;
   };
 
   const roll = document.createElement("span");
   const track = document.createElement("span");
-  roll.className = isIcon ? "roll roll--icon" : "roll";
+  roll.className = "roll";
   track.className = "roll__track";
   track.append(make(true), make(false));
   roll.append(track);
@@ -366,8 +390,7 @@ function addRoll(target, isIcon = false) {
 
 document
   .querySelectorAll(".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip")
-  .forEach((el) => addRoll(el));
-document.querySelectorAll(".site-nav__circle, .pill-link__icon").forEach((el) => addRoll(el, true));
+  .forEach(addRoll);
 
 let lastWidth = innerWidth;
 addEventListener("resize", () => {
