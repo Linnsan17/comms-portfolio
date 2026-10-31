@@ -5,25 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Remove before launch, together with the Disallow line in robots.txt -->
   <meta name="robots" content="noindex">
-  <title>About · Your Name</title>
-  <meta name="description" content="About Your Name: background, how I work and how to get in touch.">
+  <title>About · Linn Harrvik</title>
+  <meta name="description" content="About Linn Harrvik: background, how I work and how to get in touch.">
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/main.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="wrap">
-      <a class="site-name" href="/">Your Name</a>
-      <nav class="site-nav" aria-label="Main">
-        <ul>
-          <li><a href="/#work">Work</a></li>
-          <li><a href="/about/" aria-current="page">About</a></li>
-          <li><a href="/#contact">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
+  <header class="site-header" data-header>
+    <a class="pill site-header__cta" href="/#contact">Let’s work</a>
+    <a class="site-header__logo" href="/">Linn Harrvik</a>
+    <nav class="site-nav" aria-label="Main" data-nav>
+      <button class="site-nav__toggle" type="button" aria-label="Menu" aria-expanded="true" aria-controls="site-nav-links" data-nav-toggle>
+        <span class="pill site-nav__label">Menu</span>
+        <span class="site-nav__circle" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16"><path d="M2 8h11.5M9 3.5 13.5 8 9 12.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </span>
+      </button>
+      <ul class="pill site-nav__links" id="site-nav-links">
+        <li><a href="/#services">Services</a></li>
+        <li><a href="/about/" aria-current="page">About</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </nav>
   </header>
 
   <main id="main">
@@ -67,7 +72,7 @@
         <li><a href="https://www.linkedin.com/">LinkedIn</a></li>
         <li><a href="/assets/cv.pdf">CV</a></li>
       </ul>
-      <p>© <span data-year></span> Your Name</p>
+      <p>© <span data-year></span> Linn Harrvik</p>
     </div>
   </footer>
 </body>

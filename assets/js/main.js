@@ -262,6 +262,45 @@ function createHero(hero) {
   };
 }
 
+// Header: the arrow button folds the links into a "Menu" pill (folded by
+// default on phones), and the pills turn white over pink sections.
+const header = document.querySelector("[data-header]");
+const nav = header?.querySelector("[data-nav]");
+const navToggle = header?.querySelector("[data-nav-toggle]");
+const pinkSections = [...document.querySelectorAll(".services")];
+const smallScreen = matchMedia("(max-width: 760px)");
+
+function setNav(open) {
+  nav.classList.toggle("is-collapsed", !open);
+  navToggle.setAttribute("aria-expanded", String(open));
+}
+
+if (nav && navToggle) {
+  setNav(!smallScreen.matches);
+  smallScreen.addEventListener("change", (e) => setNav(!e.matches));
+  navToggle.addEventListener("click", () => setNav(nav.classList.contains("is-collapsed")));
+  nav.querySelectorAll("a").forEach((link) =>
+    link.addEventListener("click", () => smallScreen.matches && setNav(false))
+  );
+  addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && smallScreen.matches && !nav.classList.contains("is-collapsed")) {
+      setNav(false);
+      navToggle.focus();
+    }
+  });
+}
+
+function updateHeaderTone() {
+  if (!header || !pinkSections.length) return;
+  const pill = header.querySelector(".pill").getBoundingClientRect();
+  const y = pill.top + pill.height / 2;
+  const onPink = pinkSections.some((section) => {
+    const r = section.getBoundingClientRect();
+    return r.top <= y && r.bottom >= y;
+  });
+  header.classList.toggle("is-on-pink", onPink);
+}
+
 let lastWidth = innerWidth;
 addEventListener("resize", () => {
   if (innerWidth !== lastWidth) {
@@ -279,6 +318,7 @@ requestAnimationFrame(function frame(time) {
   if (scrollY !== lastScroll) {
     lastScroll = scrollY;
     updateStack();
+    updateHeaderTone();
   }
   renderHero?.(time);
   requestAnimationFrame(frame);
