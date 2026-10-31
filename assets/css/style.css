@@ -516,11 +516,19 @@ p {
   aspect-ratio: 16 / 9;
 }
 
-/* Home page: the header floats over the full-screen hero */
+/* Home page: the header floats over the full-screen hero, and waits for
+   the intro animation to finish (main.js adds .intro-done) */
 
 .site-header--overlay {
   position: fixed;
   inset: 0 0 auto;
+  transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js:not(.intro-done) .site-header--overlay {
+  visibility: hidden;
+  transform: translate3d(0, -16px, 0);
+  opacity: 0;
 }
 
 /* Hero: card stack that grows in, then fans out toward the pointer.
@@ -582,12 +590,25 @@ p {
   position: relative;
   z-index: 2;
   padding-inline: clamp(16px, 1.68vw, 32px);
+}
+
+/* Headline, then button, fade up once the intro animation is done */
+.hero-title,
+.hero-stack__cta {
   transition: opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Fades up once the intro has grown the stack */
-.js .hero-stack__copy:not(.is-in) {
-  transform: translate3d(0, 0.4em, 0);
+.hero-title {
+  transition-delay: 100ms;
+}
+
+.hero-stack__cta {
+  transition-delay: 220ms;
+}
+
+.js .hero-stack__copy:not(.is-in) :is(.hero-title, .hero-stack__cta) {
+  visibility: hidden;
+  transform: translate3d(0, 24px, 0);
   opacity: 0;
 }
 
@@ -682,7 +703,8 @@ html.lenis body {
   --services-pad-y: clamp(18px, 1.68vw, 34px);
   --services-gap: clamp(12px, 1.03vw, 20px);
 
-  padding-block: clamp(64px, 7.75vw, 160px);
+  /* No bottom padding: the last card runs straight into the introduction */
+  padding-top: clamp(64px, 7.75vw, 160px);
   background: var(--services-bg);
   color: var(--services-ink);
 }
@@ -783,12 +805,6 @@ html.lenis body {
   list-style: none;
   font-size: clamp(13px, 0.9vw, 17px);
   line-height: 1.28;
-}
-
-.services__more {
-  display: flex;
-  justify-content: center;
-  margin-top: clamp(40px, 4.2vw, 80px);
 }
 
 

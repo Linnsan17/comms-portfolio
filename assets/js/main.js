@@ -230,15 +230,22 @@ if (rowBlocks.length) {
   }
 }
 
-// Hero card stack. Timeline matched frame by frame to the reference reels:
-// the front card cuts in at full size on a flat colour and its edges pinch
-// inwards (~0.15s), it holds for 0.66s, then the cards behind grow out
-// around it (expo ease-out, 1.1s) from a slight 3D angle that settles flat,
-// while the background cuts to white 0.1s into the grow. At rest the stack
-// is a tunnel: each card behind is bigger than the one in front. The
-// pointer then fans the stack gently toward it.
+// Hero card stack. Sequence from the reference reel, with every step on a
+// hard ease-in-out (the site's --roll-ease curve): the front card grows
+// from nothing and its edges pinch in, holds, then the cards behind grow
+// out around it from a slight 3D angle that settles flat, hold, and the
+// stack swings into a fan toward the top right. Only then do the header,
+// headline and button appear, and the pointer takes over the fan.
 const heroEl = document.querySelector("[data-hero]");
 const renderHero = heroEl ? createHero(heroEl) : null;
+
+// Header and hero copy wait for the intro; show them straight away when
+// there is no intro, and as a safety net if the animation never finishes
+function introDone() {
+  document.documentElement.classList.add("intro-done");
+}
+if (!heroEl || reduceMotion) introDone();
+else setTimeout(introDone, 6000);
 
 function createHero(hero) {
   const cards = [...hero.querySelectorAll(".stack-card")]; // front first
@@ -249,21 +256,15 @@ function createHero(hero) {
   const count = cards.length;
   const mid = (count - 1) / 2;
 
-  const PINCH_IN = 0.15; // edges pinch inwards as the card appears
-  const GROW_AT = 0.66; // the cards behind start growing
-  const GROW = 1.1; // grow duration
-  const TITLE_AT = GROW_AT + 0.45;
-  const ENTRY_TILT = { x: 5, y: -9 }; // degrees, settles to flat with the grow
-
-  // After the tunnel holds, the reel whips the stack into a fan toward the
-  // top right (~0.15s), lets it drift, then (here) hands over to the pointer
-  const FAN_AT = GROW_AT + 1.05;
-  const FAN_SNAP = 0.2;
-  const FAN_POS = { x: 0.72, y: -0.5 };
-  const FAN_DRIFT = 1.3;
-  const DRIFT_TO = { x: 0.58, y: -0.36 };
-  const HANDOVER_AT = FAN_AT + FAN_SNAP + FAN_DRIFT;
+  const APPEAR = 0.6; // front card grows from nothing
+  const GROW_AT = APPEAR + 0.3; // the cards behind start growing
+  const GROW = 0.9;
+  const FAN_AT = GROW_AT + GROW + 0.2; // swing into the fan
+  const FAN = 0.5;
+  const DONE_AT = FAN_AT + FAN; // header, headline and button appear
   const HANDOVER = 1; // blend from the scripted fan to the live pointer
+  const FAN_POS = { x: 0.72, y: -0.5 };
+  const ENTRY_TILT = { x: 5, y: -9 }; // degrees, settles to flat with the grow
 
   const TUNNEL_STEP = 2.6 / (count - 1); // back card is 3.6x the front, as in the reel
   const MAX_SCALE = 1 + (count - 1) * TUNNEL_STEP; // cards are drawn at this size
@@ -272,9 +273,12 @@ function createHero(hero) {
   const TILT = 6; // degrees
   const FOLLOW_EASE = 3; // how quickly the stack catches up with the pointer
 
-  const expoOut = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
-  const cubicOut = (t) => 1 - Math.pow(1 - Math.min(1, t), 3);
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  // Hard ease-in-out, the same curve as --roll-ease: cubic-bezier(0.76, 0, 0.24, 1)
+  const hard = (t) => {
+    t = clamp(t, 0, 1);
+    return t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 / 2;
+  };
 
   // Rounded card with edges bowed inwards; pinch 1 is the resting shape
   const pillowPath = (pinch) => {
@@ -290,7 +294,7 @@ function createHero(hero) {
   const canHover = matchMedia("(hover: hover) and (pointer: fine)").matches;
   let start = null;
   let last = null;
-  let titleShown = false;
+  let done = false;
   let inView = true;
   let cardWidth, heroWidth, heroHeight;
   const measure = () => {
@@ -321,34 +325,29 @@ function createHero(hero) {
     const dt = last === null ? 0 : Math.min(0.05, (time - last) / 1000);
     last = time;
 
-    if (!titleShown && t >= TITLE_AT) {
+    if (!done && t >= DONE_AT) {
+      done = true;
+      introDone();
       copy?.classList.add("is-in");
       if (rotator) startRotator(rotator);
-      titleShown = true;
     }
-    if (!inView && t > HANDOVER_AT + HANDOVER) return;
+    if (!inView && t > DONE_AT + HANDOVER) return;
 
-    // Card shape: pinch in as the front card appears, relax to rest with the grow
-    const growAll = expoOut(clamp((t - GROW_AT) / GROW, 0, 1));
-    const pinch = (0.2 + 1.2 * cubicOut(t / PINCH_IN)) * (1 - growAll) + 1 * growAll;
+    const appear = hard(t / APPEAR);
+    const growAll = hard((t - GROW_AT) / GROW);
+
+    // Card shape: pinch in as the front card grows, relax to rest with the grow
+    const pinch = (0.2 + 1.2 * appear) * (1 - growAll) + growAll;
     const rounded = Math.round(pinch * 100) / 100;
     if (pillow && rounded !== lastPinch) {
       pillow.setAttribute("d", pillowPath(rounded));
       lastPinch = rounded;
     }
 
-    // Scripted part of the intro: snap out to the fan, then drift
-    let sx = 0;
-    let sy = 0;
-    if (t >= FAN_AT) {
-      const snap = expoOut((t - FAN_AT) / FAN_SNAP);
-      const d = clamp((t - FAN_AT - FAN_SNAP) / FAN_DRIFT, 0, 1);
-      const drift = d * d * (3 - 2 * d);
-      sx = (FAN_POS.x + (DRIFT_TO.x - FAN_POS.x) * drift) * snap;
-      sy = (FAN_POS.y + (DRIFT_TO.y - FAN_POS.y) * drift) * snap;
-    }
-
-    // Live target: the mouse, or a slow drift on touch screens
+    // Scripted fan, then the live target: the mouse, or a slow drift on touch screens
+    const fan = t >= FAN_AT ? hard((t - FAN_AT) / FAN) : 0;
+    const sx = FAN_POS.x * fan;
+    const sy = FAN_POS.y * fan;
     let tx = pointer.x;
     let ty = pointer.y;
     if (!canHover) {
@@ -359,12 +358,11 @@ function createHero(hero) {
     if (reduceMotion) {
       current.x = 0;
       current.y = 0;
-    } else if (t < HANDOVER_AT) {
-      // Follow the script exactly so the snap stays as quick as the reel's
+    } else if (t < DONE_AT) {
       current.x = sx;
       current.y = sy;
     } else {
-      const h = clamp((t - HANDOVER_AT) / HANDOVER, 0, 1);
+      const h = clamp((t - DONE_AT) / HANDOVER, 0, 1);
       const blend = h * h * (3 - 2 * h);
       const ease = 1 - Math.exp(-dt * FOLLOW_EASE);
       current.x += (sx + (tx - sx) * blend - current.x) * ease;
@@ -378,8 +376,8 @@ function createHero(hero) {
     const driftY = current.y * DRIFT * (heroHeight / 2);
 
     cards.forEach((card, i) => {
-      const grow = expoOut(clamp((t - GROW_AT - i * 0.03) / GROW, 0, 1));
-      const scale = (1 + i * step * grow) / MAX_SCALE;
+      const grow = hard((t - GROW_AT - i * 0.03) / GROW);
+      const scale = (appear * (1 + i * step * grow)) / MAX_SCALE;
       const x = driftX + (mid - i) * gap * current.x;
       const y = driftY + (mid - i) * gap * current.y;
       card.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
