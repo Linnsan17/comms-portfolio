@@ -155,7 +155,82 @@ if (revealBlocks.length) {
   }
 }
 
-// Hero card stack. Timeline matched frame by frame to the reference reel:
+// Row-by-row reveal: every row of a [data-reveal-rows] block has its own
+// trigger, so the rows come in one at a time as they scroll into view.
+// Rows that arrive together (a fast scroll) still enter 90ms apart.
+const rowBlocks = [...document.querySelectorAll("[data-reveal-rows]")];
+const ROW_GAP = 90;
+let rowObserver = null;
+const rowQueue = [];
+const pendingRows = new Set();
+let rowTimer = null;
+
+function showRow(line) {
+  pendingRows.delete(line);
+  rowObserver?.unobserve(line);
+  line.classList.add("is-in");
+}
+
+// A jump (anchor link, restored scroll) can skip rows past the screen
+// without them ever crossing it, so their trigger never fires. Called on
+// scroll: any row already above the screen just shows.
+function showPassedRows() {
+  pendingRows.forEach((line) => {
+    if (line.getBoundingClientRect().bottom < 0) showRow(line);
+  });
+}
+
+function queueRow(line) {
+  rowQueue.push(line);
+  if (rowTimer) return;
+  (function next() {
+    const row = rowQueue.shift();
+    if (!row) {
+      rowTimer = null;
+      return;
+    }
+    showRow(row);
+    rowTimer = setTimeout(next, ROW_GAP);
+  })();
+}
+
+// After a re-split (resize), rows already on screen appear without animating
+function setupRows(block, instant) {
+  block.querySelectorAll("[data-lines]").forEach(splitParagraph);
+  block.classList.add("is-split");
+  block.querySelectorAll(".line").forEach((line) => {
+    if (instant && line.getBoundingClientRect().top < innerHeight * 0.88) {
+      line.classList.add("is-in");
+      return;
+    }
+    pendingRows.add(line);
+    rowObserver.observe(line);
+  });
+  showPassedRows();
+}
+
+if (rowBlocks.length) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    rowBlocks.forEach((block) => block.classList.add("is-split"));
+  } else {
+    rowObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          rowObserver.unobserve(entry.target);
+          queueRow(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px" }
+    );
+    const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+    Promise.race([fontsReady, new Promise((r) => setTimeout(r, 1500))]).then(() =>
+      rowBlocks.forEach((block) => setupRows(block, false))
+    );
+  }
+}
+
+// Hero card stack. Timeline matched frame by frame to the reference reels:
 // the front card cuts in at full size on a flat colour and its edges pinch
 // inwards (~0.15s), it holds for 0.66s, then the cards behind grow out
 // around it (expo ease-out, 1.1s) from a slight 3D angle that settles flat,
@@ -177,10 +252,18 @@ function createHero(hero) {
   const PINCH_IN = 0.15; // edges pinch inwards as the card appears
   const GROW_AT = 0.66; // the cards behind start growing
   const GROW = 1.1; // grow duration
-  const WHITE_AT = GROW_AT + 0.1; // background cuts to white
   const TITLE_AT = GROW_AT + 0.45;
-  const FOLLOW_AT = GROW_AT + 0.9; // pointer takes over, fading in over 1s
   const ENTRY_TILT = { x: 5, y: -9 }; // degrees, settles to flat with the grow
+
+  // After the tunnel holds, the reel whips the stack into a fan toward the
+  // top right (~0.15s), lets it drift, then (here) hands over to the pointer
+  const FAN_AT = GROW_AT + 1.05;
+  const FAN_SNAP = 0.2;
+  const FAN_POS = { x: 0.72, y: -0.5 };
+  const FAN_DRIFT = 1.3;
+  const DRIFT_TO = { x: 0.58, y: -0.36 };
+  const HANDOVER_AT = FAN_AT + FAN_SNAP + FAN_DRIFT;
+  const HANDOVER = 1; // blend from the scripted fan to the live pointer
 
   const TUNNEL_STEP = 2.6 / (count - 1); // back card is 3.6x the front, as in the reel
   const MAX_SCALE = 1 + (count - 1) * TUNNEL_STEP; // cards are drawn at this size
@@ -243,8 +326,7 @@ function createHero(hero) {
       if (rotator) startRotator(rotator);
       titleShown = true;
     }
-    hero.classList.toggle("is-intro", t < WHITE_AT);
-    if (!inView && t > FOLLOW_AT + 1) return;
+    if (!inView && t > HANDOVER_AT + HANDOVER) return;
 
     // Card shape: pinch in as the front card appears, relax to rest with the grow
     const growAll = expoOut(clamp((t - GROW_AT) / GROW, 0, 1));
@@ -255,17 +337,39 @@ function createHero(hero) {
       lastPinch = rounded;
     }
 
-    // Where the stack is heading: the mouse, or a slow drift on touch screens
+    // Scripted part of the intro: snap out to the fan, then drift
+    let sx = 0;
+    let sy = 0;
+    if (t >= FAN_AT) {
+      const snap = expoOut((t - FAN_AT) / FAN_SNAP);
+      const d = clamp((t - FAN_AT - FAN_SNAP) / FAN_DRIFT, 0, 1);
+      const drift = d * d * (3 - 2 * d);
+      sx = (FAN_POS.x + (DRIFT_TO.x - FAN_POS.x) * drift) * snap;
+      sy = (FAN_POS.y + (DRIFT_TO.y - FAN_POS.y) * drift) * snap;
+    }
+
+    // Live target: the mouse, or a slow drift on touch screens
     let tx = pointer.x;
     let ty = pointer.y;
     if (!canHover) {
       tx = Math.sin(t * 0.5) * 0.3;
       ty = Math.cos(t * 0.4) * 0.22;
     }
-    const follow = reduceMotion ? 0 : clamp((t - FOLLOW_AT) / 1, 0, 1);
-    const ease = 1 - Math.exp(-dt * FOLLOW_EASE);
-    current.x += (tx * follow - current.x) * ease;
-    current.y += (ty * follow - current.y) * ease;
+
+    if (reduceMotion) {
+      current.x = 0;
+      current.y = 0;
+    } else if (t < HANDOVER_AT) {
+      // Follow the script exactly so the snap stays as quick as the reel's
+      current.x = sx;
+      current.y = sy;
+    } else {
+      const h = clamp((t - HANDOVER_AT) / HANDOVER, 0, 1);
+      const blend = h * h * (3 - 2 * h);
+      const ease = 1 - Math.exp(-dt * FOLLOW_EASE);
+      current.x += (sx + (tx - sx) * blend - current.x) * ease;
+      current.y += (sy + (ty - sy) * blend - current.y) * ease;
+    }
 
     const spread = Math.min(1, Math.hypot(current.x, current.y));
     const step = TUNNEL_STEP * (1 - 0.6 * spread);
@@ -397,6 +501,11 @@ addEventListener("resize", () => {
   if (innerWidth !== lastWidth) {
     lastWidth = innerWidth;
     revealBlocks.filter((b) => b.classList.contains("is-split")).forEach(splitBlock);
+    if (rowObserver) {
+      rowObserver.disconnect();
+      pendingRows.clear();
+      rowBlocks.filter((b) => b.classList.contains("is-split")).forEach((b) => setupRows(b, true));
+    }
   }
   measureStack();
   updateStack();
@@ -410,6 +519,7 @@ requestAnimationFrame(function frame(time) {
     lastScroll = scrollY;
     updateStack();
     updateHeaderTone();
+    if (pendingRows.size) showPassedRows();
   }
   renderHero?.(time);
   requestAnimationFrame(frame);
