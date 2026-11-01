@@ -999,10 +999,183 @@ html.lenis body {
   }
 }
 
+/* Areas of expertise, after wearemotto.com. Measured at a 1537px-wide
+   window and scaled with the viewport from there (1vw = 15.37px); the side
+   margins follow the rest of this site. Cards are opaque and positioned so
+   each one paints over the one before; main.js slows and darkens the card
+   being covered (--dim). */
+.areas {
+  --areas-pad-x: clamp(16px, 1.68vw, 32px);
+  --areas-small: clamp(14px, 1.39vw, 26px);
+  --areas-rule: rgba(0, 0, 0, 0.13);
+  background: var(--paper-alt);
+}
+
+.areas__head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(48px, 6vw, 110px) var(--areas-pad-x) clamp(24px, 2.34vw, 44px);
+  font-size: var(--areas-small);
+  line-height: 1.15;
+}
+
+/* Bottom-aligned with the link: the same space under the text as the
+   link's padding and underline, so the baselines line up */
+.areas__label {
+  margin: 0;
+  padding-bottom: calc(0.31em + 1px);
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+  letter-spacing: 0;
+}
+
+/* Underlined text links: the line sits 0.61em under the baseline */
+.areas__link,
+.area__link {
+  display: inline-block;
+  padding-bottom: 0.31em;
+  border-bottom: 1px solid currentColor;
+  line-height: 1.15;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.area {
+  --dim: 0;
+  position: relative;
+  border-top: 1px solid var(--areas-rule);
+  background: var(--paper-alt);
+}
+
+.area::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #2e2e2e;
+  opacity: var(--dim);
+  pointer-events: none;
+}
+
+.area__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  height: 22.51vw;
+  padding: 2.78vw var(--areas-pad-x) 0;
+  font-size: 7.67vw;
+  line-height: 1;
+}
+
+.area__title,
+.area__number {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.area__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 21.37vw;
+  grid-template-rows: auto auto;
+  column-gap: var(--areas-pad-x);
+  padding: 2.68vw var(--areas-pad-x) 7.48vw;
+  border-top: 1px solid var(--areas-rule);
+}
+
+.area__desc {
+  grid-column: 1;
+  max-width: 17.85em;
+  margin: 0.08vw 0 0;
+  font-size: 3.39vw;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.area__media {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: start;
+  aspect-ratio: 328.5 / 401.5;
+  overflow: hidden;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.area__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Two lists and the link, bottom-aligned on their last baselines */
+.area__foot {
+  grid-column: 1;
+  display: grid;
+  grid-template-columns: 24.07vw 22.87vw auto;
+  align-items: end;
+  margin-top: 9.33vw;
+  font-size: var(--areas-small);
+}
+
+.area__list {
+  margin: 0;
+  padding: 0 0 calc(0.185em + 1px);
+  list-style: none;
+  line-height: 1.4;
+}
+
+.area__link {
+  justify-self: start;
+}
+
+@media (max-width: 760px) {
+  .area__head {
+    height: auto;
+    padding-block: 6vw 16vw;
+    font-size: 12.5vw;
+  }
+
+  .area__body {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 6vw 14vw;
+  }
+
+  .area__desc {
+    font-size: 6.4vw;
+    line-height: 1.05;
+  }
+
+  .area__media {
+    grid-column: 1;
+    grid-row: 2;
+    width: 58%;
+    margin-top: 8vw;
+  }
+
+  .area__foot {
+    grid-row: 3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8vw 4vw;
+    margin-top: 10vw;
+  }
+
+  .area__link {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Stats: rows of label and big number, after the reference (Eidra): a two
    line heading with a softened first line, thin grey rules between rows,
    numbers on the right half. Numbers count up when the row scrolls in. */
+/* Positioned so it slides over the last expertise card */
 .stats {
+  position: relative;
   padding: clamp(80px, 9vw, 160px) clamp(16px, 1.68vw, 32px);
   background: var(--paper);
 }

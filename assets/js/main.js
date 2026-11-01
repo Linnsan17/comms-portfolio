@@ -58,10 +58,14 @@ const STACK_LINE = 0.27;
 const STACK_SPEED = 0.436;
 
 const stackCards = reduceMotion ? [] : [...document.querySelectorAll("[data-stack] [data-card]")];
+// The section label rides with the first card, so the gap between them
+// never changes while that card slows down
+const stackLabel = document.querySelector(".services__label");
 let naturalTops = [];
 
 function measureStack() {
   stackCards.forEach((card) => (card.style.transform = ""));
+  if (stackLabel) stackLabel.style.transform = "";
   naturalTops = stackCards.map((card) => card.getBoundingClientRect().top + scrollY);
 }
 
@@ -75,6 +79,39 @@ function updateStack() {
     const top = naturalTops[i] - scrollY;
     const past = Math.min(Math.max(line - top, 0), lastTop - naturalTops[i]);
     card.style.transform = past ? `translate3d(0, ${past * (1 - STACK_SPEED)}px, 0)` : "";
+  });
+  if (stackLabel) stackLabel.style.transform = stackCards[0].style.transform;
+}
+
+// Areas of expertise, after wearemotto.com (measured frame by frame): each
+// card scrolls normally until the next card, or after the last one the
+// stats section, comes up from the bottom of the screen. From then until
+// it is fully covered, the card falls behind to AREA_SPEED of the scroll
+// and a dark grey wash builds up over it, to AREA_DIM when covered.
+const AREA_SPEED = 0.62;
+const AREA_DIM = 0.6;
+
+const areaCards = reduceMotion ? [] : [...document.querySelectorAll("[data-area]")];
+const areaFollowers = areaCards.map(
+  (card, i) => areaCards[i + 1] || card.closest("section").nextElementSibling
+);
+
+// Position in the page from layout alone, so the cards' own movement
+// doesn't feed back into it
+function pageTop(el) {
+  let top = 0;
+  for (; el; el = el.offsetParent) top += el.offsetTop;
+  return top;
+}
+
+function updateAreas() {
+  const vh = innerHeight;
+  areaCards.forEach((card, i) => {
+    const follower = areaFollowers[i];
+    if (!follower) return;
+    const risen = Math.min(Math.max(vh - (pageTop(follower) - scrollY), 0), vh);
+    card.style.transform = risen ? `translate3d(0, ${risen * (1 - AREA_SPEED)}px, 0)` : "";
+    card.style.setProperty("--dim", ((risen / vh) * AREA_DIM).toFixed(3));
   });
 }
 
@@ -695,7 +732,9 @@ function addRoll(target) {
 }
 
 document
-  .querySelectorAll(".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip")
+  .querySelectorAll(
+    ".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip, .areas__link, .area__link"
+  )
   .forEach(addRoll);
 
 let lastWidth = innerWidth;
@@ -711,6 +750,7 @@ addEventListener("resize", () => {
   }
   measureStack();
   updateStack();
+  updateAreas();
 });
 
 measureStack();
@@ -720,6 +760,7 @@ requestAnimationFrame(function frame(time) {
   if (scrollY !== lastScroll) {
     lastScroll = scrollY;
     updateStack();
+    updateAreas();
     updateHeaderTone();
     if (pendingRows.size) showPassedRows();
     if (pendingCounts.size) showPassedCounts();
