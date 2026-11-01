@@ -9,6 +9,17 @@ const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const lenis =
   window.Lenis && !reduceMotion ? new Lenis({ lerp: 0.1, anchors: true }) : null;
 
+// A reload always starts at the top. Otherwise the browser goes back to
+// where you were, or to the section a nav link put in the address (/#work).
+// Arriving from a link to a section (from the 404 page, say) still lands there.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
+  if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  const toTop = () => (lenis ? lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0));
+  toTop();
+  addEventListener("load", toTop, { once: true });
+}
+
 // Stacked service cards. Each card scrolls normally until its top reaches
 // STACK_LINE of the viewport, then moves at STACK_SPEED of the page so the
 // next card slides over it. That stops once the last card reaches the line,
