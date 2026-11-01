@@ -867,7 +867,8 @@ document.querySelectorAll("[data-copy]").forEach((link) => {
 // Sheets. "View case" on a work card and "Read more" under the introduction
 // open one shared sheet, filled from the card or section around the button
 // ([data-sheet-source]): its title, its video or picture
-// ([data-sheet-media], or a template of one), its text ([data-sheet-intro]),
+// ([data-sheet-media], or a template of one), its text ([data-sheet-intro],
+// or the longer version in its data-sheet-full),
 // its two fact lists ([data-sheet-facts]), a list of tools built from the
 // toolbox's badges ([data-sheet-tools]) and the sheet-only blocks in its
 // <template data-sheet-more>. Close, Escape, a click on the dimmed page or
@@ -907,8 +908,10 @@ if (sheet) {
     if (introSource) {
       const intro = document.createElement("p");
       intro.className = "sheet__intro";
-      // The reveal splits the introduction into lines; it keeps the text whole in data-text
-      intro.textContent = (introSource.dataset.text ?? introSource.textContent).replace(/\s+/g, " ").trim();
+      // A card's summary can have a longer version for its sheet. The reveal
+      // splits the introduction into lines; it keeps the text whole in data-text
+      const text = introSource.dataset.sheetFull ?? introSource.dataset.text ?? introSource.textContent;
+      intro.textContent = text.replace(/\s+/g, " ").trim();
       body.append(intro);
     }
     const lists = source.querySelectorAll("[data-sheet-facts] ul");
