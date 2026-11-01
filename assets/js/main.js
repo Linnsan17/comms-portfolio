@@ -950,7 +950,7 @@ if (sheet) {
     opener = trigger;
     sheet.showModal();
     sheet.scrollTop = 0; // where overflow: clip isn't supported, undo the jump to the focused panel
-    panel.scrollTop = 0;
+    content.scrollTop = 0;
     lenis?.stop();
     document.documentElement.classList.add("has-sheet");
     sheet.getBoundingClientRect(); // start the slide from below
