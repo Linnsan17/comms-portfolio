@@ -1,17 +1,16 @@
 # Portfolio
 
-A personal portfolio for content, social media, PR, copywriting and employer branding roles. It's plain HTML, CSS and a little JavaScript, with no build step: what's in this folder is exactly what goes live. It's hosted on GitHub Pages.
+A personal portfolio for content, social media, PR, copywriting and employer branding roles. It's one page of plain HTML, CSS and JavaScript, with no build step: what's in this folder is exactly what goes live. It's hosted on GitHub Pages.
 
 ## Structure
 
 ```
-index.html                 home: hero, filterable work, capabilities, about, contact
-work/<case>/index.html     one folder per case, so the URL is /work/<case>/
-about/index.html
-404.html
+index.html                 the whole site: hero, services, introduction, toolbox, selected work, footer
+404.html                   shown for any address that doesn't exist
 assets/css/style.css       design tokens at the top, in :root
-assets/js/main.js          discipline filter, footer year
-assets/img/<case>/         images per case
+assets/js/main.js          all the motion and interaction
+assets/img/                logo, portrait, hero cut-out, tool logos, work stills
+assets/video/              compressed videos (see Videos)
 assets/cv.pdf
 robots.txt
 ```
@@ -41,29 +40,15 @@ Before you start, pull the latest changes (Fetch origin, then Pull, in GitHub De
 
 ## Add a case
 
-1. Copy a folder in `work/`, for example `work/nilar/`, and give it a new name. The name becomes the URL.
-2. Edit the text, then put the images in `assets/img/<case>/`.
-3. Add a card to the case list in `index.html`.
-4. Update the "Next case" links so the cases still go round in a loop.
+The cases live on the home page; there are no case pages.
 
-## Discipline filter
-
-Each case card in `index.html` has a `data-tags` attribute with the filters it belongs to, separated by spaces:
-
-| Key | Chip |
-| --- | --- |
-| `content` | Content |
-| `social` | Social media |
-| `pr` | PR and comms |
-| `copy` | Copywriting |
-| `employer-branding` | Employer branding |
-| `coordination` | Campaign coordination |
-
-You can link to a filtered list, for example `/?tag=social#work`.
+1. In `index.html`, copy one `<article class="area">` in the Selected work section.
+2. Change the title, its `id`, the number, the text and the lists.
+3. Cut the case's film to the card's shape (see Videos) and point the `<video>` at it, or use a still in `assets/img/work/`.
 
 ## Videos
 
-The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-homes`), and `hero-sunset` plays behind the hand on the front card. The service cards play their own film where there is one (`service-*`) and a placeholder screen reel (`work-*`) otherwise, and a Selected work card plays its case's own film (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the reels are 960×540 at about 1.5 Mbps, the service films 960×640 at 2 Mbps (the service card's 3:2 media box) and the case films 896×752 at 1.5–2 Mbps (the case card's media box). `transcode` crops the middle to fit. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
+The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-homes`), and `hero-sunset` plays behind the hand on the front card. The service cards play their own films (`service-*`), and a Selected work card plays its case's own film (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the hero clips are 960×540 at about 1.5 Mbps, the service films 960×640 at 2 Mbps (the service card's 3:2 media box) and the case films 896×752 at 1.5–2 Mbps (the case card's media box). `transcode` crops the middle to fit. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
 
 To add or replace a reel, compress it first. This Mac has no ffmpeg, so use the Swift transcoder in `tools/`:
 
