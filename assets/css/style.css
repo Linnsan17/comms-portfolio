@@ -634,18 +634,13 @@ p {
   transform: scale(0);
 }
 
-/* The card's colour frames its reel, so white-background reels still read
-   as cards (and the tunnel keeps its rings) on the white page */
-.stack-card:has(video, img) {
-  padding: 3%;
-}
-
+/* Footage from Linn's work fills each card behind the phone, edge to edge;
+   the card's colour only shows until the poster loads */
 .stack-card img,
 .stack-card video {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: calc(var(--w) * 0.03);
   object-fit: cover;
 }
 
