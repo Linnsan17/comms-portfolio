@@ -58,6 +58,8 @@ swiftc -O tools/transcode.swift -o /tmp/transcode
 /tmp/transcode "in.mp4" assets/video/name.mp4 assets/video/name.jpg 960 540 1500000
 ```
 
+Svedea's case film is a re-edit rather than a straight cut (a second phone with another post, the background turned blue, two shots taken out): `tools/svedea_edit.swift` makes it from Svedea's reel and a screenshot of the post (usage at the top of the file).
+
 Add a start and a length in seconds to keep only part of a clip, for example `... 960 540 1500000 19.56 2.92`. Add `bounce` after them to play that part forward and then backward, so a short clip loops without a jump. For a portrait clip, keep its own shape (for example `720 960`) and aim the crop with `object-position` on the video.
 
 ## Hero phone
