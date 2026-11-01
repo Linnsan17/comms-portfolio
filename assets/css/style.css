@@ -88,8 +88,20 @@
      (photo rows 390-1015), so the cut-out hand sits on it as in the photo */
   --phone-gradient: linear-gradient(180deg, #985978 0%, #b6658d 12.5%, #d06f9e 25%, #e878ac 37.5%, #f97cb4 50%, #fd79b1 62.5%, #fd74a6 75%, #fe6e99 87.5%, #fd627e 100%);
 
-  /* Corners on every photo and video box (cards, portrait, case images) */
-  --radius-media: 10px;
+  /* Corners, after Apple: 18px on photo and video boxes and 28px on the big
+     hero cards (apple.com's tiles), 38px on the sheet (an iOS sheet). Apple
+     draws them as continuous curves that ease into the straight edges. Where
+     the browser can (corner-shape, Chrome and Edge for now), every rounded
+     box is drawn that way: a superellipse 1.6 times the radius
+     (--corner-span), which reaches as deep at the diagonal as a circle of
+     the radius itself, the shape of Figma's iOS corner smoothing. Elsewhere
+     it falls back to that plain circle. main.js draws the hero cards the
+     same way. Use calc(radius * var(--corner-span)) with --corner-curve. */
+  --radius-media: 18px;
+  --radius-card: 28px;
+  --radius-sheet: 38px;
+  --corner-span: 1;
+  --corner-curve: superellipse(1.78);
 
   /* Type scale: five sizes for the whole site (px at a 1440px window /
      on phones). Everything on the home page and the footer uses these. */
@@ -114,6 +126,12 @@
   --page-max: 72rem;
   --text-max: 40rem;
   --gutter: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+}
+
+@supports (corner-shape: superellipse(2)) {
+  :root {
+    --corner-span: 1.6;
+  }
 }
 
 *,
@@ -424,7 +442,8 @@ a {
     gap: 10px;
     height: auto;
     padding: 16px 20px;
-    border-radius: 21px;
+    border-radius: calc(21px * var(--corner-span));
+    corner-shape: var(--corner-curve);
   }
 }
 
@@ -559,7 +578,7 @@ p {
   margin: calc(var(--w) / var(--shrink, 1) / -2.9) 0 0 calc(var(--w) / var(--shrink, 1) / -2);
   overflow: hidden;
   background: var(--c);
-  clip-path: inset(0 round var(--corner, 16px));
+  clip-path: var(--card-clip, inset(0 round var(--radius-card)));
   will-change: transform;
 }
 
@@ -592,7 +611,7 @@ p {
   position: absolute;
   inset: 0;
   background: var(--c);
-  clip-path: inset(0 round var(--corner, 16px));
+  clip-path: var(--card-clip, inset(0 round var(--radius-card)));
 }
 
 /* Footage behind the hand, in the card's shape; the gradient under it
@@ -600,7 +619,7 @@ p {
 .stack-card__backdrop {
   position: absolute;
   inset: 0;
-  clip-path: inset(0 round var(--corner, 16px));
+  clip-path: var(--card-clip, inset(0 round var(--radius-card)));
 }
 
 .stack-card__phone {
@@ -934,7 +953,8 @@ html.lenis body {
   display: grid;
   place-items: center;
   aspect-ratio: 3 / 2;
-  border-radius: var(--radius-media);
+  border-radius: calc(var(--radius-media) * var(--corner-span));
+  corner-shape: var(--corner-curve);
   overflow: hidden;
   background: color-mix(in srgb, currentColor 12%, transparent);
   font-size: 0.875rem;
@@ -1195,7 +1215,8 @@ html.lenis body {
   align-self: start;
   height: 26.12vw;
   overflow: hidden;
-  border-radius: var(--radius-media);
+  border-radius: calc(var(--radius-media) * var(--corner-span));
+  corner-shape: var(--corner-curve);
   background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
@@ -1371,7 +1392,8 @@ html.has-sheet {
   margin-inline: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-radius: 16px 16px 0 0;
+  border-radius: calc(var(--radius-sheet) * var(--corner-span)) calc(var(--radius-sheet) * var(--corner-span)) 0 0;
+  corner-shape: var(--corner-curve);
   background: var(--paper);
   transform: translate3d(0, calc(100% + var(--sheet-top)), 0);
   transition: transform var(--sheet-close);
@@ -1618,7 +1640,8 @@ html.has-sheet {
   height: auto;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: var(--radius-media);
+  border-radius: calc(var(--radius-media) * var(--corner-span));
+  corner-shape: var(--corner-curve);
 }
 
 .site-footer__cta {
