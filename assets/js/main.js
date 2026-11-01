@@ -929,6 +929,7 @@ if (sheet) {
     fill(trigger.closest("[data-sheet-source]"));
     opener = trigger;
     sheet.showModal();
+    sheet.scrollTop = 0; // where overflow: clip isn't supported, undo the jump to the focused panel
     panel.scrollTop = 0;
     lenis?.stop();
     document.documentElement.classList.add("has-sheet");
@@ -952,7 +953,7 @@ if (sheet) {
     sheet.classList.remove("is-open");
     content.querySelector("video")?.pause();
     if (reduceMotion) return finishClose();
-    closeTimer = setTimeout(finishClose, 500);
+    closeTimer = setTimeout(finishClose, 850); // a little after the 700ms slide
   }
 
   panel.addEventListener("transitionend", (e) => {

@@ -91,6 +91,9 @@
   /* Corners on every photo and video box (cards, portrait, case images) */
   --radius-media: 10px;
 
+  /* Hairlines between blocks: the work cards, the footer, above the toolbox */
+  --rule: rgba(0, 0, 0, 0.13);
+
   /* Type scale: five sizes for the whole site (px at a 1440px window /
      on phones). Everything on the home page and the footer uses these. */
   --text-display: clamp(56px, 8vw, 168px); /* 115 / 56: hero headline, service and case titles */
@@ -1044,20 +1047,23 @@ html.lenis body {
    wavy marquee. Badges are 215px on a 1440px screen, as in the reference;
    the script places each one along the wave. Without the script they sit
    in a plain row. */
-/* The wave's own band already gives the badges room above */
+/* A hairline opens the toolbox, as on the work cards: the section's usual
+   top space sits above it, and the label follows as a card's title follows
+   its line */
 .intro:has(+ .logo-wave) {
-  padding-bottom: clamp(16px, 2vw, 40px);
+  padding-bottom: clamp(48px, 6vw, 110px);
 }
 
 .logo-wave {
   --d: clamp(150px, 14.93vw, 290px);
   padding-bottom: calc(var(--d) * 0.2);
   overflow: hidden;
+  border-top: 1px solid var(--rule);
   background: var(--paper-alt);
 }
 
 .logo-wave__head {
-  padding: clamp(48px, 6vw, 110px) clamp(16px, 1.68vw, 32px) clamp(24px, 2.34vw, 44px);
+  padding: clamp(24px, 2.78vw, 52px) clamp(16px, 1.68vw, 32px) clamp(24px, 2.34vw, 44px);
 }
 
 /* Just tall enough for the wave at rest (main.js: WAVE_HEIGHT 0.254 of a
@@ -1124,7 +1130,7 @@ html.lenis body {
   /* The footer's grid gap: the media spans the footer's last four columns */
   --areas-grid-gap: 1.55vw;
   --areas-small: var(--text-small);
-  --areas-rule: rgba(0, 0, 0, 0.13);
+  --areas-rule: var(--rule);
   background: var(--paper-alt);
 }
 
@@ -1326,16 +1332,17 @@ html.lenis body {
 /* Sheets: "View case" and "Read more" open a white sheet that slides up
    over the dimmed page, after the project sheets on timestwo.com (from
    Linn's recording at a 1537px window: 48.8% of the window wide, 11.5px
-   from the top, a 100px header; up in ~650ms with a hard ease-out, down in
-   ~350ms, the page dimmed to 60%). The header stays put while the sheet
-   scrolls; dragging it down closes the sheet. main.js fills the sheet from
-   the card or section that opened it. */
+   from the top, a 100px header, the page dimmed to 60%). It rises from
+   below the screen and sinks back down with the site's hard ease in and
+   out (--roll-ease). The header stays put while the sheet scrolls;
+   dragging it down closes the sheet. main.js fills the sheet from the card
+   or section that opened it. */
 .sheet {
   --sheet-top: 12px;
   --sheet-pad: clamp(16px, 2.6vw, 48px);
   --sheet-gap: clamp(40px, 4.2vw, 80px);
-  --sheet-open: 650ms cubic-bezier(0.16, 1, 0.3, 1);
-  --sheet-close: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  --sheet-open: 800ms var(--roll-ease);
+  --sheet-close: 700ms var(--roll-ease);
   position: fixed;
   inset: 0;
   width: 100%;
@@ -1344,7 +1351,10 @@ html.lenis body {
   max-height: none;
   margin: 0;
   padding: 0;
+  /* clip, not hidden: opening moves focus into the panel, and a dialog that
+     can scroll would jump to show it before the slide starts */
   overflow: hidden;
+  overflow: clip;
   border: 0;
   background: rgba(0, 0, 0, 0);
   color: var(--ink);
@@ -1388,12 +1398,16 @@ html.has-sheet {
   }
 }
 
+.sheet__panel:focus {
+  outline: none;
+}
+
 .sheet.is-open .sheet__panel {
   transform: none;
   transition: transform var(--sheet-open);
 }
 
-/* Title in the middle, Close on the right, a grab bar on top */
+/* Title in the middle, Close on the right */
 .sheet__head {
   position: sticky;
   top: 0;
@@ -1408,23 +1422,14 @@ html.has-sheet {
   touch-action: none;
 }
 
-.sheet__grabber {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  width: 80px;
-  height: 4px;
-  margin-left: -40px;
-  border-radius: 2px;
-  background: rgba(0, 0, 0, 0.12);
-}
-
 .sheet__title {
   grid-column: 2;
   margin: 0;
-  font-size: var(--text-small);
-  font-weight: 600;
-  line-height: 1.15;
+  font-size: var(--text-large);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 /* Close: an X in a round beige button, the way iOS does it */
@@ -1433,8 +1438,8 @@ html.has-sheet {
   justify-self: end;
   display: grid;
   place-items: center;
-  width: var(--pill-h);
-  height: var(--pill-h);
+  width: clamp(44px, 3.33vw, 52px);
+  height: clamp(44px, 3.33vw, 52px);
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -1448,12 +1453,14 @@ html.has-sheet {
   background: color-mix(in srgb, var(--paper-alt), var(--ink) 8%);
 }
 
+/* The X spans about 30% of the button, in fine round-ended strokes, like
+   the SF Symbols xmark */
 .sheet__close svg {
-  width: 40%;
-  height: 40%;
+  width: 37.5%;
+  height: 37.5%;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.6;
+  stroke-width: 1.6;
   stroke-linecap: round;
 }
 
@@ -1546,7 +1553,7 @@ html.has-sheet {
   gap: var(--sheet-pad);
   align-items: start;
   padding: clamp(14px, 1.4vw, 24px) 0 clamp(20px, 2vw, 36px);
-  border-top: 1px solid rgba(0, 0, 0, 0.13);
+  border-top: 1px solid var(--rule);
 }
 
 .sheet__label {
@@ -1594,7 +1601,7 @@ html.has-sheet {
   --footer-gap: 1.55vw;
   --footer-big: var(--text-large);
   --footer-small: var(--text-small);
-  --footer-rule: rgba(0, 0, 0, 0.13);
+  --footer-rule: var(--rule);
   position: relative;
   background: var(--block-1);
   color: var(--ink);
