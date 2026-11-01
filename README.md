@@ -45,7 +45,7 @@ The cases live on the home page; there are no case pages.
 1. In `index.html`, copy one `<article class="area">` in the Selected work section.
 2. Change the title, its `id`, the number, the text and the lists.
 3. Cut the case's film to the card's shape (see Videos) and point the `<video>` at it, or use a still in `assets/img/work/`.
-4. Fill in the `<template data-sheet-more>` at the end of the article: the brief, the work and the result, and three numbers. "View case" shows them in the case's sheet, under the card's film, summary and facts.
+4. Fill in the `<template data-sheet-more>` at the end of the article: the story of the work as one text block, and three numbers with their labels. "View case" shows them in the case's sheet, under the card's film, summary and facts.
 
 ## Videos
 
@@ -109,7 +109,7 @@ The script repeats the badges to fill the screen, so any number of logos works.
 - In `robots.txt`, change `Disallow: /` to `Allow: /`.
 - Add `sitemap.xml` with the real URLs, and a `Sitemap:` line in `robots.txt`.
 - Add Open Graph tags, `og-image.jpg` and a favicon.
-- Replace every placeholder: name, email, LinkedIn, `assets/cv.pdf`, and the brief, work, result and numbers in each case's sheet (they say "Placeholder").
+- Replace every placeholder: name, email, LinkedIn, `assets/cv.pdf`, and the text and numbers in each case's sheet (they say "Placeholder").
 - **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git. Before launch:
   1. Buy a web licence at pangrampangram.com.
   2. Put the licensed `.woff2` files in `assets/fonts/` and point the `@font-face` rules in `style.css` at them.

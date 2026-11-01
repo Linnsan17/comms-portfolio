@@ -841,7 +841,7 @@ function addRoll(target) {
 
 document
   .querySelectorAll(
-    ".site-header__cta-label, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .section-head__link, .area__link, .sheet__close-label, .site-footer a"
+    ".site-header__cta-label, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .section-head__link, .area__link, .site-footer a"
   )
   .forEach(addRoll);
 
