@@ -722,7 +722,7 @@ p {
 
 /* Headline: "Making brands / matter through / [word]." on three rows at
    every size. The word rotates; the rows above it never move. The widest
-   row is "Artificial Intelligence." at about 9.6em; see .hero-title for
+   row is "Artificial Intelligence." at about 9.3em; see .hero-title for
    how it fits on narrow phones. */
 .hero-stack__copy {
   position: relative;
@@ -757,15 +757,15 @@ p {
   opacity: 0;
 }
 
-/* On narrow phones the size drops below 40px just enough for the longest
-   word, "Artificial Intelligence." (9.6em), to fit inside the margins */
-/* Set like the service card titles: regular weight, pure black, tight
-   0.88 line height */
+/* Set exactly like the service card titles (.service__title): the same
+   size, regular weight, pure black, tight 0.88 line height. Only on narrow
+   phones does it drop below their 56px, just enough for the longest word,
+   "Artificial Intelligence." (9.3em), to fit inside the margins. */
 .hero-title {
   --swap: var(--roll-duration) var(--roll-ease);
   margin: 0;
   color: var(--block-1-ink);
-  font-size: clamp(min(40px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 9.6), 6.2vw, 96px);
+  font-size: clamp(min(56px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 9.4), 8vw, 168px);
   font-weight: 400;
   line-height: 0.88;
   letter-spacing: -0.02em;
@@ -800,12 +800,14 @@ p {
   transition: transform var(--swap), opacity var(--swap);
 }
 
+/* A word's own height plus a little, so with the tight line height no
+   ascender or descender peeks into the slot before or after the roll */
 .hero-title__word.is-entering {
-  transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, calc(-100% - 0.2em), 0);
 }
 
 .hero-title__word.is-leaving {
-  transform: translate3d(0, 100%, 0);
+  transform: translate3d(0, calc(100% + 0.2em), 0);
 }
 
 .hero-stack__cta {
