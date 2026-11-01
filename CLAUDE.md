@@ -19,7 +19,7 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
 
 ## Home page, top to bottom
 
-1. **Hero:** the intro animation, then a card stack that follows the mouse (the front card is a hand holding a phone that plays `hero-phone.mp4`, with the top of the phone poking out above the card; see README "Hero phone"), with the headline "Making brands / matter through / [Content | Social Media | Strategy | Websites]." and a "Get in touch" button.
+1. **Hero:** the intro animation, then a card stack that follows the mouse (the front card is a hand holding a phone that plays `hero-phone.mp4`, on the photo's own gradient (`--phone-gradient`), with the top of the phone poking out above the card; see README "Hero phone"), with the headline "Making brands / matter through / [Content | Social Media | Strategy | Websites]." and a "Get in touch" button.
 2. **Services:** the "Services" label and four stacked colour cards (Content, Social Media, Strategy, Website) that slow down and stack as you scroll, each with a work reel video. The label rides with the first card, so the gap between them never changes.
 3. **Introduction:** "Introduction", then a big statement on the off-white band, revealed row by row on scroll.
 4. **Toolbox:** "Toolbox" with a "View all" link to the About page's tools section, then the logo wave: the tools Linn works with (logos in `assets/img/tools/`), on white round badges riding a sine wave, still on the off-white band. Scrolling pushes the row along and the wave swells with speed, after the Osmo "wavy marquee" (measured frame by frame; the constants are in `createLogoWave` in `main.js`).

@@ -85,6 +85,9 @@
 
   /* Hero outer card: blue to rosewood to pink */
   --hero-gradient: linear-gradient(180deg, #486adc 0%, #a45b61 50%, #fbbad4 100%);
+  /* The hero photo's own background, over the part the front card shows
+     (photo rows 390-1015), so the cut-out hand sits on it as in the photo */
+  --phone-gradient: linear-gradient(180deg, #985978 0%, #b6658d 12.5%, #d06f9e 25%, #e878ac 37.5%, #f97cb4 50%, #fd79b1 62.5%, #fd74a6 75%, #fe6e99 87.5%, #fd627e 100%);
 
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-body);
