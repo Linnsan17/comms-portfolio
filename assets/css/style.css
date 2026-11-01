@@ -750,7 +750,8 @@ p {
 
 /* Headline: "Making brands / matter through / [word]." on three rows at
    every size. The word rotates; the rows above it never move. The widest
-   row ("matter through") is about 7em, so 40-96px always fits. */
+   row is "Artificial Intelligence." at about 9.6em; see .hero-title for
+   how it fits on narrow phones. */
 .hero-stack__copy {
   position: relative;
   z-index: 2;
@@ -784,11 +785,13 @@ p {
   opacity: 0;
 }
 
+/* On narrow phones the size drops below 40px just enough for the longest
+   word, "Artificial Intelligence." (9.6em), to fit inside the margins */
 .hero-title {
   --swap: var(--roll-duration) var(--roll-ease);
   margin: 0;
   color: var(--ink);
-  font-size: clamp(40px, 6.2vw, 96px);
+  font-size: clamp(min(40px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 9.6), 6.2vw, 96px);
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.02em;
