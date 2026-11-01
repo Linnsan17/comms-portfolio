@@ -475,6 +475,104 @@ function createHero(hero) {
   };
 }
 
+// Logo wave, after the Osmo wavy marquee (measured frame by frame): round
+// badges ride one sine wave about 1.5 screens long. Scrolling pushes them
+// along, left when scrolling down and right when scrolling up, and they
+// keep drifting slowly the way you last scrolled. While they move, the
+// wave slides against them at a quarter of their speed and swells, up to
+// 65% taller at speed, settling back as they slow. Reduced motion: a still
+// wave.
+const waveEl = document.querySelector("[data-logo-wave]");
+const renderLogoWave = waveEl ? createLogoWave(waveEl) : null;
+
+function createLogoWave(section) {
+  const list = section.querySelector(".logo-wave__list");
+  const originals = [...list.children];
+  const PITCH = 1.128; // badge to badge, in badge widths
+  const WAVE_LENGTH = 1.53; // in screen widths
+  const WAVE_HEIGHT = 0.254; // up and down from the middle, in badge widths
+  const PHASE = 1.13; // starts low on the left, rising to the right
+  const TRAVEL = 0.25; // the wave slides against the badges at this share of their speed
+  const SWELL = 0.65; // the wave grows this much taller at full speed...
+  const SWELL_SPEED = 1.2; // ...which is 1.2 screen widths a second
+  const DRIFT = 0.06; // idle speed, in screen widths a second
+  const SCROLL_PUSH = 0.5; // badges move this share of the scroll distance
+  const MAX_SPEED = 2.5; // screen widths a second, so a jump doesn't fling them
+  let items = [];
+  let width = 0;
+  let size = 0;
+  let pitch = 0;
+  let track = 0;
+  let offset = 0;
+  let dir = -1;
+  let speed = 0;
+  let swell = 0;
+  let lastY = scrollY;
+  let last = null;
+  let inView = false;
+
+  // Repeat the badges until they cover the screen with one spare on each
+  // side, in whole rounds so the order never breaks where the row wraps
+  function measure() {
+    width = section.clientWidth;
+    size = originals[0].offsetWidth;
+    pitch = size * PITCH;
+    const per = originals.length;
+    const count = Math.ceil((Math.ceil(width / pitch) + 2) / per) * per;
+    list.querySelectorAll("[data-clone]").forEach((clone) => clone.remove());
+    items = [...originals];
+    for (let i = per; i < count; i++) {
+      const clone = originals[i % per].cloneNode(true);
+      clone.dataset.clone = "";
+      clone.setAttribute("aria-hidden", "true");
+      list.append(clone);
+      items.push(clone);
+    }
+    track = items.length * pitch;
+  }
+
+  function place() {
+    const k = (2 * Math.PI) / (WAVE_LENGTH * width);
+    const height = WAVE_HEIGHT * size * (1 + swell);
+    const phase = PHASE + TRAVEL * k * offset;
+    items.forEach((item, i) => {
+      const x = ((((i * pitch + offset) % track) + track) % track) - pitch;
+      const y = height * Math.sin(k * (x + size / 2) + phase);
+      item.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+  }
+
+  measure();
+  place();
+  section.classList.add("is-ready");
+  addEventListener("resize", () => {
+    measure();
+    place();
+  });
+  if (reduceMotion) return null;
+  new IntersectionObserver(([entry]) => (inView = entry.isIntersecting), {
+    rootMargin: "100px 0px",
+  }).observe(section);
+
+  return function render(time) {
+    const dt = last === null ? 0 : Math.min(0.05, (time - last) / 1000);
+    const dy = scrollY - lastY;
+    last = time;
+    lastY = scrollY;
+    if (!dt) return;
+    if (dy) dir = dy > 0 ? -1 : 1;
+    const push = Math.min(MAX_SPEED * width, (Math.abs(dy) / dt) * SCROLL_PUSH);
+    const target = dir * (DRIFT * width + push);
+    speed += (target - speed) * (1 - Math.exp(-dt / 0.12));
+    offset += speed * dt;
+    const swellTo = SWELL * Math.min(1, Math.abs(speed) / (SWELL_SPEED * width));
+    swell += (swellTo - swell) * (1 - Math.exp(-dt / 0.1));
+    // Keep moving off screen so it comes back the way it's going, but only
+    // touch the page while it's in view
+    if (inView) place();
+  };
+}
+
 // Header: on phones the links fold behind a "Menu" pill, and the pills
 // change colour over the colour blocks.
 const header = document.querySelector("[data-header]");
@@ -627,5 +725,6 @@ requestAnimationFrame(function frame(time) {
     if (pendingCounts.size) showPassedCounts();
   }
   renderHero?.(time);
+  renderLogoWave?.(time);
   requestAnimationFrame(frame);
 });

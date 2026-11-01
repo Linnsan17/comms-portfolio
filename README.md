@@ -72,6 +72,16 @@ swiftc -O tools/transcode.swift -o /tmp/transcode
 /tmp/transcode "in.mp4" assets/video/name.mp4 assets/video/name.jpg 960 540 1500000
 ```
 
+## Tool logos
+
+The logo wave after the introduction shows the tools in `assets/img/tools/`. To add one:
+
+1. Save the logo as a trimmed `.webp` about 320px on its longest side, or as an `.svg`.
+2. Copy one of the `<li class="logo-wave__item">` lines in `index.html` and change the image and its `alt`.
+3. Set `--w` to the logo's width as a share of the badge. The default, 0.36, suits a square icon; a wide wordmark needs more (Canva is 0.56).
+
+The script repeats the badges to fill the screen, so any number of logos works.
+
 ## Handwritten logo
 
 `assets/img/linn-logo-write.svg` is generated from the logo. If the logo changes:

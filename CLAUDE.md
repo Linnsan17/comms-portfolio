@@ -22,8 +22,9 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
 1. **Hero:** the intro animation, then a card stack that follows the mouse, with the headline "Making brands / matter through / [Content | Social Media | Strategy | Websites]." and a "Get in touch" button.
 2. **Services:** four stacked colour cards (Content, Social Media, Strategy, Website) that slow down and stack as you scroll, each with a work reel video.
 3. **Introduction:** a big statement on the off-white band, revealed row by row on scroll.
-4. **Stats:** numbers count up when they come into view. **The heading, labels and numbers are placeholders.**
-5. **About teaser and contact:** **placeholders** (email, LinkedIn, `assets/cv.pdf`).
+4. **Logo wave:** the tools Linn works with (logos in `assets/img/tools/`), on white round badges riding a sine wave, still on the off-white band. Scrolling pushes the row along and the wave swells with speed, after the Osmo "wavy marquee" (measured frame by frame; the constants are in `createLogoWave` in `main.js`).
+5. **Stats:** numbers count up when they come into view. **The heading, labels and numbers are placeholders.**
+6. **About teaser and contact:** **placeholders** (email, LinkedIn, `assets/cv.pdf`).
 
 The "Selected work" section (case cards and filter) is removed for now; it's in git history before commit `3b4b232`. The case pages in `work/` still exist but have placeholder content.
 

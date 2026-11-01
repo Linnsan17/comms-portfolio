@@ -933,6 +933,72 @@ html.lenis body {
   transform: none;
 }
 
+/* Logo wave: white badges on the introduction's off-white, after the Osmo
+   wavy marquee. Badges are 215px on a 1440px screen, as in the reference;
+   the script places each one along the wave. Without the script they sit
+   in a plain row. */
+/* The wave's own band already gives the badges room above */
+.intro:has(+ .logo-wave) {
+  padding-bottom: clamp(16px, 2vw, 40px);
+}
+
+.logo-wave {
+  --d: clamp(150px, 14.93vw, 290px);
+  height: calc(var(--d) * 2);
+  overflow: hidden;
+  background: var(--paper-alt);
+}
+
+.logo-wave__list {
+  display: flex;
+  gap: calc(var(--d) * 0.128);
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.js .logo-wave__list {
+  position: relative;
+  display: block;
+}
+
+.js .logo-wave:not(.is-ready) .logo-wave__list {
+  visibility: hidden;
+}
+
+.logo-wave__item {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--d);
+  height: var(--d);
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.js .logo-wave__item {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin-top: calc(var(--d) / -2);
+  will-change: transform;
+}
+
+/* Logos are sized by eye so they weigh the same: --w is the width as a
+   share of the badge, set per logo in the HTML */
+.logo-wave__item img {
+  width: calc(var(--d) * var(--w, 0.36));
+  height: auto;
+}
+
+@media (max-width: 760px) {
+  .logo-wave {
+    --d: 36vw;
+  }
+}
+
 /* Stats: rows of label and big number, after the reference (Eidra): a two
    line heading with a softened first line, thin grey rules between rows,
    numbers on the right half. Numbers count up when the row scrolls in. */
