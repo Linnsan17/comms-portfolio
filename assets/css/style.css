@@ -895,14 +895,16 @@ html.lenis body {
    1548px-wide window and scale with the viewport width from there. */
 
 .services {
-  --services-bg: var(--paper);
+  --services-bg: var(--paper-alt);
   --services-ink: var(--ink);
   --services-pad-x: clamp(16px, 1.3vw, 28px);
   --services-pad-y: clamp(18px, 1.68vw, 34px);
   --services-gap: clamp(12px, 1.03vw, 20px);
 
-  /* No bottom padding: the last card runs straight into the introduction */
-  padding-top: clamp(64px, 7.75vw, 160px);
+  /* The hero's beige runs on, and the label sits just below the fold, the
+     same small gap above it as under it. No bottom padding: the last card
+     runs straight into the introduction. */
+  padding-top: clamp(24px, 2.34vw, 44px);
   background: var(--services-bg);
   color: var(--services-ink);
 }
