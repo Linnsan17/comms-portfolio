@@ -1008,10 +1008,11 @@ function addRoll(target) {
   const text = target.textContent.trim();
   if (!text) return;
 
+  // The copy that rolls in on hover can say something else (data-hover)
   const make = (hidden) => {
     const item = document.createElement("span");
     item.className = "roll__item";
-    item.textContent = text;
+    item.textContent = hidden ? target.dataset.hover || text : text;
     if (hidden) item.setAttribute("aria-hidden", "true");
     return item;
   };
@@ -1030,6 +1031,25 @@ document
     ".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip, .section-head__link, .area__link, .site-footer a"
   )
   .forEach(addRoll);
+
+// Footer email: hovering rolls in "Copy email", and a click copies the
+// address and says so for a moment. Without a clipboard the link just opens
+// the mail app.
+document.querySelectorAll("[data-copy]").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    if (!navigator.clipboard) return;
+    e.preventDefault();
+    navigator.clipboard.writeText(link.dataset.copy).then(
+      () => {
+        const label = link.querySelector(".roll__item");
+        if (!label) return;
+        label.textContent = "Copied";
+        setTimeout(() => (label.textContent = link.dataset.hover), 1600);
+      },
+      () => (location.href = link.href)
+    );
+  });
+});
 
 let lastWidth = innerWidth;
 addEventListener("resize", () => {

@@ -1427,16 +1427,15 @@ figcaption {
   border-bottom: 1px solid var(--footer-rule);
 }
 
-.site-footer__logo {
+/* Linn's portrait where the reference has its logo: square, with the same
+   space under it as above */
+.site-footer__portrait {
   grid-column: 1 / 9;
   display: block;
-  width: 21vw;
-}
-
-.site-footer__logo img {
-  display: block;
-  width: 100%;
+  width: 18.27vw;
   height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
 }
 
 .site-footer__cta {
@@ -1528,7 +1527,7 @@ figcaption {
     padding-block: 8vw 12vw;
   }
 
-  .site-footer__logo {
+  .site-footer__portrait {
     grid-column: 1 / -1;
     width: 44vw;
   }
@@ -1546,14 +1545,14 @@ figcaption {
     row-gap: 10vw;
   }
 
-  .site-footer__col {
-    grid-column: 1 / 7;
+  /* One column under the other, and type that scales with the screen,
+     so the email address always fits */
+  .site-footer {
+    --footer-big: 7.5vw;
   }
 
-  .site-footer__col--connect {
-    grid-column: 7 / 13;
-  }
-
+  .site-footer__col,
+  .site-footer__col--connect,
   .site-footer__col--open {
     grid-column: 1 / -1;
   }
