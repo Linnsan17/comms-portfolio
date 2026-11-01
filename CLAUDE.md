@@ -20,16 +20,18 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
 ## Home page, top to bottom
 
 1. **Hero:** the intro animation, then a card stack that follows the mouse, with the headline "Making brands / matter through / [Content | Social Media | Strategy | Websites]." and a "Get in touch" button.
-2. **Services:** the "Services" label and four stacked colour cards (Content, Social Media, Strategy, Website) that slow down and stack as you scroll, each with a work reel video. The label rides with the first card, so the gap between them never changes.
-3. **Introduction:** a big statement on the off-white band, revealed row by row on scroll.
-4. **Logo wave:** the tools Linn works with (logos in `assets/img/tools/`), on white round badges riding a sine wave, still on the off-white band. Scrolling pushes the row along and the wave swells with speed, after the Osmo "wavy marquee" (measured frame by frame; the constants are in `createLogoWave` in `main.js`).
-5. **Areas of expertise:** "(Areas of Expertise)" and three full-width cards (Strategy 01, Culture 02, Identity 03), rebuilt 1:1 from wearemotto.com at a 1537px window. As the next card rises, the covered one falls back to 62% of the scroll speed and a dark grey wash builds over it to 60%; the stats section slides over the last card the same way. **The descriptions and lists are draft copy for Linn to rewrite** (the reference's own copy isn't reused), and the videos are placeholders.
+2. **Services:** the "(Services)" label and four stacked colour cards (Content, Social Media, Strategy, Website) that slow down and stack as you scroll, each with a work reel video. The label rides with the first card, so the gap between them never changes.
+3. **Introduction:** "(Introduction)", then a big statement on the off-white band, revealed row by row on scroll.
+4. **Toolbox:** "(Toolbox)" with a "View all" link to the About page's tools section, then the logo wave: the tools Linn works with (logos in `assets/img/tools/`), on white round badges riding a sine wave, still on the off-white band. Scrolling pushes the row along and the wave swells with speed, after the Osmo "wavy marquee" (measured frame by frame; the constants are in `createLogoWave` in `main.js`).
+5. **Selected work:** "(Selected work)" with "Let’s join forces", then three full-width cards (Strategy 01, Culture 02, Identity 03), rebuilt 1:1 from wearemotto.com at a 1537px window. As the next card rises, the covered one falls back to 62% of the scroll speed and a dark grey wash builds over it to 60%; the stats section slides over the last card the same way. **The descriptions and lists are draft copy for Linn to rewrite** (the reference's own copy isn't reused), and the videos are placeholders.
 6. **Stats:** numbers count up when they come into view. **The heading, labels and numbers are placeholders.**
 7. **About teaser and contact:** **placeholders** (email, LinkedIn, `assets/cv.pdf`).
 
 The "Selected work" section (case cards and filter) is removed for now; it's in git history before commit `3b4b232`. The case pages in `work/` still exist but have placeholder content.
 
 ## Decisions to keep
+
+- **Section labels:** every section after the hero opens with a "(Label)" on the left and, where there is one, an underlined link on the right on the same baseline (`.section-head` in `style.css`, after wearemotto.com).
 
 - **Palette ("Geometric" with light blue):**
   - Page background white #ffffff, with the off-white #f2f0ec only behind the introduction.

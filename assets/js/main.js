@@ -60,7 +60,7 @@ const STACK_SPEED = 0.436;
 const stackCards = reduceMotion ? [] : [...document.querySelectorAll("[data-stack] [data-card]")];
 // The section label rides with the first card, so the gap between them
 // never changes while that card slows down
-const stackLabel = document.querySelector(".services__label");
+const stackLabel = document.querySelector(".services__head");
 let naturalTops = [];
 
 function measureStack() {
@@ -733,7 +733,7 @@ function addRoll(target) {
 
 document
   .querySelectorAll(
-    ".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip, .areas__link, .area__link"
+    ".site-header__cta, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .chip, .section-head__link, .area__link"
   )
   .forEach(addRoll);
 

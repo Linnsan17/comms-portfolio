@@ -66,7 +66,9 @@
 
     <!-- Services: stacked cards, rebuilt from serious.business, each with a work reel. -->
     <section class="services" id="services" aria-labelledby="services-title">
-      <h2 class="services__label" id="services-title">Services</h2>
+      <div class="section-head services__head">
+        <h2 class="section-head__label" id="services-title">(Services)</h2>
+      </div>
 
       <ul class="services__stack" data-stack>
         <li class="service service--block-1" data-card>
@@ -134,7 +136,9 @@
 
     <!-- Introduction: big statement that reveals row by row on scroll -->
     <section class="intro" id="introduction" aria-labelledby="intro-label">
-      <h2 class="intro__label" id="intro-label">Introduction</h2>
+      <div class="section-head intro__head">
+        <h2 class="section-head__label" id="intro-label">(Introduction)</h2>
+      </div>
       <div class="intro__text" data-reveal-rows>
         <p data-lines>Communications specialist with experience in social media, web, newsletters and content production across both large and small companies. Background from both strategic and hands-on digital communications, managing website projects and developing social media strategies. Experienced in employer branding in collaboration with HR, as well as analyzing and optimising communication efforts to strengthen brands, engage target audiences and deliver results.</p>
       </div>
@@ -145,7 +149,11 @@
          assets/img/tools/ and add a badge; --w is the logo's width as a share
          of the badge (about 0.36 for a square icon, more for a wide one). The
          script repeats the badges to fill the screen, so any number works. -->
-    <section class="logo-wave" aria-label="Tools I work with" data-logo-wave>
+    <section class="logo-wave" aria-labelledby="toolbox-label" data-logo-wave>
+      <div class="section-head logo-wave__head">
+        <h2 class="section-head__label" id="toolbox-label">(Toolbox)</h2>
+        <a class="section-head__link" href="/about/#tools">View all</a>
+      </div>
       <ul class="logo-wave__list" role="list">
         <li class="logo-wave__item"><img src="/assets/img/tools/figma.webp" alt="Figma" width="213" height="320" style="--w: 0.26" decoding="async"></li>
         <li class="logo-wave__item"><img src="/assets/img/tools/photoshop.webp" alt="Adobe Photoshop" width="320" height="312" decoding="async"></li>
@@ -164,10 +172,10 @@
          you scroll, each one sliding over the last while the covered card
          falls behind and darkens; the stats section slides over the last.
          Draft copy for Linn to rewrite; the videos are placeholders. -->
-    <section class="areas" id="expertise" aria-labelledby="areas-label">
-      <div class="areas__head">
-        <h2 class="areas__label" id="areas-label">(Areas of Expertise)</h2>
-        <a class="areas__link" href="#contact">Let’s join forces</a>
+    <section class="areas" id="work" aria-labelledby="areas-label">
+      <div class="section-head areas__head">
+        <h2 class="section-head__label" id="areas-label">(Selected work)</h2>
+        <a class="section-head__link" href="#contact">Let’s join forces</a>
       </div>
 
       <article class="area" data-area aria-labelledby="area-strategy">

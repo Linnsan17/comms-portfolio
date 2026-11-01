@@ -766,6 +766,39 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Section heads, after wearemotto.com: a "(Label)" on the left and an
+   optional underlined link on the right. The label keeps the same space
+   under its text as the link's padding and underline, so both sit on one
+   baseline. Each section sets the spacing around its head. */
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: clamp(14px, 1.39vw, 26px);
+  line-height: 1.15;
+}
+
+.section-head__label {
+  margin: 0;
+  padding-bottom: calc(0.31em + 1px);
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+  letter-spacing: 0;
+}
+
+/* Underlined text links: the line sits 0.61em under the baseline */
+.section-head__link,
+.area__link {
+  display: inline-block;
+  padding-bottom: 0.31em;
+  border-bottom: 1px solid currentColor;
+  line-height: 1.15;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 /* Services: stacked cards. Sizes are measured from serious.business at a
    1548px-wide window and scale with the viewport width from there. */
 
@@ -782,13 +815,9 @@ html.lenis body {
   color: var(--services-ink);
 }
 
-.services__label {
-  margin: 0 0 clamp(18px, 1.75vw, 34px);
+.services__head {
+  margin-bottom: clamp(24px, 2.34vw, 44px);
   padding-inline: var(--services-pad-x);
-  font-size: clamp(18px, 1.6vw, 30px);
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: 0;
 }
 
 .services__stack {
@@ -890,16 +919,8 @@ html.lenis body {
   background: var(--paper-alt);
 }
 
-.intro__label {
-  display: inline-block;
-  margin: 0 0 clamp(56px, 9vw, 170px);
-  padding: 0.2em 0.65em 0.1em;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: 0;
+.intro__head {
+  margin-bottom: clamp(56px, 9vw, 170px);
 }
 
 .intro__text p {
@@ -944,16 +965,19 @@ html.lenis body {
 
 .logo-wave {
   --d: clamp(150px, 14.93vw, 290px);
-  height: calc(var(--d) * 2);
   overflow: hidden;
   background: var(--paper-alt);
+}
+
+.logo-wave__head {
+  padding: clamp(48px, 6vw, 110px) clamp(16px, 1.68vw, 32px) clamp(24px, 2.34vw, 44px);
 }
 
 .logo-wave__list {
   display: flex;
   gap: calc(var(--d) * 0.128);
   align-items: center;
-  height: 100%;
+  height: calc(var(--d) * 2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1012,35 +1036,7 @@ html.lenis body {
 }
 
 .areas__head {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 16px;
   padding: clamp(48px, 6vw, 110px) var(--areas-pad-x) clamp(24px, 2.34vw, 44px);
-  font-size: var(--areas-small);
-  line-height: 1.15;
-}
-
-/* Bottom-aligned with the link: the same space under the text as the
-   link's padding and underline, so the baselines line up */
-.areas__label {
-  margin: 0;
-  padding-bottom: calc(0.31em + 1px);
-  font-size: inherit;
-  font-weight: 400;
-  line-height: inherit;
-  letter-spacing: 0;
-}
-
-/* Underlined text links: the line sits 0.61em under the baseline */
-.areas__link,
-.area__link {
-  display: inline-block;
-  padding-bottom: 0.31em;
-  border-bottom: 1px solid currentColor;
-  line-height: 1.15;
-  text-decoration: none;
-  white-space: nowrap;
 }
 
 .area {
