@@ -477,6 +477,30 @@ function createHero(hero) {
 
   cards.forEach((card, i) => (card.style.zIndex = count - i));
 
+  // Where the headline crosses the cards it turns white: a white copy of
+  // it, laid exactly over the black one, shows only over the cards.
+  // Markers on each card's corners (and the phone screen's) show where
+  // those shapes land on the page, however they're scaled and tilted.
+  const title = hero.querySelector(".hero-title");
+  const titleStack = document.createElement("div");
+  titleStack.className = "hero-title-stack";
+  title.before(titleStack);
+  titleStack.append(title);
+  const lightTitle = title.cloneNode(true);
+  lightTitle.removeAttribute("id");
+  lightTitle.setAttribute("aria-hidden", "true");
+  lightTitle.classList.add("hero-title--light");
+  titleStack.append(lightTitle);
+  const markCorners = (el) =>
+    [0, 1, 2, 3].map((n) => {
+      const mark = document.createElement("i");
+      mark.className = "corner-mark";
+      mark.dataset.corner = n;
+      el.append(mark);
+      return mark;
+    });
+  const quads = [...cards.map(markCorners), ...(phoneScreen ? [markCorners(phoneScreen)] : [])];
+
   addEventListener("pointermove", (e) => {
     if (e.pointerType !== "mouse") return;
     const r = hero.getBoundingClientRect();
@@ -500,7 +524,7 @@ function createHero(hero) {
       done = true;
       introDone();
       copy?.classList.add("is-in");
-      if (rotator) startRotator(rotator);
+      if (rotator) startRotator([...hero.querySelectorAll("[data-rotator]")]);
     }
     if (!inView && t > FOLLOW_AT + SWING) return;
 
@@ -546,6 +570,23 @@ function createHero(hero) {
       // Corners that stay the same on screen however far the card is scaled
       card.style.setProperty("--corner", `${(CORNER / Math.max(scale, 0.05)).toFixed(1)}px`);
     });
+
+    // The headline copy shows only over the cards and the phone screen
+    {
+      const box = lightTitle.getBoundingClientRect();
+      const path = quads
+        .map(
+          (quad) =>
+            quad
+              .map((mark, n) => {
+                const r = mark.getBoundingClientRect();
+                return `${n ? "L" : "M"}${(r.left - box.left).toFixed(1)} ${(r.top - box.top).toFixed(1)}`;
+              })
+              .join("") + "Z"
+        )
+        .join("");
+      lightTitle.style.clipPath = `path("${path}")`;
+    }
 
     // The phone layer's clip follows the front card's corners
     if (phoneLayer) {
@@ -743,33 +784,36 @@ function updateHeaderTone() {
 // (see --roll-ease in style.css): the next word drops in from above while
 // the current one leaves below. The rows above never move. Reduced
 // motion: CSS turns this into a plain fade.
-function startRotator(slot) {
+// Several slots (the headline and any copy of it) roll in step.
+function startRotator(slots) {
   const HOLD = 2200;
   const SWAP = 620;
-  const words = slot.dataset.words.split("|").map((word) => `${word}.`);
+  const words = slots[0].dataset.words.split("|").map((word) => `${word}.`);
   let index = 0;
-  let current = slot.querySelector(".hero-title__word");
+  let current = slots.map((slot) => slot.querySelector(".hero-title__word"));
 
-  const fit = () => (slot.style.width = `${current.offsetWidth}px`);
+  const fit = () => slots.forEach((slot, i) => (slot.style.width = `${current[i].offsetWidth}px`));
   fit();
   addEventListener("resize", fit);
   document.fonts?.ready.then(fit);
 
   setTimeout(function swap() {
     index = (index + 1) % words.length;
-    const next = document.createElement("span");
-    next.className = "hero-title__word is-entering";
-    next.textContent = words[index];
-    slot.append(next);
+    current = slots.map((slot, i) => {
+      const next = document.createElement("span");
+      next.className = "hero-title__word is-entering";
+      next.textContent = words[index];
+      slot.append(next);
 
-    // Reading the width also commits the start position, so the
-    // transitions below run without waiting for a frame.
-    slot.style.width = `${next.offsetWidth}px`;
-    next.classList.remove("is-entering");
-    const leaving = current;
-    leaving.classList.add("is-leaving");
-    setTimeout(() => leaving.remove(), SWAP);
-    current = next;
+      // Reading the width also commits the start position, so the
+      // transitions below run without waiting for a frame.
+      slot.style.width = `${next.offsetWidth}px`;
+      next.classList.remove("is-entering");
+      const leaving = current[i];
+      leaving.classList.add("is-leaving");
+      setTimeout(() => leaving.remove(), SWAP);
+      return next;
+    });
 
     setTimeout(swap, HOLD + SWAP);
   }, HOLD);

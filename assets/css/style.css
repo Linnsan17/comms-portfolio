@@ -720,6 +720,46 @@ p {
   background: #000;
 }
 
+/* The headline turns white where it crosses the cards: main.js lays a
+   white copy over the black one and clips it to the cards each frame. A
+   faint shadow keeps it readable over light footage. */
+.hero-title-stack {
+  display: grid;
+}
+
+.hero-title-stack > .hero-title {
+  grid-area: 1 / 1;
+}
+
+.hero-title.hero-title--light {
+  color: var(--paper);
+  text-shadow: 0 0 0.25em rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+}
+
+/* Markers on the cards' and phone screen's corners: where they land on the
+   page tells main.js where to clip the white headline */
+.corner-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+}
+
+.corner-mark[data-corner="1"] {
+  left: 100%;
+}
+
+.corner-mark[data-corner="2"] {
+  top: 100%;
+  left: 100%;
+}
+
+.corner-mark[data-corner="3"] {
+  top: 100%;
+}
+
 /* Headline: "Making brands / matter through / [word]." on three rows at
    every size. The word rotates; the rows above it never move. The widest
    row is "Artificial Intelligence." at about 9.3em; see .hero-title for
