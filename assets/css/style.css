@@ -1522,32 +1522,6 @@ html.has-sheet {
   margin-top: 1em;
 }
 
-/* A list with a label on the left, the text on the right (the about
-   sheet's experience) */
-.sheet__block {
-  display: grid;
-  gap: clamp(20px, 2vw, 32px);
-  margin: 0;
-}
-
-.sheet__row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: var(--sheet-pad);
-}
-
-.sheet__row dt {
-  font-size: var(--text-small);
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.sheet__row dd {
-  margin: 0;
-  font-size: var(--text-medium);
-  line-height: 1.25;
-}
-
 /* The toolbox sheet: each tool's logo in a round beige frame, then its
    name, one to a row between hairlines. Logos keep the wave's sizing by
    eye (--w, a share of the frame's width). */
@@ -1618,13 +1592,6 @@ html.has-sheet {
   line-height: 1;
   letter-spacing: -0.02em;
   white-space: nowrap;
-}
-
-@media (max-width: 760px) {
-  .sheet__row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
