@@ -951,11 +951,25 @@ if (sheet) {
     content.replaceChildren(...parts);
   }
 
+  // The big numbers share one size: --text-display, or smaller when the
+  // widest would overflow its column
+  function fitNumbers() {
+    const numbers = [...content.querySelectorAll(".sheet__number")];
+    numbers.forEach((number) => (number.style.fontSize = ""));
+    const fit = Math.min(1, ...numbers.map((number) => number.clientWidth / number.scrollWidth));
+    if (fit < 1) {
+      const size = Math.floor(parseFloat(getComputedStyle(numbers[0]).fontSize) * fit);
+      numbers.forEach((number) => (number.style.fontSize = `${size}px`));
+    }
+  }
+  addEventListener("resize", () => sheet.open && fitNumbers());
+
   function openSheet(trigger) {
     clearTimeout(closeTimer);
     fill(trigger.closest("[data-sheet-source]"));
     opener = trigger;
     sheet.showModal();
+    fitNumbers();
     sheet.scrollTop = 0; // where overflow: clip isn't supported, undo the jump to the focused panel
     content.scrollTop = 0;
     lenis?.stop();

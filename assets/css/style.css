@@ -1595,7 +1595,7 @@ html.has-sheet {
 .sheet__number {
   grid-column: 2;
   grid-row: 1;
-  margin-top: calc(0.275 * var(--text-small) - 0.075 * var(--text-display));
+  margin-top: calc(0.275 * var(--text-small) - 0.075em);
   font-size: var(--text-display);
   line-height: 1;
   letter-spacing: -0.02em;
