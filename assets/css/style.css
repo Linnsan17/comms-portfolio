@@ -578,7 +578,7 @@ p {
 }
 
 /* Front card: a hand holding a phone that plays a reel, cut out of the
-   hero photo. The card's colour (the light blue) sits behind, the arm is cut off by the
+   hero photo. The card's colour (the pink) sits behind, the arm is cut off by the
    card, and the top of the phone pokes out above it: main.js clips the
    layer to the card's shape plus everything above its top edge. */
 .stack-card--phone {
