@@ -62,14 +62,47 @@
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="wrap">
-      <ul>
-        <li><a href="mailto:you@example.com">Email</a></li>
-        <li><a href="https://www.linkedin.com/">LinkedIn</a></li>
-        <li><a href="/assets/cv.pdf">CV</a></li>
-      </ul>
-      <p>© <span data-year></span> Linn Harrvik</p>
+  <!-- Footer, after the Flow site's: the logo and a call to action, then
+       navigation, links and what Linn is open to, then the small print, on
+       a 12-column grid. Placeholder links: email, Instagram, LinkedIn, CV. -->
+  <footer class="site-footer" id="contact">
+    <div class="site-footer__top">
+      <a class="site-footer__logo" href="/"><img src="/assets/img/linn-logo.svg" alt="Linn Harrvik" width="1192" height="674"></a>
+      <p class="site-footer__cta">Ready to talk?<br><a href="mailto:you@example.com">Get in touch</a></p>
+    </div>
+    <div class="site-footer__main">
+      <div class="site-footer__cols">
+        <nav class="site-footer__col" aria-labelledby="footer-navigate">
+          <h2 class="site-footer__label" id="footer-navigate">Navigate</h2>
+          <ul class="site-footer__list" role="list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#work">Work</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="mailto:you@example.com">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="site-footer__col site-footer__col--connect">
+          <h2 class="site-footer__label">Connect</h2>
+          <ul class="site-footer__list" role="list">
+            <li><a href="https://www.instagram.com/">Instagram</a></li>
+            <li><a href="https://www.linkedin.com/">LinkedIn</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__col site-footer__col--open">
+          <h2 class="site-footer__label">Open to</h2>
+          <ul class="site-footer__list" role="list">
+            <li>In-house roles</li>
+            <li>Freelance projects</li>
+            <li>Collaborations</li>
+          </ul>
+        </div>
+      </div>
+      <div class="site-footer__bar">
+        <p>All rights reserved © Linn Harrvik <span data-year>2026</span></p>
+        <a href="/assets/cv.pdf">Download CV</a>
+        <a href="#main">Back to top</a>
+      </div>
     </div>
   </footer>
 </body>

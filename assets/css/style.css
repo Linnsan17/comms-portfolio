@@ -1397,21 +1397,186 @@ figcaption {
 
 /* Footer */
 
-/* Positioned and opaque so it slides over the last work card */
+/* Footer, rebuilt 1:1 from the Flow site's in pink. Measured at a 1552px
+   window (1vw = 15.52px) on its 12-column grid with 24px gaps; the side
+   margins follow the rest of this site. Positioned and opaque, so on the
+   home page it slides over the last work card. */
 .site-footer {
+  --footer-pad-x: clamp(16px, 1.68vw, 32px);
+  --footer-gap: 1.55vw;
+  --footer-big: clamp(28px, 3.41vw, 66px);
+  --footer-small: clamp(14px, 1.26vw, 24px);
+  --footer-rule: rgba(0, 0, 0, 0.13);
   position: relative;
-  padding-block: var(--space-l);
-  background: var(--paper);
-  color: var(--ink-soft);
+  background: var(--block-1);
+  color: var(--ink);
 }
 
-.site-footer ul {
+.site-footer a {
+  text-decoration: none;
+}
+
+.site-footer__top,
+.site-footer__cols,
+.site-footer__bar {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--footer-gap);
+}
+
+/* Logo and call to action, with the rule under them */
+.site-footer__top {
+  align-items: start;
+  height: 22.13vw;
+  padding: 1.93vw var(--footer-pad-x) 0;
+  border-bottom: 1px solid var(--footer-rule);
+}
+
+.site-footer__logo {
+  grid-column: 1 / 9;
+  display: block;
+  width: 21vw;
+}
+
+.site-footer__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.site-footer__cta {
+  grid-column: 9 / 13;
+  margin: 0;
+  font-size: var(--footer-big);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+}
+
+/* The line sits 0.22em under the baseline, 0.057em thick. On the rolled
+   copies too: underlines don't reach into the roll's inline-block. */
+.site-footer__cta a,
+.site-footer__cta .roll__item {
+  text-decoration: underline;
+  text-decoration-thickness: 0.057em;
+  text-underline-offset: 0.217em;
+}
+
+/* Columns at the top, the small print pinned to the bottom */
+.site-footer__main {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-m);
-  margin: 0 0 var(--space-s);
+  flex-direction: column;
+  min-height: 36.76vw;
+  padding: 3.22vw var(--footer-pad-x) 1.29vw;
+}
+
+.site-footer__col {
+  grid-column: 1 / 4;
+}
+
+.site-footer__col--connect {
+  grid-column: 4 / 9;
+}
+
+.site-footer__col--open {
+  grid-column: 9 / 13;
+}
+
+.site-footer__label {
+  margin: 0 0 2.2vw;
+  font-size: clamp(14px, 1.39vw, 26px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.site-footer__list {
+  margin: 0;
   padding: 0;
   list-style: none;
+  font-size: var(--footer-big);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* The hover roll keeps the list's tight line height */
+.site-footer__list .roll {
+  height: 1em;
+  line-height: 1;
+}
+
+.site-footer__bar {
+  align-items: end;
+  margin-top: auto;
+  padding-top: 4vw;
+  font-size: var(--footer-small);
+  line-height: 1.15;
+}
+
+.site-footer__bar p {
+  grid-column: 1 / 5;
+  margin: 0;
+}
+
+.site-footer__bar a {
+  grid-column: 5 / 9;
+  justify-self: start;
+}
+
+.site-footer__bar a:last-child {
+  grid-column: 9 / 13;
+}
+
+@media (max-width: 760px) {
+  .site-footer__top {
+    height: auto;
+    row-gap: 10vw;
+    padding-block: 8vw 12vw;
+  }
+
+  .site-footer__logo {
+    grid-column: 1 / -1;
+    width: 44vw;
+  }
+
+  .site-footer__cta {
+    grid-column: 1 / -1;
+  }
+
+  .site-footer__main {
+    min-height: 0;
+    padding-block: 8vw 6vw;
+  }
+
+  .site-footer__cols {
+    row-gap: 10vw;
+  }
+
+  .site-footer__col {
+    grid-column: 1 / 7;
+  }
+
+  .site-footer__col--connect {
+    grid-column: 7 / 13;
+  }
+
+  .site-footer__col--open {
+    grid-column: 1 / -1;
+  }
+
+  .site-footer__label {
+    margin-bottom: 4vw;
+  }
+
+  .site-footer__bar {
+    row-gap: 3vw;
+    padding-top: 14vw;
+  }
+
+  .site-footer__bar p,
+  .site-footer__bar a,
+  .site-footer__bar a:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
