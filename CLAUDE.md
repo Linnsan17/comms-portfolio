@@ -30,6 +30,7 @@ The "Selected work" section (case cards and filter) is removed for now; it's in 
 
 ## Decisions to keep
 
+- **Rounded media:** every photo and video box (service and work cards, footer portrait, case page images) has 10px corners (`--radius-media`). The hero cards keep their bowed pillow shape.
 - **Section labels:** every section after the hero opens with a semibold label (no brackets) on the left and, where there is one, an underlined link on the right on the same baseline (`.section-head` in `style.css`, after wearemotto.com).
 
 - **Palette ("Geometric" with light blue):**
