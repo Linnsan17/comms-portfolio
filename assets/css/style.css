@@ -1526,8 +1526,9 @@ html.has-sheet {
 }
 
 /* The toolbox sheet: each tool's logo in a round beige frame, then its
-   name, one to a row between hairlines. Logos keep the wave's sizing by
-   eye (--w, a share of the frame's width). */
+   name, and its number on the right, as on the work cards; A to Z, one to a
+   row between hairlines. Logos keep the wave's sizing by eye (--w, a share
+   of the frame's width). */
 .sheet__tools {
   margin: 0;
   padding: 0;
@@ -1559,6 +1560,10 @@ html.has-sheet {
 .sheet__tool-logo img {
   width: calc(var(--frame) * var(--w, 0.36));
   height: auto;
+}
+
+.sheet__tool-number {
+  margin-left: auto;
 }
 
 /* Numbers, after a reference Linn sent: one per row under a hairline, the

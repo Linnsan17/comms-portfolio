@@ -918,12 +918,15 @@ if (sheet) {
       lists.forEach((list) => facts.append(list.cloneNode(true)));
       body.append(facts);
     }
-    const logos = source.querySelectorAll("[data-sheet-tools] > :not([data-clone]) img");
+    // In A to Z order and numbered, whatever order the wave mixes them in
+    const logos = [...source.querySelectorAll("[data-sheet-tools] > :not([data-clone]) img")].sort((a, b) =>
+      a.alt.localeCompare(b.alt, "en", { sensitivity: "base" })
+    );
     if (logos.length) {
       const tools = document.createElement("ul");
       tools.className = "sheet__tools";
       tools.setAttribute("role", "list");
-      logos.forEach((logo) => {
+      logos.forEach((logo, i) => {
         const tool = document.createElement("li");
         const frame = document.createElement("span");
         frame.className = "sheet__tool-logo";
@@ -932,7 +935,11 @@ if (sheet) {
         frame.append(img);
         const name = document.createElement("span");
         name.textContent = logo.alt;
-        tool.append(frame, name);
+        const number = document.createElement("span");
+        number.className = "sheet__tool-number";
+        number.setAttribute("aria-hidden", "true");
+        number.textContent = String(i + 1).padStart(2, "0");
+        tool.append(frame, name, number);
         tools.append(tool);
       });
       body.append(tools);
