@@ -40,7 +40,7 @@ The "Selected work" section (case cards and filter) is removed for now; it's in 
   - Blocks: pink #fbbad4, rosewood #a45b61, blue #486adc, light blue #bfcef7.
   - Buttons pink. Nav pill white, no outline.
 - **Type:** PP Mori everywhere, on a five-size scale (tokens at the top of `style.css`; px at 1440 / on phones):
-  - `--text-display` 115 / 56: hero headline, service and case titles. Only the hero drops lower on narrow phones, so "matter through" fits (about 50px at 375); phones show "AI" for "Artificial Intelligence".
+  - `--text-display` 115 / 56: hero headline, service and case titles. On phones the hero's two fixed rows break onto two lines each so it keeps the display size (56px at 375); phones show "AI" for "Artificial Intelligence".
   - `--text-large` 49 / 28: intro statement, case descriptions, footer.
   - `--text-medium` 23 / 18: service descriptions.
   - `--text-small` 19 / 15: labels, lists, links, buttons, nav, small print.
