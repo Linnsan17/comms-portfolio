@@ -1178,8 +1178,7 @@ html.lenis body {
   font-size: inherit;
   font-weight: 400;
   line-height: inherit;
-  letter-spacing: -0.05em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
 .area__body {
@@ -1209,7 +1208,8 @@ html.lenis body {
   background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
-.area__media video {
+.area__media video,
+.area__media img {
   display: block;
   width: 100%;
   height: 100%;
