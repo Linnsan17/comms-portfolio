@@ -759,21 +759,24 @@ p {
 
 /* On narrow phones the size drops below 40px just enough for the longest
    word, "Artificial Intelligence." (9.6em), to fit inside the margins */
+/* Set like the service card titles: regular weight, pure black, tight
+   0.88 line height */
 .hero-title {
   --swap: var(--roll-duration) var(--roll-ease);
   margin: 0;
-  color: var(--ink);
+  color: var(--block-1-ink);
   font-size: clamp(min(40px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 9.6), 6.2vw, 96px);
   font-weight: 400;
-  line-height: 1.05;
+  line-height: 0.88;
   letter-spacing: -0.02em;
 }
 
 /* Each row is a mask, with room below for descenders */
+/* Room above for ascenders, which reach just over the tight line box */
 .hero-title__row {
   display: block;
-  padding-bottom: 0.14em;
-  margin-bottom: -0.14em;
+  padding: 0.05em 0 0.14em;
+  margin: -0.05em 0 -0.14em;
   overflow: hidden;
 }
 
@@ -784,8 +787,8 @@ p {
 .hero-title__slot {
   position: relative;
   display: block;
-  height: 1.05em;
-  clip-path: inset(0 -100vw);
+  height: 0.88em;
+  clip-path: inset(-0.05em -100vw);
   transition: width var(--swap), transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) 180ms;
 }
 
