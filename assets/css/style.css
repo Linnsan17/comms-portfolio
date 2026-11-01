@@ -92,6 +92,14 @@
   /* Corners on every photo and video box (cards, portrait, case images) */
   --radius-media: 10px;
 
+  /* Type scale: five sizes for the whole site (px at a 1440px window /
+     on phones). Everything on the home page and the footer uses these. */
+  --text-display: clamp(56px, 8vw, 168px); /* 115 / 56: hero headline, service and case titles */
+  --text-large: clamp(24px, 3.41vw, 66px); /* 49 / 28: intro statement, case descriptions, footer */
+  --text-medium: clamp(18px, 1.6vw, 29px); /* 23 / 18: service descriptions */
+  --text-small: clamp(15px, 1.32vw, 22px); /* 19 / 15: labels, lists, links, buttons, nav, small print */
+  --text-xsmall: clamp(14px, 1.05vw, 19px); /* 15 / 14: service lists */
+
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-body);
 
@@ -221,7 +229,7 @@ a {
 .pill-link {
   display: inline-flex;
   color: var(--ink);
-  font-size: 19px;
+  font-size: var(--text-small);
   text-decoration: none;
 }
 
@@ -262,15 +270,11 @@ a {
   :root {
     --pill-h: 36px;
   }
-
-  .pill-link {
-    font-size: 15px;
-  }
 }
 
 .site-header__cta {
   justify-self: start;
-  font-size: 19px;
+  font-size: var(--text-small);
 }
 
 .site-header__logo {
@@ -334,9 +338,9 @@ a {
   cursor: pointer;
 }
 
-/* Nav text is the same size as the buttons (19px, 15px on phones) */
+/* Nav text is the same size as the buttons */
 .site-nav__label {
-  font-size: 19px;
+  font-size: var(--text-small);
 }
 
 /* The nav is white, no outline, so it stands out on the beige hero */
@@ -351,7 +355,7 @@ a {
   margin: 0;
   padding-inline: 29px;
   list-style: none;
-  font-size: 19px;
+  font-size: var(--text-small);
 }
 
 .site-nav__links li,
@@ -382,11 +386,6 @@ a {
     display: flex;
   }
 
-  .site-header__cta,
-  .site-nav__label,
-  .site-nav__links {
-    font-size: 15px;
-  }
 
   .site-header {
     --logo-h: 40px;
@@ -806,10 +805,11 @@ p {
   opacity: 0;
 }
 
-/* Set exactly like the service card titles (.service__title): the same
-   size, regular weight, pure black, tight 0.88 line height. Only on narrow
-   phones does it drop below their 56px, just enough for the longest word,
-   "Artificial Intelligence." (9.3em), to fit inside the margins. */
+/* Set exactly like the service card titles: the display size
+   (--text-display), regular weight, pure black, tight 0.88 line height.
+   Only on narrow phones does it drop below the display size's 56px, just
+   enough for the longest word, "Artificial Intelligence." (9.3em), to fit
+   inside the margins. */
 .hero-title {
   --swap: var(--roll-duration) var(--roll-ease);
   margin: 0;
@@ -875,6 +875,11 @@ p {
 
 
 @media (max-width: 760px) {
+  /* On phones the large size scales with the screen (28px at 375) */
+  :root {
+    --text-large: clamp(24px, 7.5vw, 34px);
+  }
+
   /* Portrait cards on phones; the footage stays upright and crops to fit */
   .stack-card {
     --w: 86.4vw;
@@ -916,7 +921,7 @@ html.lenis body {
   align-items: end;
   justify-content: space-between;
   gap: 16px;
-  font-size: clamp(14px, 1.39vw, 26px);
+  font-size: var(--text-small);
   line-height: 1.15;
 }
 
@@ -995,7 +1000,7 @@ html.lenis body {
   grid-column: 1 / 3;
   grid-row: 1;
   margin: 0;
-  font-size: clamp(56px, 8vw, 168px);
+  font-size: var(--text-display);
   font-weight: 400;
   line-height: 0.88;
   letter-spacing: -0.02em;
@@ -1042,7 +1047,7 @@ html.lenis body {
 .service__desc {
   max-width: 30.5vw;
   margin: 0;
-  font-size: clamp(18px, 1.6vw, 29px);
+  font-size: var(--text-medium);
   line-height: 1.3;
 }
 
@@ -1050,7 +1055,7 @@ html.lenis body {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: clamp(14px, 1.05vw, 19px);
+  font-size: var(--text-xsmall);
   line-height: 1.28;
 }
 
@@ -1066,13 +1071,13 @@ html.lenis body {
    block is the text, so the gap is measured to the top of its capitals
    (0.085em below the line box, at the statement's size). */
 .intro__head {
-  margin-bottom: calc(clamp(24px, 2.34vw, 44px) - 0.085 * clamp(30px, 3.9vw, 68px));
+  margin-bottom: calc(clamp(24px, 2.34vw, 44px) - 0.085 * var(--text-large));
 }
 
 .intro__text p {
   max-width: 24em;
   margin: 0;
-  font-size: clamp(30px, 3.9vw, 68px);
+  font-size: var(--text-large);
   font-weight: 600;
   line-height: 1.02;
   letter-spacing: -0.03em;
@@ -1181,7 +1186,7 @@ html.lenis body {
    being covered (--dim). */
 .areas {
   --areas-pad-x: clamp(16px, 1.68vw, 32px);
-  --areas-small: clamp(14px, 1.39vw, 26px);
+  --areas-small: var(--text-small);
   --areas-rule: rgba(0, 0, 0, 0.13);
   background: var(--paper-alt);
 }
@@ -1212,7 +1217,7 @@ html.lenis body {
   gap: 16px;
   height: 22.51vw;
   padding: 2.78vw var(--areas-pad-x) 0;
-  font-size: 7.67vw;
+  font-size: var(--text-display);
   line-height: 1;
 }
 
@@ -1238,7 +1243,7 @@ html.lenis body {
   grid-column: 1;
   max-width: 17.85em;
   margin: 0.08vw 0 0;
-  font-size: 3.39vw;
+  font-size: var(--text-large);
   line-height: 1;
   letter-spacing: -0.03em;
 }
@@ -1286,7 +1291,6 @@ html.lenis body {
   .area__head {
     height: auto;
     padding-block: 6vw 16vw;
-    font-size: 12.5vw;
   }
 
   .area__body {
@@ -1295,7 +1299,6 @@ html.lenis body {
   }
 
   .area__desc {
-    font-size: 6.4vw;
     line-height: 1.05;
   }
 
@@ -1352,10 +1355,6 @@ html.lenis body {
   .service__text {
     grid-column: 1;
     grid-row: auto;
-  }
-
-  .service__title {
-    font-size: 15vw;
   }
 
   .service__text {
@@ -1452,8 +1451,8 @@ figcaption {
 .site-footer {
   --footer-pad-x: clamp(16px, 1.68vw, 32px);
   --footer-gap: 1.55vw;
-  --footer-big: clamp(28px, 3.41vw, 66px);
-  --footer-small: clamp(14px, 1.26vw, 24px);
+  --footer-big: var(--text-large);
+  --footer-small: var(--text-small);
   --footer-rule: rgba(0, 0, 0, 0.13);
   position: relative;
   background: var(--block-1);
@@ -1531,7 +1530,7 @@ figcaption {
 
 .site-footer__label {
   margin: 0 0 2.2vw;
-  font-size: clamp(14px, 1.39vw, 26px);
+  font-size: var(--text-small);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: 0;
@@ -1599,12 +1598,7 @@ figcaption {
     row-gap: 10vw;
   }
 
-  /* One column under the other, and type that scales with the screen,
-     so the email address always fits */
-  .site-footer {
-    --footer-big: 7.5vw;
-  }
-
+  /* One column under the other, so the email address always fits */
   .site-footer__col,
   .site-footer__col--connect,
   .site-footer__col--open {

@@ -39,7 +39,14 @@ The "Selected work" section (case cards and filter) is removed for now; it's in 
   - Text #1c1c1c.
   - Blocks: pink #fbbad4, rosewood #a45b61, blue #486adc, light blue #bfcef7.
   - Buttons pink. Nav pill white, no outline.
-- **Type:** PP Mori everywhere. Buttons and nav are 600 weight at 19px (15px on phones). Labels are cap-centred: pills get 0.15em top padding, and every label holder is a flex container.
+- **Type:** PP Mori everywhere, on a five-size scale (tokens at the top of `style.css`; px at 1440 / on phones):
+  - `--text-display` 115 / 56: hero headline, service and case titles. Only the hero drops lower on narrow phones so "Artificial Intelligence." fits.
+  - `--text-large` 49 / 28: intro statement, case descriptions, footer.
+  - `--text-medium` 23 / 18: service descriptions.
+  - `--text-small` 19 / 15: labels, lists, links, buttons, nav, small print.
+  - `--text-xsmall` 15 / 14: service lists.
+
+  Use a token for any new text instead of a new size. Buttons and nav are 600 weight. Labels are cap-centred: pills get 0.15em top padding, and every label holder is a flex container.
 - **No arrows or icons** on buttons.
 - **Motion:**
   - **Roll:** `--roll-ease` cubic-bezier(0.76, 0, 0.24, 1) over 620ms, used for the headline word and every button hover (the label rolls down).
