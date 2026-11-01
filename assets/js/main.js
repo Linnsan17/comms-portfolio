@@ -401,52 +401,26 @@ function createHero(hero) {
   };
   if (phoneArt && phoneScreen) new ResizeObserver(placeScreen).observe(phoneArt);
 
-  // The cards' corners, drawn like the CSS draws every rounded box (see
-  // --corner-span in style.css): Apple's continuous curve where the browser
-  // has corner-shape, a plain circle elsewhere. A corner is a quarter
-  // superellipse reaching CORNER_SPAN radii; exponent 2 is a circle.
-  const SMOOTH = CSS.supports("corner-shape", "superellipse(2)");
-  const CORNER_SPAN = SMOOTH ? 1.6 : 1;
-  const CORNER_EXP = SMOOTH ? 2 ** 1.78 : 2;
-  const CORNER = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--radius-card")) || 28; // px on screen
-  const bend = (v) => Math.sign(v) * Math.abs(v) ** (2 / CORNER_EXP);
-  // A quarter turn round one corner, rx and ry the curve's reach as shares
-  // of the box's width and height
-  const corner = (pts, cx, cy, rx, ry, from) => {
-    for (let i = 0; i <= 8; i++) {
-      const a = from + (Math.PI / 2) * (i / 8);
-      pts.push([cx + rx * bend(Math.cos(a)), cy + ry * bend(Math.sin(a))]);
-    }
-  };
-  const toPolygon = (pts) =>
-    `polygon(${pts.map(([px, py]) => `${(px * 100).toFixed(2)}% ${(py * 100).toFixed(2)}%`).join(",")})`;
-  const cardPolygon = (rx, ry) => {
-    const pts = [];
-    corner(pts, 1 - rx, 1 - ry, rx, ry, 0);
-    corner(pts, rx, 1 - ry, rx, ry, Math.PI / 2);
-    corner(pts, rx, ry, rx, ry, Math.PI);
-    corner(pts, 1 - rx, ry, rx, ry, (3 * Math.PI) / 2);
-    return toPolygon(pts);
-  };
-  // The phone layer's clip: the card's shape, plus everything above the top
-  // edge so the phone pokes out
+  // The phone layer's clip: the card's rounded rectangle, rx and ry its
+  // corners as shares of its width and height, plus everything above the
+  // top edge so the phone pokes out
   const popPolygon = (rx, ry) => {
     const pts = [[-0.2, -1], [1.2, -1], [1.2, 0.04], [1, 0.04]];
-    corner(pts, 1 - rx, 1 - ry, rx, ry, 0);
-    corner(pts, rx, 1 - ry, rx, ry, Math.PI / 2);
+    const arc = (cx, cy, from) => {
+      for (let i = 0; i <= 6; i++) {
+        const a = from + (Math.PI / 2) * (i / 6);
+        pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]);
+      }
+    };
+    arc(1 - rx, 1 - ry, 0);
+    arc(rx, 1 - ry, Math.PI / 2);
     pts.push([0, 0.04], [-0.2, 0.04]);
     return toPolygon(pts);
   };
-  // Each card's size, and the corner its clip was last drawn for
-  const cardSize = new Map();
-  const cardCorner = new Map();
-  const sizeObserver = new ResizeObserver((entries) =>
-    entries.forEach(({ target }) => {
-      cardSize.set(target, [target.offsetWidth, target.offsetHeight]);
-      cardCorner.delete(target);
-    })
-  );
-  cards.forEach((card) => sizeObserver.observe(card));
+  const toPolygon = (pts) =>
+    `polygon(${pts.map(([px, py]) => `${(px * 100).toFixed(2)}% ${(py * 100).toFixed(2)}%`).join(",")})`;
+  const CORNER = 16; // px on screen, a little rounder than --radius-media for the bigger cards
+  let lastClip = null;
 
   const pointer = { x: 0, y: 0 };
   const current = { x: 0, y: 0 };
@@ -564,17 +538,8 @@ function createHero(hero) {
       const y = driftY + (mid - i) * gap * current.y;
       card.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
       card.style.visibility = i === 0 || t >= GROW_AT ? "" : "hidden";
-      // Corners that stay the same on screen however far the card is scaled;
-      // the front card's also shapes the phone layer
-      const size = cardSize.get(card);
-      const reach = ((CORNER * CORNER_SPAN) / Math.max(scale, 0.05)).toFixed(1);
-      if (size && cardCorner.get(card) !== reach) {
-        cardCorner.set(card, reach);
-        const rx = Math.min(0.5, reach / size[0]);
-        const ry = Math.min(0.5, reach / size[1]);
-        card.style.setProperty("--card-clip", cardPolygon(rx, ry));
-        if (i === 0 && phoneLayer) phoneLayer.style.clipPath = popPolygon(rx, ry);
-      }
+      // Corners that stay the same on screen however far the card is scaled
+      card.style.setProperty("--corner", `${(CORNER / Math.max(scale, 0.05)).toFixed(1)}px`);
     });
 
     // The headline copy shows only over the cards and the phone screen
@@ -592,6 +557,16 @@ function createHero(hero) {
         )
         .join("");
       lightTitle.style.clipPath = `path("${path}")`;
+    }
+
+    // The phone layer's clip follows the front card's corners
+    if (phoneLayer) {
+      const corner = cards[0].style.getPropertyValue("--corner");
+      if (corner !== lastClip) {
+        const r = parseFloat(corner);
+        phoneLayer.style.clipPath = popPolygon(Math.min(0.5, r / cards[0].offsetWidth), Math.min(0.5, r / cards[0].offsetHeight));
+        lastClip = corner;
+      }
     }
 
     const settle = 1 - growAll;
