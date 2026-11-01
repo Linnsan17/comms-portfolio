@@ -821,8 +821,20 @@ p {
 
 
 @media (max-width: 760px) {
+  /* Portrait cards on phones; the footage stays upright and crops to fit */
   .stack-card {
     --w: 86.4vw;
+    aspect-ratio: 1 / 1.45;
+    margin-top: calc(var(--w) / var(--shrink, 1) * -0.725);
+  }
+
+  /* In the tall card the phone is scaled up until the arm reaches the
+     card's bottom edge: its face is 1.25 card widths tall, centred, with
+     the top quarter of it above the card */
+  .stack-card__art {
+    top: -21.55%;
+    left: 4.3%;
+    width: 192.2%;
   }
 }
 
