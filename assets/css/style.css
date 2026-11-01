@@ -764,7 +764,7 @@ p {
   margin: 0;
   color: var(--ink);
   font-size: clamp(min(40px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 9.6), 6.2vw, 96px);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
