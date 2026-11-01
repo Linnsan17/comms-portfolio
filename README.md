@@ -74,7 +74,9 @@ swiftc -O tools/transcode.swift -o /tmp/transcode
 
 ## Hero phone
 
-The front hero card shows a hand holding a phone that plays `assets/video/hero-phone.mp4`. The hand and phone are cut out of the hero photo (`assets/img/hero/phone-hand.webp`), and main.js warps the video onto the phone's screen. To redo the cut-out:
+The front hero card shows a hand holding a phone. On its pink screen the letters of LINN HARRVIK drop in one by one (L, I, N, N, then the surname), each with its own physics, and pile up so LINN lands along the bottom. A mouse moving over the screen shoves them. After a few seconds the floor opens, they fall out and drop in again. The physics is [Matter.js](https://brm.io/matter-js/) 0.20.0 from jsDelivr; the settings are at the top of `createPhoneLetters` in `main.js`.
+
+The hand and phone are cut out of the hero photo (`assets/img/hero/phone-hand.webp`), with a hole for the screen. To redo the cut-out:
 
 1. Lift the subject with macOS Vision. This writes the cut-out and `photo-mask.png`:
 
@@ -83,15 +85,13 @@ The front hero card shows a hand holding a phone that plays `assets/video/hero-p
    /tmp/lift photo.png photo.png
    ```
 
-2. Clean the edges and get the screen corners:
+2. Clean the edges, cut the screen hole and get the screen's corners:
 
    ```bash
    python3 tools/phone_cutout.py photo.png photo-mask.png assets/img/hero/phone-hand.webp
    ```
 
    It prints `PHONE_SCREEN`; paste the value into `main.js`.
-
-To show another video on the phone, replace `hero-phone.mp4` and its poster `hero-phone.jpg`. Any 9:16 video works; the sides are cropped slightly to fit the screen.
 
 ## Tool logos
 

@@ -707,8 +707,36 @@ p {
   visibility: hidden;
 }
 
-.stack-card .stack-card__screen video {
-  border-radius: 0;
+/* The screen: Linn's name in letters that drop in and pile up (main.js) */
+.stack-card__screen {
+  background: var(--block-1);
+}
+
+.stack-card__screen canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Markers on the screen's corners: where they land on the page tells
+   main.js where the pointer is on the tilted screen */
+.stack-card__corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.stack-card__corner:nth-of-type(2) {
+  left: 100%;
+}
+
+.stack-card__corner:nth-of-type(3) {
+  top: 100%;
+  left: 100%;
+}
+
+.stack-card__corner:nth-of-type(4) {
+  top: 100%;
 }
 
 /* Headline: "Making brands / matter through / [word]." on three rows at

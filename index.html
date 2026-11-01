@@ -10,6 +10,7 @@
   <script>document.documentElement.classList.add("js")</script>
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js" defer></script>
   <script src="/assets/js/main.js" defer></script>
 </head>
 <body>
@@ -39,7 +40,10 @@
           <div class="stack-card stack-card--phone" style="--c: var(--phone-gradient)">
             <div class="stack-card__phone">
               <div class="stack-card__art" data-phone>
-                <div class="stack-card__screen" data-phone-screen><video src="/assets/video/hero-phone.mp4" poster="/assets/video/hero-phone.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+                <div class="stack-card__screen" data-phone-screen>
+                  <canvas data-phone-letters></canvas>
+                  <span class="stack-card__corner" data-corner></span><span class="stack-card__corner" data-corner></span><span class="stack-card__corner" data-corner></span><span class="stack-card__corner" data-corner></span>
+                </div>
                 <img src="/assets/img/hero/phone-hand.webp" alt="" width="760" height="705">
               </div>
             </div>

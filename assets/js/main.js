@@ -438,8 +438,22 @@ function createHero(hero) {
     phoneScreen.style.borderRadius = `${width * 0.13}px`;
     phoneScreen.style.transform = quadMatrix(width, width / SCREEN_ASPECT, quad);
     phoneScreen.classList.add("is-placed");
+    letters?.resize(width, width / SCREEN_ASPECT);
   };
-  if (phoneArt && phoneScreen) new ResizeObserver(placeScreen).observe(phoneArt);
+  let letters = null;
+  if (phoneArt && phoneScreen) {
+    new ResizeObserver(placeScreen).observe(phoneArt);
+    // The letters are measured in PP Mori, so wait for it
+    if (window.Matter) {
+      document.fonts
+        .load('600 130px "PP Mori"')
+        .catch(() => {})
+        .then(() => {
+          letters = createPhoneLetters(phoneScreen, SCREEN_ASPECT);
+          placeScreen();
+        });
+    }
+  }
 
   // The phone layer's clip: the card's shape with its curved edges traced
   // as a polygon, plus everything above the top edge so the phone pokes out
@@ -513,6 +527,7 @@ function createHero(hero) {
       copy?.classList.add("is-in");
       if (rotator) startRotator(rotator);
     }
+    letters?.step(time, inView && t >= GROW_AT);
     if (!inView && t > FOLLOW_AT + SWING) return;
 
     const appear = hard(t / APPEAR);
@@ -685,9 +700,179 @@ function createLogoWave(section) {
   };
 }
 
-// The CSS matrix3d that warps a w×h box onto a quad (top left, top right,
-// bottom right, bottom left), for laying flat content onto a photo
-function quadMatrix(w, h, [[x0, y0], [x1, y1], [x2, y2], [x3, y3]]) {
+// The hero phone's screen: the letters of Linn's name drop in one by one,
+// in order (L, I, N, N, then HARRVIK), each its own body, and pile up so
+// LINN lands along the bottom. A pointer moving over the screen shoves
+// them. After a while the floor opens, they fall out, and they drop in
+// again, like the reference. Reduced motion: the settled pile, still.
+// The world is measured in units, WORLD across the screen.
+function createPhoneLetters(screen, aspect) {
+  const { Engine, Bodies, Body, Composite } = Matter;
+  const canvas = screen.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  const corners = [...screen.querySelectorAll("[data-corner]")];
+
+  const NAME = "LINNHARRVIK";
+  const WORLD = 400;
+  const HEIGHT = WORLD / aspect;
+  const SIZE = 130; // font size: LINN spans about three quarters of the screen
+  const EDGE = 12; // keeps letters clear of the bezel
+  const DROP_GAP = 160; // ms between letters
+  const HOLD = 6500; // ms the pile stays before the floor opens
+  const REACH = 140; // how close the pointer has to come to move a letter
+  const MAX_SHOVE = 22; // fastest a shove sends a letter, units per step
+  const STEP = 1000 / 60;
+  const pink = getComputedStyle(screen).backgroundColor;
+
+  const engine = Engine.create({ gravity: { y: 1.6 } });
+  const wall = { isStatic: true };
+  const floor = Bodies.rectangle(WORLD / 2, HEIGHT - EDGE + 100, WORLD * 3, 200, wall);
+  Composite.add(engine.world, [
+    Bodies.rectangle(EDGE - 100, 0, 200, HEIGHT * 4, wall),
+    Bodies.rectangle(WORLD - EDGE + 100, 0, 200, HEIGHT * 4, wall),
+    floor,
+  ]);
+
+  let glyphs = [];
+  let bodies = [];
+  let cycleStart = null;
+  let floorOpen = false;
+  let clock = 0;
+  let lastTime = null;
+  let behind = 0;
+  let pointer = null;
+
+  // Glyph boxes in PP Mori SemiBold: LINN gets slots across the bottom,
+  // the rest drop wherever they fit
+  function measure() {
+    ctx.font = `600 ${SIZE}px "PP Mori", sans-serif`;
+    const cap = SIZE * 0.7;
+    glyphs = [...NAME].map((char) => ({ char, advance: ctx.measureText(char).width, cap }));
+    const first = glyphs.slice(0, 4);
+    const span = first.reduce((sum, glyph) => sum + glyph.advance, 0) + 3 * 6;
+    let x = (WORLD - span) / 2;
+    first.forEach((glyph) => {
+      glyph.x = x + glyph.advance / 2;
+      x += glyph.advance + 6;
+    });
+  }
+
+  function drop(i) {
+    const glyph = glyphs[i];
+    const x = glyph.x ?? EDGE + glyph.advance / 2 + Math.random() * (WORLD - 2 * EDGE - glyph.advance);
+    const body = Bodies.rectangle(x, -glyph.cap, glyph.advance * 0.9, glyph.cap, {
+      angle: i < 4 ? 0 : (Math.random() - 0.5) * 0.6,
+      chamfer: { radius: 6 },
+      friction: 0.6,
+      restitution: 0.15,
+    });
+    body.glyph = glyph;
+    bodies.push(body);
+    Composite.add(engine.world, body);
+  }
+
+  // One fixed physics step of the cycle: drop in, hold, fall out, again
+  function tick() {
+    clock += STEP;
+    if (cycleStart === null) cycleStart = clock;
+    const since = clock - cycleStart;
+    while (bodies.length < glyphs.length && since >= bodies.length * DROP_GAP) drop(bodies.length);
+    if (!floorOpen && since > glyphs.length * DROP_GAP + HOLD) {
+      Composite.remove(engine.world, floor);
+      floorOpen = true;
+    }
+    if (floorOpen && bodies.every((body) => body.position.y > HEIGHT + 300)) {
+      Composite.remove(engine.world, bodies);
+      bodies = [];
+      Composite.add(engine.world, floor);
+      floorOpen = false;
+      cycleStart = clock + 500;
+    }
+    Engine.update(engine, STEP);
+  }
+
+  function draw() {
+    const scale = canvas.width / WORLD;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = pink;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#000";
+    ctx.font = `600 ${SIZE}px "PP Mori", sans-serif`;
+    for (const body of bodies) {
+      const { advance, cap, char } = body.glyph;
+      ctx.setTransform(scale, 0, 0, scale, body.position.x * scale, body.position.y * scale);
+      ctx.rotate(body.angle);
+      ctx.fillText(char, -advance / 2, cap / 2);
+    }
+  }
+
+  // Where the pointer is on the screen, in world units: the corner markers
+  // show where the tilted screen sits on the page
+  function toWorld(x, y) {
+    const quad = corners.map((corner) => {
+      const r = corner.getBoundingClientRect();
+      return [r.left, r.top];
+    });
+    const [u, v] = quadToSquare(quad, x, y);
+    return u > -0.1 && u < 1.1 && v > -0.1 && v < 1.1 ? { x: u * WORLD, y: v * HEIGHT } : null;
+  }
+
+  // Letters near the pointer get carried along with it and nudged away
+  addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "mouse" || reduceMotion) return;
+    const next = toWorld(e.clientX, e.clientY);
+    if (next && pointer) {
+      const dx = next.x - pointer.x;
+      const dy = next.y - pointer.y;
+      for (const body of bodies) {
+        const ax = body.position.x - next.x;
+        const ay = body.position.y - next.y;
+        const distance = Math.hypot(ax, ay);
+        if (distance > REACH) continue;
+        const strength = 1 - distance / REACH;
+        const push = (strength * 3) / (distance || 1);
+        const vx = body.velocity.x + dx * 0.25 * strength + ax * push;
+        const vy = body.velocity.y + dy * 0.25 * strength + ay * push;
+        const speed = Math.hypot(vx, vy);
+        const cap = Math.min(1, MAX_SHOVE / speed);
+        Body.setVelocity(body, { x: vx * cap, y: vy * cap });
+      }
+    }
+    pointer = next;
+  });
+
+  return {
+    // Called when the screen is laid out: match the canvas to its pixels
+    resize(width, height) {
+      const ratio = devicePixelRatio || 1;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      if (!glyphs.length) measure();
+      if (reduceMotion && !bodies.length) {
+        while (clock < glyphs.length * DROP_GAP + 3000) tick();
+      }
+      draw();
+    },
+    // Called every frame from the hero; runs only while it's on screen
+    step(time, active) {
+      const dt = lastTime === null ? 0 : Math.min(100, time - lastTime);
+      lastTime = time;
+      if (!active || reduceMotion || !glyphs.length) return;
+      // Fixed steps, however fast the screen refreshes
+      behind += dt;
+      while (behind >= STEP) {
+        tick();
+        behind -= STEP;
+      }
+      draw();
+    },
+  };
+}
+
+// The perspective warp of a unit square onto a quad (top left, top right,
+// bottom right, bottom left): a point (u, v) lands on
+// ((a u + b v + x0) / (g u + k v + 1), (d u + e v + y0) / (g u + k v + 1))
+function squareToQuad([[x0, y0], [x1, y1], [x2, y2], [x3, y3]]) {
   const dx1 = x1 - x2;
   const dx2 = x3 - x2;
   const dx3 = x0 - x1 + x2 - x3;
@@ -697,11 +882,25 @@ function quadMatrix(w, h, [[x0, y0], [x1, y1], [x2, y2], [x3, y3]]) {
   const den = dx1 * dy2 - dx2 * dy1;
   const g = (dx3 * dy2 - dx2 * dy3) / den;
   const k = (dx1 * dy3 - dx3 * dy1) / den;
-  const a = x1 - x0 + g * x1;
-  const b = x3 - x0 + k * x3;
-  const d = y1 - y0 + g * y1;
-  const e = y3 - y0 + k * y3;
+  return { a: x1 - x0 + g * x1, b: x3 - x0 + k * x3, d: y1 - y0 + g * y1, e: y3 - y0 + k * y3, g, k, x0, y0 };
+}
+
+// The CSS matrix3d that warps a w×h box onto a quad, for laying flat
+// content onto a photo
+function quadMatrix(w, h, quad) {
+  const { a, b, d, e, g, k, x0, y0 } = squareToQuad(quad);
   return `matrix3d(${a / w},${d / w},0,${g / w},${b / h},${e / h},0,${k / h},0,0,1,0,${x0},${y0},0,1)`;
+}
+
+// The other way: where a point inside the quad sits on the unit square
+function quadToSquare(quad, x, y) {
+  const { a, b, d, e, g, k, x0, y0 } = squareToQuad(quad);
+  const p = a - g * x;
+  const q = b - k * x;
+  const r = d - g * y;
+  const s = e - k * y;
+  const det = p * s - q * r;
+  return [((x - x0) * s - q * (y - y0)) / det, (p * (y - y0) - r * (x - x0)) / det];
 }
 
 // Header: on phones the links fold behind a "Menu" pill, and the pills
