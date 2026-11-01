@@ -1184,9 +1184,12 @@ html.lenis body {
   border-top: 1px solid var(--areas-rule);
 }
 
+/* Room for four lines whatever the summary's length, so every card is the
+   same height */
 .area__desc {
   grid-column: 1;
   max-width: 17.85em;
+  min-height: 4em;
   margin: 0.08vw 0 0;
   font-size: var(--text-large);
   line-height: 1;
@@ -1262,6 +1265,7 @@ button.section-head__link {
   }
 
   .area__desc {
+    min-height: 0;
     line-height: 1.05;
   }
 
