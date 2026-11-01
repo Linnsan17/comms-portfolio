@@ -919,8 +919,11 @@ html.lenis body {
   background: var(--paper-alt);
 }
 
+/* Every section head sits the same distance above its block. Here the
+   block is the text, so the gap is measured to the top of its capitals
+   (0.085em below the line box, at the statement's size). */
 .intro__head {
-  margin-bottom: clamp(56px, 9vw, 170px);
+  margin-bottom: calc(clamp(24px, 2.34vw, 44px) - 0.085 * clamp(30px, 3.9vw, 68px));
 }
 
 .intro__text p {
@@ -965,6 +968,7 @@ html.lenis body {
 
 .logo-wave {
   --d: clamp(150px, 14.93vw, 290px);
+  padding-bottom: calc(var(--d) * 0.2);
   overflow: hidden;
   background: var(--paper-alt);
 }
@@ -973,11 +977,15 @@ html.lenis body {
   padding: clamp(48px, 6vw, 110px) clamp(16px, 1.68vw, 32px) clamp(24px, 2.34vw, 44px);
 }
 
+/* Just tall enough for the wave at rest (main.js: WAVE_HEIGHT 0.254 of a
+   badge each way), so the highest badges sit the same distance under the
+   label as every other block. At speed the wave swells into the space
+   above and into the section's bottom padding. */
 .logo-wave__list {
   display: flex;
   gap: calc(var(--d) * 0.128);
   align-items: center;
-  height: calc(var(--d) * 2);
+  height: calc(var(--d) * 1.508);
   margin: 0;
   padding: 0;
   list-style: none;

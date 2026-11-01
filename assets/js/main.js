@@ -549,10 +549,15 @@ function createLogoWave(section) {
   let inView = false;
 
   // Repeat the badges until they cover the screen with one spare on each
-  // side, in whole rounds so the order never breaks where the row wraps
+  // side, in whole rounds so the order never breaks where the row wraps.
+  // Until the styles apply, a badge is as wide as the page; measuring then
+  // would space them a page apart with a wave as tall, so wait.
   function measure() {
-    width = section.clientWidth;
-    size = originals[0].offsetWidth;
+    const sectionWidth = section.clientWidth;
+    const badge = originals[0].offsetWidth;
+    if (!badge || badge >= sectionWidth) return false;
+    width = sectionWidth;
+    size = badge;
     pitch = size * PITCH;
     const per = originals.length;
     const count = Math.ceil((Math.ceil(width / pitch) + 2) / per) * per;
@@ -566,9 +571,11 @@ function createLogoWave(section) {
       items.push(clone);
     }
     track = items.length * pitch;
+    return true;
   }
 
   function place() {
+    if (!track) return;
     const k = (2 * Math.PI) / (WAVE_LENGTH * width);
     const height = WAVE_HEIGHT * size * (1 + swell);
     const phase = PHASE + TRAVEL * k * offset;
@@ -579,13 +586,18 @@ function createLogoWave(section) {
     });
   }
 
-  measure();
-  place();
-  section.classList.add("is-ready");
-  addEventListener("resize", () => {
-    measure();
+  // Measure whenever the section or a badge changes size: on resize, and
+  // whenever the styles settle after this script has run. The row stays
+  // hidden until it has been placed once.
+  function fit() {
+    if (!measure()) return;
     place();
-  });
+    section.classList.add("is-ready");
+  }
+  fit();
+  const resizes = new ResizeObserver(fit);
+  resizes.observe(section);
+  resizes.observe(originals[0]);
   if (reduceMotion) return null;
   new IntersectionObserver(([entry]) => (inView = entry.isIntersecting), {
     rootMargin: "100px 0px",
@@ -597,8 +609,11 @@ function createLogoWave(section) {
     last = time;
     lastY = scrollY;
     if (!dt) return;
-    if (dy) dir = dy > 0 ? -1 : 1;
-    const push = Math.min(MAX_SPEED * width, (Math.abs(dy) / dt) * SCROLL_PUSH);
+    // More than a screen in one frame is a jump, not a scroll: the browser
+    // restoring the position on reload, or the start of a long anchor scroll
+    const jump = Math.abs(dy) > innerHeight;
+    if (dy && !jump) dir = dy > 0 ? -1 : 1;
+    const push = jump ? 0 : Math.min(MAX_SPEED * width, (Math.abs(dy) / dt) * SCROLL_PUSH);
     const target = dir * (DRIFT * width + push);
     speed += (target - speed) * (1 - Math.exp(-dt / 0.12));
     offset += speed * dt;
@@ -754,6 +769,14 @@ addEventListener("resize", () => {
 });
 
 measureStack();
+// Fonts and media can settle after this runs and move the cards down the
+// page, so measure again whenever the page changes height
+if (stackCards.length) {
+  new ResizeObserver(() => {
+    measureStack();
+    updateStack();
+  }).observe(document.body);
+}
 let lastScroll = -1;
 requestAnimationFrame(function frame(time) {
   lenis?.raf(time);
