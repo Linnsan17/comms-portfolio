@@ -644,6 +644,67 @@ p {
   object-fit: cover;
 }
 
+/* Front card: a hand holding a phone that plays a reel, cut out of the
+   hero photo. The card's colour sits behind, the arm is cut off by the
+   card, and the top of the phone pokes out above it (#pillow-pop is the
+   card's shape plus everything above its top edge). */
+.stack-card--phone {
+  overflow: visible;
+  background: none;
+  clip-path: none;
+}
+
+.stack-card--phone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--c);
+  clip-path: url(#pillow);
+}
+
+.stack-card__phone {
+  position: absolute;
+  inset: 0;
+  clip-path: url(#pillow-pop);
+}
+
+/* The phone's face is as tall as the card, with its top quarter above
+   the card; the face is 625 of the cut-out's 891px height */
+.stack-card__art {
+  position: absolute;
+  top: -25%;
+  left: 24.8%;
+  width: 106%;
+}
+
+.stack-card .stack-card__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+/* Laid out at a phone screen's own shape, then warped onto the photo's
+   screen by main.js (matrix3d), so it follows the phone's tilt */
+.stack-card__screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 1000px;
+  overflow: hidden;
+  border-radius: 62px;
+  transform-origin: 0 0;
+}
+
+.stack-card__screen:not(.is-placed) {
+  visibility: hidden;
+}
+
+.stack-card .stack-card__screen video {
+  border-radius: 0;
+}
+
 /* Headline: "Making brands / matter through / [word]." on three rows at
    every size. The word rotates; the rows above it never move. The widest
    row ("matter through") is about 7em, so 40-96px always fits. */

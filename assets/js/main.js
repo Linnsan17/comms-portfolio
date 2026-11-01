@@ -376,6 +376,7 @@ function createHero(hero) {
   const cards = [...hero.querySelectorAll(".stack-card")]; // front first
   const cardsWrap = hero.querySelector("[data-hero-cards]");
   const pillow = hero.querySelector("#pillow path");
+  const pillowPop = hero.querySelector("#pillow-pop path");
   const copy = hero.querySelector("[data-hero-copy]");
   const rotator = hero.querySelector("[data-rotator]");
   const count = cards.length;
@@ -411,6 +412,22 @@ function createHero(hero) {
       `Q0.5 ${1 - y} 0.06 1 Q0 1 0 0.913 Q${x} 0.5 0 0.087 Q0 0 0.06 0 Z`;
   };
   let lastPinch = null;
+
+  // Front card's phone: the reel is warped onto the photo's screen. Its
+  // corners inside the bezel (top left, top right, bottom right, bottom
+  // left), as fractions of the cut-out, traced from the blacked-out screen.
+  const PHONE_SCREEN = [[0.06683, 0.01247], [0.34567, 0.02533], [0.3982, 0.69488], [0.14172, 0.70216]];
+  const phoneArt = hero.querySelector("[data-phone]");
+  const phoneScreen = hero.querySelector("[data-phone-screen]");
+  const placeScreen = () => {
+    const w = phoneArt.offsetWidth;
+    const h = phoneArt.offsetHeight;
+    if (!w || !h) return;
+    const quad = PHONE_SCREEN.map(([x, y]) => [x * w, y * h]);
+    phoneScreen.style.transform = quadMatrix(phoneScreen.offsetWidth, phoneScreen.offsetHeight, quad);
+    phoneScreen.classList.add("is-placed");
+  };
+  if (phoneArt && phoneScreen) new ResizeObserver(placeScreen).observe(phoneArt);
 
   const pointer = { x: 0, y: 0 };
   const current = { x: 0, y: 0 };
@@ -464,6 +481,7 @@ function createHero(hero) {
     const rounded = Math.round(pinch * 100) / 100;
     if (pillow && rounded !== lastPinch) {
       pillow.setAttribute("d", pillowPath(rounded));
+      pillowPop?.setAttribute("d", pillowPath(rounded));
       lastPinch = rounded;
     }
 
@@ -623,6 +641,25 @@ function createLogoWave(section) {
     // touch the page while it's in view
     if (inView) place();
   };
+}
+
+// The CSS matrix3d that warps a w×h box onto a quad (top left, top right,
+// bottom right, bottom left), for laying flat content onto a photo
+function quadMatrix(w, h, [[x0, y0], [x1, y1], [x2, y2], [x3, y3]]) {
+  const dx1 = x1 - x2;
+  const dx2 = x3 - x2;
+  const dx3 = x0 - x1 + x2 - x3;
+  const dy1 = y1 - y2;
+  const dy2 = y3 - y2;
+  const dy3 = y0 - y1 + y2 - y3;
+  const den = dx1 * dy2 - dx2 * dy1;
+  const g = (dx3 * dy2 - dx2 * dy3) / den;
+  const k = (dx1 * dy3 - dx3 * dy1) / den;
+  const a = x1 - x0 + g * x1;
+  const b = x3 - x0 + k * x3;
+  const d = y1 - y0 + g * y1;
+  const e = y3 - y0 + k * y3;
+  return `matrix3d(${a / w},${d / w},0,${g / w},${b / h},${e / h},0,${k / h},0,0,1,0,${x0},${y0},0,1)`;
 }
 
 // Header: on phones the links fold behind a "Menu" pill, and the pills

@@ -72,6 +72,27 @@ swiftc -O tools/transcode.swift -o /tmp/transcode
 /tmp/transcode "in.mp4" assets/video/name.mp4 assets/video/name.jpg 960 540 1500000
 ```
 
+## Hero phone
+
+The front hero card shows a hand holding a phone that plays `assets/video/hero-phone.mp4`. The hand and phone are cut out of the hero photo (`assets/img/hero/phone-hand.webp`), and main.js warps the video onto the phone's screen. To redo the cut-out:
+
+1. Lift the subject with macOS Vision. This writes the cut-out and `photo-mask.png`:
+
+   ```bash
+   swiftc -O tools/lift.swift -o /tmp/lift
+   /tmp/lift photo.png photo.png
+   ```
+
+2. Clean the edges and get the screen corners:
+
+   ```bash
+   python3 tools/phone_cutout.py photo.png photo-mask.png assets/img/hero/phone-hand.webp
+   ```
+
+   It prints `PHONE_SCREEN`; paste the value into `main.js`.
+
+To show another video on the phone, replace `hero-phone.mp4` and its poster `hero-phone.jpg`. Any 9:16 video works; the sides are cropped slightly to fit the screen.
+
 ## Tool logos
 
 The logo wave after the introduction shows the tools in `assets/img/tools/`. To add one:

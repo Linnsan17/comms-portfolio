@@ -36,7 +36,14 @@
     <section class="hero-stack" data-hero aria-labelledby="hero-title">
       <div class="hero-stack__stage" aria-hidden="true">
         <div class="hero-stack__cards" data-hero-cards>
-          <div class="stack-card" style="--c: var(--block-2)"><video src="/assets/video/work-3d.mp4" poster="/assets/video/work-3d.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+          <div class="stack-card stack-card--phone" style="--c: var(--block-2)">
+            <div class="stack-card__phone">
+              <div class="stack-card__art" data-phone>
+                <img src="/assets/img/hero/phone-hand.webp" alt="" width="760" height="705">
+                <div class="stack-card__screen" data-phone-screen><video src="/assets/video/hero-phone.mp4" poster="/assets/video/hero-phone.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
+              </div>
+            </div>
+          </div>
           <div class="stack-card" style="--c: var(--block-1)"><video src="/assets/video/work-globe-dark.mp4" poster="/assets/video/work-globe-dark.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
           <div class="stack-card" style="--c: var(--block-4)"><video src="/assets/video/work-gravity.mp4" poster="/assets/video/work-gravity.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
           <div class="stack-card" style="--c: var(--block-3)"><video src="/assets/video/work-grid.mp4" poster="/assets/video/work-grid.jpg" muted loop playsinline preload="none" data-autoplay aria-hidden="true"></video></div>
@@ -60,6 +67,13 @@
         <!-- Rounded card with edges bowed slightly inwards, like the reel -->
         <clipPath id="pillow" clipPathUnits="objectBoundingBox">
           <path d="M0.06 0 Q0.5 0.05 0.94 0 Q1 0 1 0.087 Q0.965 0.5 1 0.913 Q1 1 0.94 1 Q0.5 0.95 0.06 1 Q0 1 0 0.913 Q0.035 0.5 0 0.087 Q0 0 0.06 0 Z"/>
+        </clipPath>
+        <!-- The front card's phone: the card's shape plus everything above its
+             top edge (down past the dip in the middle), so the phone's top
+             pokes out while the arm is cut off by the card -->
+        <clipPath id="pillow-pop" clipPathUnits="objectBoundingBox">
+          <path d="M0.06 0 Q0.5 0.05 0.94 0 Q1 0 1 0.087 Q0.965 0.5 1 0.913 Q1 1 0.94 1 Q0.5 0.95 0.06 1 Q0 1 0 0.913 Q0.035 0.5 0 0.087 Q0 0 0.06 0 Z"/>
+          <rect x="-1" y="-1" width="3" height="1.04"/>
         </clipPath>
       </svg>
     </section>
