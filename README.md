@@ -63,7 +63,7 @@ You can link to a filtered list, for example `/?tag=social#work`.
 
 ## Videos
 
-The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-homes`). The service and work cards play screen reels (`work-*`). All are in `assets/video/`. Each is a 960×540 H.264 file at about 1.5 Mbps, with no sound, plus a poster still. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
+The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-homes`), and `hero-sunset` plays behind the hand on the front card. The service and work cards play screen reels (`work-*`). All are in `assets/video/`. Each is a 960×540 H.264 file at about 1.5 Mbps, with no sound, plus a poster still. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
 
 To add or replace a reel, compress it first. This Mac has no ffmpeg, so use the Swift transcoder in `tools/`:
 
@@ -72,7 +72,7 @@ swiftc -O tools/transcode.swift -o /tmp/transcode
 /tmp/transcode "in.mp4" assets/video/name.mp4 assets/video/name.jpg 960 540 1500000
 ```
 
-Add a start and a length in seconds to keep only part of a clip, for example `... 960 540 1500000 19.56 2.92`. For a portrait clip, keep its own shape (for example `720 960`) and aim the crop with `object-position` on the video.
+Add a start and a length in seconds to keep only part of a clip, for example `... 960 540 1500000 19.56 2.92`. Add `bounce` after them to play that part forward and then backward, so a short clip loops without a jump. For a portrait clip, keep its own shape (for example `720 960`) and aim the crop with `object-position` on the video.
 
 ## Hero phone
 

@@ -1,6 +1,7 @@
-// usage: transcode <in> <out.mp4> <poster.jpg> <width> <height> <bitrate> [start s] [length s]
+// usage: transcode <in> <out.mp4> <poster.jpg> <width> <height> <bitrate> [start s] [length s] [bounce]
 // Video only (audio dropped), H.264 High, moov atom first for streaming.
 // With a start and length, only that part is kept, retimed to start at 0.
+// "bounce" plays the part forward, then backward, so it loops seamlessly.
 import AVFoundation
 import AppKit
 
@@ -9,6 +10,7 @@ let input = URL(fileURLWithPath: a[1]), output = URL(fileURLWithPath: a[2]), pos
 let width = Int(a[4])!, height = Int(a[5])!, bitrate = Int(a[6])!
 let start = a.count > 7 ? CMTime(seconds: Double(a[7])!, preferredTimescale: 600) : .zero
 let length = a.count > 8 ? CMTime(seconds: Double(a[8])!, preferredTimescale: 600) : nil
+let bounce = a.count > 9 && a[9] == "bounce"
 try? FileManager.default.removeItem(at: output)
 
 let asset = AVURLAsset(url: input)
@@ -34,10 +36,24 @@ let settings: [String: Any] = [
 let writerIn = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
 writerIn.expectsMediaDataInRealTime = false
 writer.add(writerIn)
+let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerIn, sourcePixelBufferAttributes: nil)
 
-reader.startReading()
+// For a bounce, every frame is kept, then written forward and back again
+// (without repeating the frames it turns on)
+var frames: [CVPixelBuffer] = []
+if bounce {
+  reader.startReading()
+  while let buffer = readerOut.copyNextSampleBuffer() {
+    if let image = CMSampleBufferGetImageBuffer(buffer) { frames.append(image) }
+  }
+  frames += frames.dropFirst().dropLast().reversed()
+}
+let frameTime = CMTime(value: 1, timescale: CMTimeScale(track.nominalFrameRate.rounded()))
+
+if !bounce { reader.startReading() }
 writer.startWriting()
 writer.startSession(atSourceTime: .zero)
+var next = 0
 // Shift a frame's timestamps back so a trimmed clip starts at 0
 func retimed(_ buffer: CMSampleBuffer, by offset: CMTime) -> CMSampleBuffer {
   var timing = CMSampleTimingInfo()
@@ -53,6 +69,16 @@ let queue = DispatchQueue(label: "transcode")
 let done = DispatchSemaphore(value: 0)
 writerIn.requestMediaDataWhenReady(on: queue) {
   while writerIn.isReadyForMoreMediaData {
+    if bounce {
+      if next < frames.count {
+        adaptor.append(frames[next], withPresentationTime: CMTimeMultiply(frameTime, multiplier: Int32(next)))
+        next += 1
+        continue
+      }
+      writerIn.markAsFinished()
+      writer.finishWriting { done.signal() }
+      return
+    }
     if let buffer = readerOut.copyNextSampleBuffer() {
       writerIn.append(start == .zero ? buffer : retimed(buffer, by: start))
     } else {

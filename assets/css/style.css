@@ -662,6 +662,14 @@ p {
   clip-path: url(#pillow);
 }
 
+/* Footage behind the hand, in the card's shape; the gradient under it
+   shows until it loads */
+.stack-card__backdrop {
+  position: absolute;
+  inset: 0;
+  clip-path: url(#pillow);
+}
+
 .stack-card__phone {
   position: absolute;
   inset: 0;
