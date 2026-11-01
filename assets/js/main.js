@@ -841,7 +841,7 @@ function addRoll(target) {
 
 document
   .querySelectorAll(
-    ".site-header__cta-label, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .section-head__link, .site-footer a"
+    ".site-header__cta-label, .site-nav__label, .site-nav__links a, .pill-link__text, .button, .section-head__link, .area__link, .sheet__close-label, .site-footer a"
   )
   .forEach(addRoll);
 
@@ -863,6 +863,138 @@ document.querySelectorAll("[data-copy]").forEach((link) => {
     );
   });
 });
+
+// Sheets. "View case" on a work card and "Read more" under the introduction
+// open one shared sheet, filled from the card or section around the button
+// ([data-sheet-source]): its title, its video or picture
+// ([data-sheet-media], or a template of one), its text ([data-sheet-intro]),
+// its two fact lists ([data-sheet-facts]) and the sheet-only blocks in its
+// <template data-sheet-more>. Close, Escape, a click on the dimmed page or
+// dragging the header down closes it; the page stays still underneath.
+const sheet = document.querySelector("[data-sheet]");
+
+if (sheet) {
+  const panel = sheet.querySelector(".sheet__panel");
+  const head = sheet.querySelector(".sheet__head");
+  const title = sheet.querySelector(".sheet__title");
+  const content = sheet.querySelector("[data-sheet-content]");
+  let opener = null;
+  let closeTimer = 0;
+
+  const copy = (node) => (node instanceof HTMLTemplateElement ? node.content.cloneNode(true) : node.cloneNode(true));
+
+  function fill(source) {
+    title.textContent = source.dataset.sheetTitle || source.querySelector("h3")?.textContent || "";
+    const parts = [];
+
+    const mediaSource = source.querySelector("[data-sheet-media]");
+    if (mediaSource) {
+      const media = document.createElement("div");
+      media.className = "sheet__media";
+      media.append(...copy(mediaSource).childNodes);
+      media.querySelectorAll("video").forEach((video) => {
+        video.removeAttribute("data-autoplay");
+        video.preload = "auto";
+      });
+      media.querySelectorAll("img").forEach((img) => (img.loading = "eager"));
+      parts.push(media);
+    }
+
+    const body = document.createElement("div");
+    body.className = "sheet__body";
+    const introSource = source.querySelector("[data-sheet-intro]");
+    if (introSource) {
+      const intro = document.createElement("p");
+      intro.className = "sheet__intro";
+      // The reveal splits the introduction into lines; it keeps the text whole in data-text
+      intro.textContent = (introSource.dataset.text ?? introSource.textContent).replace(/\s+/g, " ").trim();
+      body.append(intro);
+    }
+    const lists = source.querySelectorAll("[data-sheet-facts] ul");
+    if (lists.length) {
+      const facts = document.createElement("div");
+      facts.className = "sheet__facts";
+      lists.forEach((list) => facts.append(list.cloneNode(true)));
+      body.append(facts);
+    }
+    const more = source.querySelector("template[data-sheet-more]");
+    if (more) body.append(more.content.cloneNode(true));
+    parts.push(body);
+
+    content.replaceChildren(...parts);
+  }
+
+  function openSheet(trigger) {
+    clearTimeout(closeTimer);
+    fill(trigger.closest("[data-sheet-source]"));
+    opener = trigger;
+    sheet.showModal();
+    panel.scrollTop = 0;
+    lenis?.stop();
+    document.documentElement.classList.add("has-sheet");
+    sheet.getBoundingClientRect(); // start the slide from below
+    sheet.classList.add("is-open");
+    content.querySelector("video")?.play().catch(() => {});
+  }
+
+  function finishClose() {
+    clearTimeout(closeTimer);
+    if (!sheet.open) return;
+    sheet.close();
+    content.replaceChildren();
+    document.documentElement.classList.remove("has-sheet");
+    lenis?.start();
+    opener?.focus({ preventScroll: true });
+  }
+
+  function closeSheet() {
+    if (!sheet.classList.contains("is-open")) return;
+    sheet.classList.remove("is-open");
+    content.querySelector("video")?.pause();
+    if (reduceMotion) return finishClose();
+    closeTimer = setTimeout(finishClose, 500);
+  }
+
+  panel.addEventListener("transitionend", (e) => {
+    if (e.target === panel && e.propertyName === "transform" && !sheet.classList.contains("is-open")) finishClose();
+  });
+
+  document.querySelectorAll("[data-sheet-open]").forEach((button) => {
+    button.addEventListener("click", () => openSheet(button));
+  });
+  sheet.querySelectorAll("[data-sheet-close]").forEach((button) => button.addEventListener("click", closeSheet));
+  sheet.addEventListener("click", (e) => {
+    if (e.target === sheet) closeSheet();
+  });
+  sheet.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    closeSheet();
+  });
+
+  // Drag the header down to close: past 120px, or a quick flick
+  let drag = null;
+  head.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || e.target.closest("button")) return;
+    drag = { y: e.clientY, time: e.timeStamp, dy: 0 };
+    head.setPointerCapture(e.pointerId);
+    panel.style.transition = "none";
+  });
+  head.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    drag.dy = Math.max(0, e.clientY - drag.y);
+    panel.style.transform = `translate3d(0, ${drag.dy}px, 0)`;
+  });
+  const endDrag = (e) => {
+    if (!drag) return;
+    const { dy, time } = drag;
+    drag = null;
+    panel.style.transition = "";
+    panel.style.transform = "";
+    if (dy > 120 || (dy > 30 && dy / (e.timeStamp - time) > 0.6)) closeSheet();
+  };
+  head.addEventListener("pointerup", endDrag);
+  head.addEventListener("pointercancel", endDrag);
+}
 
 let lastWidth = innerWidth;
 addEventListener("resize", () => {

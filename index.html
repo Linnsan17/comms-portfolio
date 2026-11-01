@@ -138,13 +138,37 @@
     </section>
 
     <!-- Introduction: big statement that reveals row by row on scroll -->
-    <section class="intro" id="introduction" aria-labelledby="intro-label">
+    <section class="intro" id="introduction" aria-labelledby="intro-label" data-sheet-source data-sheet-title="About">
       <div class="section-head intro__head">
         <h2 class="section-head__label" id="intro-label">Introduction</h2>
       </div>
       <div class="intro__text" data-reveal-rows>
-        <p data-lines>Communications specialist with experience in social media, web, newsletters and content production across both large and small companies. Background from both strategic and hands-on digital communications, managing website projects and developing social media strategies. Experienced in employer branding in collaboration with HR, as well as analyzing and optimising communication efforts to strengthen brands, engage target audiences and deliver results.</p>
+        <p data-lines data-sheet-intro>Communications specialist with experience in social media, web, newsletters and content production across both large and small companies. Background from both strategic and hands-on digital communications, managing website projects and developing social media strategies. Experienced in employer branding in collaboration with HR, as well as analyzing and optimising communication efforts to strengthen brands, engage target audiences and deliver results.</p>
       </div>
+      <div class="intro__more">
+        <button class="pill-link" type="button" data-sheet-open>
+          <span class="pill-link__text">Read more</span>
+        </button>
+      </div>
+      <!-- The about sheet: Linn's portrait, the statement above, her
+           experience and three numbers, all from her LinkedIn -->
+      <template data-sheet-media>
+        <img src="/assets/img/linn-portrait-wide.jpg" alt="Linn Harrvik" width="1440" height="1209" decoding="async">
+      </template>
+      <template data-sheet-more>
+        <dl class="sheet__block">
+          <div class="sheet__row"><dt>Mar 2025 – now</dt><dd>Digital Content Manager at Boneo</dd></div>
+          <div class="sheet__row"><dt>Nov 2023 – Nov 2024</dt><dd>Social Media Manager at Svedea</dd></div>
+          <div class="sheet__row"><dt>Sep 2022 – Nov 2023</dt><dd>Sales &amp; Marketing Assistant at Nilar</dd></div>
+          <div class="sheet__row"><dt>Jan – Mar 2021</dt><dd>Marketing intern at Bilbolaget</dd></div>
+          <div class="sheet__row"><dt>2019 – 2022</dt><dd>Communication and PR programme, Mid Sweden University</dd></div>
+        </dl>
+        <ul class="sheet__stats" role="list">
+          <li><span class="sheet__number">3</span><span class="sheet__label">In-house roles</span></li>
+          <li><span class="sheet__number">4</span><span class="sheet__label">Industries</span></li>
+          <li><span class="sheet__number">3</span><span class="sheet__label">Years studying communication and PR</span></li>
+        </ul>
+      </template>
     </section>
 
     <!-- Logo wave: the tools Linn works with, on round badges that ride a sine
@@ -175,21 +199,24 @@
          last while the covered card falls behind and darkens; the footer
          slides over the last. The facts come from Linn's LinkedIn (role,
          type, period / industry, location); the summaries are drafts from
-         the LinkedIn titles and the films, for Linn to rewrite. -->
+         the LinkedIn titles and the films, for Linn to rewrite. "View case"
+         opens the case's sheet: the card's film, summary and facts, then
+         the blocks in its template, which are placeholders for now (the
+         brief, the work, the result, and three numbers). -->
     <section class="areas" id="work" aria-labelledby="areas-label">
       <div class="section-head areas__head">
         <h2 class="section-head__label" id="areas-label">Selected work</h2>
       </div>
 
-      <article class="area" data-area aria-labelledby="case-boneo">
+      <article class="area" data-area data-sheet-source aria-labelledby="case-boneo">
         <div class="area__head">
           <h3 class="area__title" id="case-boneo">Boneo</h3>
           <span class="area__number" aria-hidden="true">01</span>
         </div>
         <div class="area__body">
-          <p class="area__desc">Digital content for Boneo since March 2025: property stories, articles on the housing market and ads for homes for sale.</p>
-          <div class="area__media" aria-hidden="true"><video src="/assets/video/case-boneo.mp4" poster="/assets/video/case-boneo.jpg" muted loop playsinline preload="none" data-autoplay></video></div>
-          <div class="area__foot">
+          <p class="area__desc" data-sheet-intro>Digital content for Boneo since March 2025: property stories, articles on the housing market and ads for homes for sale.</p>
+          <div class="area__media" aria-hidden="true" data-sheet-media><video src="/assets/video/case-boneo.mp4" poster="/assets/video/case-boneo.jpg" muted loop playsinline preload="none" data-autoplay></video></div>
+          <div class="area__foot" data-sheet-facts>
             <ul class="area__list" role="list">
               <li>Digital Content Manager</li>
               <li>Full-time</li>
@@ -199,19 +226,32 @@
               <li>Real estate</li>
               <li>Stockholm</li>
             </ul>
+            <button class="area__link" type="button" data-sheet-open>View case</button>
           </div>
         </div>
+        <template data-sheet-more>
+          <dl class="sheet__block">
+            <div class="sheet__row"><dt>The brief</dt><dd>Placeholder: what Boneo needed, in one or two sentences.</dd></div>
+            <div class="sheet__row"><dt>The work</dt><dd>Placeholder: what Linn did, the channels and formats, and who she worked with.</dd></div>
+            <div class="sheet__row"><dt>The result</dt><dd>Placeholder: how it went, in a sentence, before the numbers below.</dd></div>
+          </dl>
+          <ul class="sheet__stats" role="list">
+            <li><span class="sheet__number">170%</span><span class="sheet__label">Placeholder: increase in reach</span></li>
+            <li><span class="sheet__number">3×</span><span class="sheet__label">Placeholder: growth in followers</span></li>
+            <li><span class="sheet__number">40k</span><span class="sheet__label">Placeholder: monthly readers</span></li>
+          </ul>
+        </template>
       </article>
 
-      <article class="area" data-area aria-labelledby="case-svedea">
+      <article class="area" data-area data-sheet-source aria-labelledby="case-svedea">
         <div class="area__head">
           <h3 class="area__title" id="case-svedea">Svedea</h3>
           <span class="area__number" aria-hidden="true">02</span>
         </div>
         <div class="area__body">
-          <p class="area__desc">A year running Svedea's social media, from November 2023: posts, competitions and shoots with dogs, boats and motorcycles.</p>
-          <div class="area__media" aria-hidden="true"><video src="/assets/video/case-svedea.mp4" poster="/assets/video/case-svedea.jpg" muted loop playsinline preload="none" data-autoplay></video></div>
-          <div class="area__foot">
+          <p class="area__desc" data-sheet-intro>A year running Svedea's social media, from November 2023: posts, competitions and shoots with dogs, boats and motorcycles.</p>
+          <div class="area__media" aria-hidden="true" data-sheet-media><video src="/assets/video/case-svedea.mp4" poster="/assets/video/case-svedea.jpg" muted loop playsinline preload="none" data-autoplay></video></div>
+          <div class="area__foot" data-sheet-facts>
             <ul class="area__list" role="list">
               <li>Social Media Manager</li>
               <li>Full-time</li>
@@ -221,19 +261,32 @@
               <li>Insurance</li>
               <li>Stockholm</li>
             </ul>
+            <button class="area__link" type="button" data-sheet-open>View case</button>
           </div>
         </div>
+        <template data-sheet-more>
+          <dl class="sheet__block">
+            <div class="sheet__row"><dt>The brief</dt><dd>Placeholder: what Svedea needed, in one or two sentences.</dd></div>
+            <div class="sheet__row"><dt>The work</dt><dd>Placeholder: what Linn did, the channels and formats, and who she worked with.</dd></div>
+            <div class="sheet__row"><dt>The result</dt><dd>Placeholder: how it went, in a sentence, before the numbers below.</dd></div>
+          </dl>
+          <ul class="sheet__stats" role="list">
+            <li><span class="sheet__number">170%</span><span class="sheet__label">Placeholder: increase in reach</span></li>
+            <li><span class="sheet__number">3×</span><span class="sheet__label">Placeholder: growth in followers</span></li>
+            <li><span class="sheet__number">40k</span><span class="sheet__label">Placeholder: monthly readers</span></li>
+          </ul>
+        </template>
       </article>
 
-      <article class="area" data-area aria-labelledby="case-nilar">
+      <article class="area" data-area data-sheet-source aria-labelledby="case-nilar">
         <div class="area__head">
           <h3 class="area__title" id="case-nilar">Nilar</h3>
           <span class="area__number" aria-hidden="true">03</span>
         </div>
         <div class="area__body">
-          <p class="area__desc">Sales and marketing at the battery maker Nilar from 2022 to 2023: the website, employee stories and pictures from the factory.</p>
-          <div class="area__media" aria-hidden="true"><video src="/assets/video/case-nilar.mp4" poster="/assets/video/case-nilar.jpg" muted loop playsinline preload="none" data-autoplay></video></div>
-          <div class="area__foot">
+          <p class="area__desc" data-sheet-intro>Sales and marketing at the battery maker Nilar from 2022 to 2023: the website, employee stories and pictures from the factory.</p>
+          <div class="area__media" aria-hidden="true" data-sheet-media><video src="/assets/video/case-nilar.mp4" poster="/assets/video/case-nilar.jpg" muted loop playsinline preload="none" data-autoplay></video></div>
+          <div class="area__foot" data-sheet-facts>
             <ul class="area__list" role="list">
               <li>Sales &amp; Marketing Assistant</li>
               <li>Full-time</li>
@@ -243,19 +296,32 @@
               <li>Energy storage</li>
               <li>Stockholm</li>
             </ul>
+            <button class="area__link" type="button" data-sheet-open>View case</button>
           </div>
         </div>
+        <template data-sheet-more>
+          <dl class="sheet__block">
+            <div class="sheet__row"><dt>The brief</dt><dd>Placeholder: what Nilar needed, in one or two sentences.</dd></div>
+            <div class="sheet__row"><dt>The work</dt><dd>Placeholder: what Linn did, the channels and formats, and who she worked with.</dd></div>
+            <div class="sheet__row"><dt>The result</dt><dd>Placeholder: how it went, in a sentence, before the numbers below.</dd></div>
+          </dl>
+          <ul class="sheet__stats" role="list">
+            <li><span class="sheet__number">170%</span><span class="sheet__label">Placeholder: increase in reach</span></li>
+            <li><span class="sheet__number">3×</span><span class="sheet__label">Placeholder: growth in followers</span></li>
+            <li><span class="sheet__number">40k</span><span class="sheet__label">Placeholder: monthly readers</span></li>
+          </ul>
+        </template>
       </article>
 
-      <article class="area" data-area aria-labelledby="case-bilbolaget">
+      <article class="area" data-area data-sheet-source aria-labelledby="case-bilbolaget">
         <div class="area__head">
           <h3 class="area__title" id="case-bilbolaget">Bilbolaget</h3>
           <span class="area__number" aria-hidden="true">04</span>
         </div>
         <div class="area__body">
-          <p class="area__desc">An internship in the marketing department at the car dealer Bilbolaget in Gävle in early 2021, during the communication and PR programme.</p>
-          <div class="area__media" aria-hidden="true"><img src="/assets/img/work/bilbolaget-site.jpg" alt="" width="1475" height="686" loading="lazy" decoding="async" style="object-position: 68% 50%"></div>
-          <div class="area__foot">
+          <p class="area__desc" data-sheet-intro>An internship in the marketing department at the car dealer Bilbolaget in Gävle in early 2021, during the communication and PR programme.</p>
+          <div class="area__media" aria-hidden="true" data-sheet-media><img src="/assets/img/work/bilbolaget-site.jpg" alt="" width="1475" height="686" loading="lazy" decoding="async" style="object-position: 68% 50%"></div>
+          <div class="area__foot" data-sheet-facts>
             <ul class="area__list" role="list">
               <li>Marketing department</li>
               <li>Internship</li>
@@ -265,8 +331,21 @@
               <li>Car retail</li>
               <li>Gävle</li>
             </ul>
+            <button class="area__link" type="button" data-sheet-open>View case</button>
           </div>
         </div>
+        <template data-sheet-more>
+          <dl class="sheet__block">
+            <div class="sheet__row"><dt>The brief</dt><dd>Placeholder: what Bilbolaget needed, in one or two sentences.</dd></div>
+            <div class="sheet__row"><dt>The work</dt><dd>Placeholder: what Linn did, the channels and formats, and who she worked with.</dd></div>
+            <div class="sheet__row"><dt>The result</dt><dd>Placeholder: how it went, in a sentence, before the numbers below.</dd></div>
+          </dl>
+          <ul class="sheet__stats" role="list">
+            <li><span class="sheet__number">170%</span><span class="sheet__label">Placeholder: increase in reach</span></li>
+            <li><span class="sheet__number">3×</span><span class="sheet__label">Placeholder: growth in followers</span></li>
+            <li><span class="sheet__number">40k</span><span class="sheet__label">Placeholder: monthly readers</span></li>
+          </ul>
+        </template>
       </article>
     </section>
   </main>
@@ -314,5 +393,17 @@
       </div>
     </div>
   </footer>
+  <!-- One sheet for every "View case" and "Read more": main.js fills it
+       from the card or section that opened it -->
+  <dialog class="sheet" aria-labelledby="sheet-title" data-sheet>
+    <div class="sheet__panel" data-lenis-prevent>
+      <div class="sheet__head">
+        <span class="sheet__grabber" aria-hidden="true"></span>
+        <h2 class="sheet__title" id="sheet-title"></h2>
+        <button class="pill sheet__close" type="button" data-sheet-close><span class="sheet__close-label">Close</span></button>
+      </div>
+      <div data-sheet-content></div>
+    </div>
+  </dialog>
 </body>
 </html>
