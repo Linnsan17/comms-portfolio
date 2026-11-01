@@ -463,6 +463,22 @@ function createHero(hero) {
   // The front card is drawn at its own size (see .stack-card in the CSS);
   // the rest at the back card's. Each card's scale makes up the difference.
   cards[0].style.setProperty("--shrink", MAX_SCALE);
+
+  // The hand and phone sit above the headline. They move into a second
+  // stage laid over the text, onto a stand-in for the front card that
+  // follows it exactly every frame; the card's own background stays below.
+  const topStage = document.createElement("div");
+  topStage.className = "hero-stack__stage hero-stack__stage--top";
+  topStage.setAttribute("aria-hidden", "true");
+  const topWrap = document.createElement("div");
+  topWrap.className = "hero-stack__cards";
+  const topCard = document.createElement("div");
+  topCard.className = "stack-card stack-card--phone stack-card--top";
+  topCard.style.setProperty("--shrink", MAX_SCALE);
+  if (phoneLayer) topCard.append(phoneLayer);
+  topWrap.append(topCard);
+  topStage.append(topWrap);
+  hero.append(topStage);
   let drawn = [];
   const measure = () => {
     const full = Math.max(...cards.map((card) => card.offsetWidth));
@@ -570,6 +586,8 @@ function createHero(hero) {
       // Corners that stay the same on screen however far the card is scaled
       card.style.setProperty("--corner", `${(CORNER / Math.max(scale, 0.05)).toFixed(1)}px`);
     });
+    topCard.style.transform = cards[0].style.transform;
+    topCard.style.visibility = cards[0].style.visibility;
 
     // The headline copy shows only over the cards and the phone screen
     {
@@ -602,6 +620,7 @@ function createHero(hero) {
     const rotX = ENTRY_TILT.x * settle - current.y * TILT;
     const rotY = ENTRY_TILT.y * settle + current.x * TILT;
     cardsWrap.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    topWrap.style.transform = cardsWrap.style.transform;
   };
 }
 

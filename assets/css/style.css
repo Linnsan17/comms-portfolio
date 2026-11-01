@@ -612,6 +612,15 @@ p {
   pointer-events: none;
 }
 
+/* Over the headline: only the hand and phone (main.js moves them here) */
+.hero-stack__stage--top {
+  z-index: 3;
+}
+
+.stack-card--top::before {
+  display: none;
+}
+
 .hero-stack__cards {
   position: absolute;
   inset: 0;
