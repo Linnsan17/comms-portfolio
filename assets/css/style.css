@@ -84,9 +84,6 @@
 
   /* Hero outer card: blue to rosewood to pink */
   --hero-gradient: linear-gradient(180deg, #486adc 0%, #a45b61 50%, #fbbad4 100%);
-  /* The hero photo's own background, over the part the front card shows
-     (photo rows 390-1015), so the cut-out hand sits on it as in the photo */
-  --phone-gradient: linear-gradient(180deg, #985978 0%, #b6658d 12.5%, #d06f9e 25%, #e878ac 37.5%, #f97cb4 50%, #fd79b1 62.5%, #fd74a6 75%, #fe6e99 87.5%, #fd627e 100%);
 
   /* Corners on every photo and video box (cards, portrait, case images) */
   --radius-media: 10px;
@@ -581,7 +578,7 @@ p {
 }
 
 /* Front card: a hand holding a phone that plays a reel, cut out of the
-   hero photo. The card's colour sits behind, the arm is cut off by the
+   hero photo. The card's colour (the light blue) sits behind, the arm is cut off by the
    card, and the top of the phone pokes out above it: main.js clips the
    layer to the card's shape plus everything above its top edge. */
 .stack-card--phone {
@@ -595,14 +592,6 @@ p {
   position: absolute;
   inset: 0;
   background: var(--c);
-  clip-path: inset(0 round var(--corner, 16px));
-}
-
-/* Footage behind the hand, in the card's shape; the gradient under it
-   shows until it loads */
-.stack-card__backdrop {
-  position: absolute;
-  inset: 0;
   clip-path: inset(0 round var(--corner, 16px));
 }
 
