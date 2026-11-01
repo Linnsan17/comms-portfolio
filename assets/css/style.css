@@ -611,15 +611,6 @@ p {
   pointer-events: none;
 }
 
-/* Over the headline: only the hand and phone (main.js moves them here) */
-.hero-stack__stage--top {
-  z-index: 3;
-}
-
-.stack-card--top::before {
-  display: none;
-}
-
 .hero-stack__cards {
   position: absolute;
   inset: 0;
@@ -770,8 +761,8 @@ p {
 
 /* Headline: "Making brands / matter through / [word]." on three rows at
    every size. The word rotates; the rows above it never move. The widest
-   row is "Artificial Intelligence." at about 9.3em; see .hero-title for
-   how it fits on narrow phones. */
+   row is "Artificial Intelligence." at about 9.3em, which phones swap for
+   "AI"; see .hero-title for the size on narrow phones. */
 .hero-stack__copy {
   position: relative;
   z-index: 2;
@@ -808,13 +799,13 @@ p {
 /* Set exactly like the service card titles: the display size
    (--text-display), regular weight, pure black, tight 0.88 line height.
    Only on narrow phones does it drop below the display size's 56px, just
-   enough for the longest word, "Artificial Intelligence." (9.3em), to fit
-   inside the margins. */
+   enough for the widest row, "matter through" (6.8em), to fit inside the
+   margins; phones show "AI" instead of "Artificial Intelligence." */
 .hero-title {
   --swap: var(--roll-duration) var(--roll-ease);
   margin: 0;
   color: var(--block-1-ink);
-  font-size: clamp(min(56px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 9.4), 8vw, 168px);
+  font-size: clamp(min(56px, (100vw - 2 * clamp(16px, 1.68vw, 32px)) / 6.9), 8vw, 168px);
   font-weight: 400;
   line-height: 0.88;
   letter-spacing: -0.02em;

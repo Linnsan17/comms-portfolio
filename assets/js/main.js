@@ -464,21 +464,6 @@ function createHero(hero) {
   // the rest at the back card's. Each card's scale makes up the difference.
   cards[0].style.setProperty("--shrink", MAX_SCALE);
 
-  // The hand and phone sit above the headline. They move into a second
-  // stage laid over the text, onto a stand-in for the front card that
-  // follows it exactly every frame; the card's own background stays below.
-  const topStage = document.createElement("div");
-  topStage.className = "hero-stack__stage hero-stack__stage--top";
-  topStage.setAttribute("aria-hidden", "true");
-  const topWrap = document.createElement("div");
-  topWrap.className = "hero-stack__cards";
-  const topCard = document.createElement("div");
-  topCard.className = "stack-card stack-card--phone stack-card--top";
-  topCard.style.setProperty("--shrink", MAX_SCALE);
-  if (phoneLayer) topCard.append(phoneLayer);
-  topWrap.append(topCard);
-  topStage.append(topWrap);
-  hero.append(topStage);
   let drawn = [];
   const measure = () => {
     const full = Math.max(...cards.map((card) => card.offsetWidth));
@@ -586,8 +571,6 @@ function createHero(hero) {
       // Corners that stay the same on screen however far the card is scaled
       card.style.setProperty("--corner", `${(CORNER / Math.max(scale, 0.05)).toFixed(1)}px`);
     });
-    topCard.style.transform = cards[0].style.transform;
-    topCard.style.visibility = cards[0].style.visibility;
 
     // The headline copy shows only over the cards and the phone screen
     {
@@ -620,7 +603,6 @@ function createHero(hero) {
     const rotX = ENTRY_TILT.x * settle - current.y * TILT;
     const rotY = ENTRY_TILT.y * settle + current.x * TILT;
     cardsWrap.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-    topWrap.style.transform = cardsWrap.style.transform;
   };
 }
 
@@ -803,11 +785,13 @@ function updateHeaderTone() {
 // (see --roll-ease in style.css): the next word drops in from above while
 // the current one leaves below. The rows above never move. Reduced
 // motion: CSS turns this into a plain fade.
-// Several slots (the headline and any copy of it) roll in step.
+// Several slots (the headline and any copy of it) roll in step. On phones
+// the words come from data-words-short where a word is too long to fit.
 function startRotator(slots) {
   const HOLD = 2200;
   const SWAP = 620;
   const words = slots[0].dataset.words.split("|").map((word) => `${word}.`);
+  const short = (slots[0].dataset.wordsShort || slots[0].dataset.words).split("|").map((word) => `${word}.`);
   let index = 0;
   let current = slots.map((slot) => slot.querySelector(".hero-title__word"));
 
@@ -821,7 +805,7 @@ function startRotator(slots) {
     current = slots.map((slot, i) => {
       const next = document.createElement("span");
       next.className = "hero-title__word is-entering";
-      next.textContent = words[index];
+      next.textContent = (smallScreen.matches ? short : words)[index];
       slot.append(next);
 
       // Reading the width also commits the start position, so the
