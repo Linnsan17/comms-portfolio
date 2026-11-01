@@ -83,18 +83,22 @@ function updateStack() {
   if (stackLabel) stackLabel.style.transform = stackCards[0].style.transform;
 }
 
-// Areas of expertise, after wearemotto.com (measured frame by frame): each
-// card scrolls normally until the next card, or after the last one the
-// stats section, comes up from the bottom of the screen. From then until
+// Selected work, after wearemotto.com's areas of expertise (measured frame
+// by frame): each card scrolls normally until the next card, or after the
+// last one whatever follows on the page, comes up from the bottom of the
+// screen. From then until
 // it is fully covered, the card falls behind to AREA_SPEED of the scroll
 // and a dark grey wash builds up over it, to AREA_DIM when covered.
 const AREA_SPEED = 0.62;
 const AREA_DIM = 0.6;
 
 const areaCards = reduceMotion ? [] : [...document.querySelectorAll("[data-area]")];
-const areaFollowers = areaCards.map(
-  (card, i) => areaCards[i + 1] || card.closest("section").nextElementSibling
-);
+// The next thing on the page after an element, climbing out of its parents
+function nextOnPage(el) {
+  for (; el; el = el.parentElement) if (el.nextElementSibling) return el.nextElementSibling;
+  return null;
+}
+const areaFollowers = areaCards.map((card, i) => areaCards[i + 1] || nextOnPage(card.closest("section")));
 
 // Position in the page from layout alone, so the cards' own movement
 // doesn't feed back into it

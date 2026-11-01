@@ -1235,85 +1235,6 @@ html.lenis body {
   }
 }
 
-/* Stats: rows of label and big number, after the reference (Eidra): a two
-   line heading with a softened first line, thin grey rules between rows,
-   numbers on the right half. Numbers count up when the row scrolls in. */
-/* Positioned so it slides over the last expertise card */
-.stats {
-  position: relative;
-  padding: clamp(80px, 9vw, 160px) clamp(16px, 1.68vw, 32px);
-  background: var(--paper);
-}
-
-.stats__head {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: clamp(16px, 1.68vw, 32px);
-  align-items: start;
-  margin-bottom: clamp(64px, 8vw, 140px);
-}
-
-.stats__title {
-  max-width: 9em;
-  margin: 0;
-  font-size: clamp(40px, 4.8vw, 92px);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-}
-
-.stats__soft {
-  display: block;
-  background: linear-gradient(180deg, var(--ink), #8f8f8f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.stats__intro {
-  max-width: 26em;
-  margin: 0.4em 0 0;
-  color: #8f8f8f;
-  font-size: clamp(16px, 1.15vw, 22px);
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.stats__list {
-  margin: 0;
-}
-
-.stats__row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: clamp(16px, 1.68vw, 32px);
-  padding: clamp(24px, 2.4vw, 44px) 0 clamp(28px, 3.2vw, 60px);
-  border-top: 1px solid #dcdcdc;
-}
-
-.stats__row dt {
-  font-size: clamp(18px, 1.6vw, 32px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.stats__row dd {
-  margin: 0;
-  font-size: clamp(64px, 9.5vw, 190px);
-  font-weight: 400;
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-@media (max-width: 760px) {
-  .stats__head,
-  .stats__row {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 12px;
-  }
-}
-
 /* Line reveal: each line slides up out of its own mask. Hidden until the
    script has split the text, so nothing flashes before it animates. */
 .js [data-reveal]:not(.is-split) {
@@ -1441,8 +1362,11 @@ figcaption {
 
 /* Footer */
 
+/* Positioned and opaque so it slides over the last work card */
 .site-footer {
+  position: relative;
   padding-block: var(--space-l);
+  background: var(--paper);
   color: var(--ink-soft);
 }
 
