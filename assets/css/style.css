@@ -339,10 +339,10 @@ a {
   font-size: 19px;
 }
 
-/* The nav is the warm beige (the introduction's off-white), no outline */
+/* The nav is white, no outline, so it stands out on the beige hero */
 .site-nav__links,
 .site-nav__label {
-  background: var(--paper-alt);
+  background: var(--paper);
   color: var(--ink);
 }
 
@@ -602,7 +602,7 @@ p {
   min-height: 100vh;
   min-height: 100svh;
   overflow: hidden;
-  background: var(--paper);
+  background: var(--paper-alt);
 }
 
 .hero-stack__stage {

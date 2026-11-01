@@ -35,10 +35,10 @@ The "Selected work" section (case cards and filter) is removed for now; it's in 
 - **Section labels:** every section after the hero opens with a semibold label (no brackets) on the left and, where there is one, an underlined link on the right on the same baseline (`.section-head` in `style.css`, after wearemotto.com).
 
 - **Palette ("Geometric" with light blue):**
-  - Page background white #ffffff, with the off-white #f2f0ec only behind the introduction.
+  - Page background white #ffffff; the warm off-white #f2f0ec behind the hero, the introduction, the toolbox and selected work.
   - Text #1c1c1c.
   - Blocks: pink #fbbad4, rosewood #a45b61, blue #486adc, light blue #bfcef7.
-  - Buttons pink. Nav pill warm beige #f2f0ec, no outline.
+  - Buttons pink. Nav pill white, no outline.
 - **Type:** PP Mori everywhere. Buttons and nav are 600 weight at 19px (15px on phones). Labels are cap-centred: pills get 0.15em top padding, and every label holder is a flex container.
 - **No arrows or icons** on buttons.
 - **Motion:**
