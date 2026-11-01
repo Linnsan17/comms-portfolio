@@ -91,13 +91,11 @@ writerIn.requestMediaDataWhenReady(on: queue) {
 done.wait()
 if writer.status != .completed { fatalError("write failed: \(String(describing: writer.error))") }
 
-// Poster: a frame half a second in, at the output size
-let gen = AVAssetImageGenerator(asset: asset)
-gen.appliesPreferredTrackTransform = true
-gen.maximumSize = CGSize(width: width, height: height)
+// Poster: the output's frame half a second in, so it has the same crop
+let gen = AVAssetImageGenerator(asset: AVURLAsset(url: output))
 gen.requestedTimeToleranceBefore = .zero
 gen.requestedTimeToleranceAfter = .zero
-let cg = try! gen.copyCGImage(at: CMTimeAdd(start, CMTime(seconds: 0.5, preferredTimescale: 600)), actualTime: nil)
+let cg = try! gen.copyCGImage(at: CMTime(seconds: 0.5, preferredTimescale: 600), actualTime: nil)
 let rep = NSBitmapImageRep(cgImage: cg)
 try! rep.representation(using: .jpeg, properties: [.compressionFactor: 0.72])!.write(to: poster)
 let size = (try? FileManager.default.attributesOfItem(atPath: output.path)[.size] as? Int) ?? 0

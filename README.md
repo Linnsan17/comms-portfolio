@@ -63,7 +63,7 @@ You can link to a filtered list, for example `/?tag=social#work`.
 
 ## Videos
 
-The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-homes`), and `hero-sunset` plays behind the hand on the front card. The service cards play screen reels (`work-*`), and a Selected work card plays its case's own film where there is one (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the reels are 960×540 at about 1.5 Mbps, and the case films are 720×880 at 2 Mbps, the portrait shape of the card (`transcode` crops the middle). They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
+The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-homes`), and `hero-sunset` plays behind the hand on the front card. The service cards play screen reels (`work-*`), and a Selected work card plays its case's own film where there is one (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the reels are 960×540 at about 1.5 Mbps, and the case films are 896×752 at 1.5–2 Mbps, the shape of the case card's media box (`transcode` crops the middle). They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
 
 To add or replace a reel, compress it first. This Mac has no ffmpeg, so use the Swift transcoder in `tools/`:
 
