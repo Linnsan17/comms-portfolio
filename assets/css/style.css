@@ -631,7 +631,7 @@ p {
   margin: calc(var(--w) / var(--shrink, 1) / -2.9) 0 0 calc(var(--w) / var(--shrink, 1) / -2);
   overflow: hidden;
   background: var(--c);
-  clip-path: url(#pillow);
+  clip-path: inset(0 round var(--corner, 16px));
   will-change: transform;
 }
 
@@ -664,7 +664,7 @@ p {
   position: absolute;
   inset: 0;
   background: var(--c);
-  clip-path: url(#pillow);
+  clip-path: inset(0 round var(--corner, 16px));
 }
 
 /* Footage behind the hand, in the card's shape; the gradient under it
@@ -672,7 +672,7 @@ p {
 .stack-card__backdrop {
   position: absolute;
   inset: 0;
-  clip-path: url(#pillow);
+  clip-path: inset(0 round var(--corner, 16px));
 }
 
 .stack-card__phone {
@@ -715,37 +715,9 @@ p {
   visibility: hidden;
 }
 
-/* The screen: Linn's portrait, with her name in letters that drop in and
-   pile up on top of it (main.js) */
+/* The screen shows black until its reel loads */
 .stack-card__screen {
-  background: var(--block-1) url("/assets/img/hero/phone-photo.jpg") center / cover;
-}
-
-.stack-card__screen canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* Markers on the screen's corners: where they land on the page tells
-   main.js where the pointer is on the tilted screen */
-.stack-card__corner {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.stack-card__corner:nth-of-type(2) {
-  left: 100%;
-}
-
-.stack-card__corner:nth-of-type(3) {
-  top: 100%;
-  left: 100%;
-}
-
-.stack-card__corner:nth-of-type(4) {
-  top: 100%;
+  background: #000;
 }
 
 /* Headline: "Making brands / matter through / [word]." on three rows at
@@ -847,10 +819,6 @@ p {
   white-space: nowrap;
 }
 
-
-.hero-stack__defs {
-  position: absolute;
-}
 
 @media (max-width: 760px) {
   .stack-card {

@@ -19,7 +19,7 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
 
 ## Home page, top to bottom
 
-1. **Hero:** the intro animation, then a card stack that follows the mouse (the cards behind play footage from Linn's work, edge to edge: boat, dachshund, autumn tree, apartment block; the front card is a hand holding a phone, over a sunset loop (`hero-sunset`, with the photo's own gradient `--phone-gradient` until it loads); on its screen, over Linn's portrait (`assets/img/hero/phone-photo.jpg`), pink letters of LINN HARRVIK drop in with Matter.js physics and react to the mouse, with the top of the phone poking out above the card; see README "Hero phone"), with the headline "Making brands / matter through / [Content | Social Media | Strategy | Websites | Artificial Intelligence]." and a "Get in touch" button.
+1. **Hero:** the intro animation, then a card stack that follows the mouse (the cards behind play footage from Linn's work, edge to edge: boat, dachshund, autumn tree, apartment block; the front card is a hand holding a phone, over a sunset loop (`hero-sunset`, with the photo's own gradient `--phone-gradient` until it loads); its screen plays Svedea's dog-puzzle video (`hero-phone-dog`), and the top of the phone pokes out above the card; see README "Hero phone"). The cards are rounded rectangles with 16px corners on screen (main.js scales `--corner` per card), with the headline "Making brands / matter through / [Content | Social Media | Strategy | Websites | Artificial Intelligence]." and a "Get in touch" button.
 2. **Services:** the "Services" label and four stacked colour cards (Content, Social Media, Strategy, Website) that slow down and stack as you scroll, each with a work reel video. The label rides with the first card, so the gap between them never changes.
 3. **Introduction:** "Introduction", then a big statement on the off-white band, revealed row by row on scroll.
 4. **Toolbox:** "Toolbox" with a "View all" link to the About page's tools section, then the logo wave: the tools Linn works with (logos in `assets/img/tools/`), on white round badges riding a sine wave, still on the off-white band. Scrolling pushes the row along and the wave swells with speed, after the Osmo "wavy marquee" (measured frame by frame; the constants are in `createLogoWave` in `main.js`).
@@ -30,7 +30,8 @@ The "Selected work" section (case cards and filter) is removed for now; it's in 
 
 ## Decisions to keep
 
-- **Rounded media:** every photo and video box (service and work cards, footer portrait, case page images) has 10px corners (`--radius-media`). The hero cards keep their bowed pillow shape.
+- **Rounded media:** every photo and video box (service and work cards, footer portrait, case page images) has 10px corners (`--radius-media`). The hero cards, which are bigger, have 16px corners on screen.
+- **Saved for later:** the phone screen with Linn's portrait and her name in falling pink letters (Matter.js physics), and the hero cards' earlier "pillow" shape, are on the branch `phone-letters`.
 - **Section labels:** every section after the hero opens with a semibold label (no brackets) on the left and, where there is one, an underlined link on the right on the same baseline (`.section-head` in `style.css`, after wearemotto.com).
 
 - **Palette ("Geometric" with light blue):**

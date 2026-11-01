@@ -360,8 +360,8 @@ if (logoLink) {
 
 // Hero card stack. Sequence from the reference reel, with every step on a
 // hard ease-in-out (the site's --roll-ease curve): the front card grows
-// from nothing and its edges pinch in, holds, then the cards behind grow
-// out around it from a slight 3D angle that settles flat. The stack stays
+// from nothing, holds, then the cards behind grow out around it from a
+// slight 3D angle that settles flat. The stack stays
 // perfectly centred while the header, headline and button appear; one
 // second later it swings straight to wherever the mouse is and follows it.
 const heroEl = document.querySelector("[data-hero]");
@@ -379,7 +379,6 @@ else setTimeout(introDone, 6000);
 function createHero(hero) {
   const cards = [...hero.querySelectorAll(".stack-card")]; // front first
   const cardsWrap = hero.querySelector("[data-hero-cards]");
-  const pillow = hero.querySelector("#pillow path");
   const copy = hero.querySelector("[data-hero-copy]");
   const rotator = hero.querySelector("[data-rotator]");
   const count = cards.length;
@@ -407,16 +406,7 @@ function createHero(hero) {
     return t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 / 2;
   };
 
-  // Rounded card with edges bowed inwards; pinch 1 is the resting shape
-  const pillowPath = (pinch) => {
-    const y = (0.05 * pinch).toFixed(4);
-    const x = (0.035 * pinch).toFixed(4);
-    return `M0.06 0 Q0.5 ${y} 0.94 0 Q1 0 1 0.087 Q${1 - x} 0.5 1 0.913 Q1 1 0.94 1 ` +
-      `Q0.5 ${1 - y} 0.06 1 Q0 1 0 0.913 Q${x} 0.5 0 0.087 Q0 0 0.06 0 Z`;
-  };
-  let lastPinch = null;
-
-  // Front card's phone: the reel plays under a hole in the photo, warped
+  // Front card's phone: a reel plays under a hole in the photo, warped
   // onto the phone's screen. Its corners (top left, top right, bottom right,
   // bottom left), a little under the bezel, as fractions of the cut-out;
   // from tools/phone_cutout.py.
@@ -438,44 +428,29 @@ function createHero(hero) {
     phoneScreen.style.borderRadius = `${width * 0.13}px`;
     phoneScreen.style.transform = quadMatrix(width, width / SCREEN_ASPECT, quad);
     phoneScreen.classList.add("is-placed");
-    letters?.resize(width, width / SCREEN_ASPECT);
   };
-  let letters = null;
-  if (phoneArt && phoneScreen) {
-    new ResizeObserver(placeScreen).observe(phoneArt);
-    // The letters are measured in PP Mori, so wait for it
-    if (window.Matter) {
-      document.fonts
-        .load('600 130px "PP Mori"')
-        .catch(() => {})
-        .then(() => {
-          letters = createPhoneLetters(phoneScreen, SCREEN_ASPECT);
-          placeScreen();
-        });
-    }
-  }
+  if (phoneArt && phoneScreen) new ResizeObserver(placeScreen).observe(phoneArt);
 
-  // The phone layer's clip: the card's shape with its curved edges traced
-  // as a polygon, plus everything above the top edge so the phone pokes out
-  const popPolygon = (pinch) => {
-    const x = 0.035 * pinch;
-    const y = 0.05 * pinch;
-    const pts = [[-0.2, -1], [1.2, -1], [1.2, 0.06]];
-    const curve = (a, c, b) => {
-      for (let i = 0; i <= 8; i++) {
-        const t = i / 8;
-        const s = 1 - t;
-        pts.push([s * s * a[0] + 2 * s * t * c[0] + t * t * b[0], s * s * a[1] + 2 * s * t * c[1] + t * t * b[1]]);
+  // The phone layer's clip: the card's rounded rectangle, rx and ry its
+  // corners as shares of its width and height, plus everything above the
+  // top edge so the phone pokes out
+  const popPolygon = (rx, ry) => {
+    const pts = [[-0.2, -1], [1.2, -1], [1.2, 0.04], [1, 0.04]];
+    const arc = (cx, cy, from) => {
+      for (let i = 0; i <= 6; i++) {
+        const a = from + (Math.PI / 2) * (i / 6);
+        pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a)]);
       }
     };
-    curve([1, 0.087], [1 - x, 0.5], [1, 0.913]);
-    curve([1, 0.913], [1, 1], [0.94, 1]);
-    curve([0.94, 1], [0.5, 1 - y], [0.06, 1]);
-    curve([0.06, 1], [0, 1], [0, 0.913]);
-    curve([0, 0.913], [x, 0.5], [0, 0.087]);
-    pts.push([-0.2, 0.06]);
-    return `polygon(${pts.map(([px, py]) => `${(px * 100).toFixed(2)}% ${(py * 100).toFixed(2)}%`).join(",")})`;
+    arc(1 - rx, 1 - ry, 0);
+    arc(rx, 1 - ry, Math.PI / 2);
+    pts.push([0, 0.04], [-0.2, 0.04]);
+    return toPolygon(pts);
   };
+  const toPolygon = (pts) =>
+    `polygon(${pts.map(([px, py]) => `${(px * 100).toFixed(2)}% ${(py * 100).toFixed(2)}%`).join(",")})`;
+  const CORNER = 16; // px on screen, a little rounder than --radius-media for the bigger cards
+  let lastClip = null;
 
   const pointer = { x: 0, y: 0 };
   const current = { x: 0, y: 0 };
@@ -527,20 +502,10 @@ function createHero(hero) {
       copy?.classList.add("is-in");
       if (rotator) startRotator(rotator);
     }
-    letters?.step(time, inView && t >= GROW_AT);
     if (!inView && t > FOLLOW_AT + SWING) return;
 
     const appear = hard(t / APPEAR);
     const growAll = hard((t - GROW_AT) / GROW);
-
-    // Card shape: pinch in as the front card grows, relax to rest with the grow
-    const pinch = (0.2 + 1.2 * appear) * (1 - growAll) + growAll;
-    const rounded = Math.round(pinch * 100) / 100;
-    if (pillow && rounded !== lastPinch) {
-      pillow.setAttribute("d", pillowPath(rounded));
-      if (phoneLayer) phoneLayer.style.clipPath = popPolygon(rounded);
-      lastPinch = rounded;
-    }
 
     // Live target: the mouse, or a slow drift on touch screens
     let tx = pointer.x;
@@ -578,7 +543,19 @@ function createHero(hero) {
       const y = driftY + (mid - i) * gap * current.y;
       card.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
       card.style.visibility = i === 0 || t >= GROW_AT ? "" : "hidden";
+      // Corners that stay the same on screen however far the card is scaled
+      card.style.setProperty("--corner", `${(CORNER / Math.max(scale, 0.05)).toFixed(1)}px`);
     });
+
+    // The phone layer's clip follows the front card's corners
+    if (phoneLayer) {
+      const corner = cards[0].style.getPropertyValue("--corner");
+      if (corner !== lastClip) {
+        const r = parseFloat(corner);
+        phoneLayer.style.clipPath = popPolygon(Math.min(0.5, r / cards[0].offsetWidth), Math.min(0.5, r / cards[0].offsetHeight));
+        lastClip = corner;
+      }
+    }
 
     const settle = 1 - growAll;
     const rotX = ENTRY_TILT.x * settle - current.y * TILT;
@@ -700,176 +677,6 @@ function createLogoWave(section) {
   };
 }
 
-// The hero phone's screen: over Linn's portrait, the letters of her name
-// drop in one by one, in order (L, I, N, N, then HARRVIK), each its own
-// body, and pile up so LINN lands along the bottom. A pointer moving over the screen shoves
-// them. After a while the floor opens, they fall out, and they drop in
-// again, like the reference. Reduced motion: the settled pile, still.
-// The world is measured in units, WORLD across the screen.
-function createPhoneLetters(screen, aspect) {
-  const { Engine, Bodies, Body, Composite } = Matter;
-  const canvas = screen.querySelector("canvas");
-  const ctx = canvas.getContext("2d");
-  const corners = [...screen.querySelectorAll("[data-corner]")];
-
-  const NAME = "LINNHARRVIK";
-  const WORLD = 400;
-  const HEIGHT = WORLD / aspect;
-  const SIZE = 160; // font size: LINN just fits across the screen
-  const EDGE = 12; // keeps letters clear of the bezel
-  const FLOOR = 40; // the floor sits this far up, clear of the screen's round corners
-  const GAP = 3; // between the LINN letters
-  const DROP_GAP = 160; // ms between letters
-  const HOLD = 6500; // ms the pile stays before the floor opens
-  const REACH = 140; // how close the pointer has to come to move a letter
-  const MAX_SHOVE = 22; // fastest a shove sends a letter, units per step
-  const STEP = 1000 / 60;
-  const pink = getComputedStyle(document.documentElement).getPropertyValue("--block-1").trim();
-
-  const engine = Engine.create({ gravity: { y: 1.6 } });
-  const wall = { isStatic: true };
-  const floor = Bodies.rectangle(WORLD / 2, HEIGHT - FLOOR + 100, WORLD * 3, 200, wall);
-  Composite.add(engine.world, [
-    Bodies.rectangle(EDGE - 100, 0, 200, HEIGHT * 4, wall),
-    Bodies.rectangle(WORLD - EDGE + 100, 0, 200, HEIGHT * 4, wall),
-    floor,
-  ]);
-
-  let glyphs = [];
-  let bodies = [];
-  let cycleStart = null;
-  let floorOpen = false;
-  let clock = 0;
-  let lastTime = null;
-  let behind = 0;
-  let pointer = null;
-
-  // Glyph boxes in PP Mori SemiBold: LINN gets slots across the bottom,
-  // the rest drop wherever they fit
-  function measure() {
-    ctx.font = `600 ${SIZE}px "PP Mori", sans-serif`;
-    const cap = SIZE * 0.7;
-    glyphs = [...NAME].map((char) => ({ char, advance: ctx.measureText(char).width, cap }));
-    const first = glyphs.slice(0, 4);
-    const span = first.reduce((sum, glyph) => sum + glyph.advance, 0) + 3 * GAP;
-    let x = (WORLD - span) / 2;
-    first.forEach((glyph) => {
-      glyph.x = x + glyph.advance / 2;
-      x += glyph.advance + GAP;
-    });
-  }
-
-  function drop(i) {
-    const glyph = glyphs[i];
-    const x = glyph.x ?? EDGE + glyph.advance / 2 + Math.random() * (WORLD - 2 * EDGE - glyph.advance);
-    const body = Bodies.rectangle(x, -glyph.cap, glyph.advance * 0.9, glyph.cap, {
-      angle: i < 4 ? 0 : (Math.random() - 0.5) * 0.6,
-      chamfer: { radius: 6 },
-      friction: 0.6,
-      restitution: 0.15,
-    });
-    body.glyph = glyph;
-    bodies.push(body);
-    Composite.add(engine.world, body);
-  }
-
-  // One fixed physics step of the cycle: drop in, hold, fall out, again
-  function tick() {
-    clock += STEP;
-    if (cycleStart === null) cycleStart = clock;
-    const since = clock - cycleStart;
-    while (bodies.length < glyphs.length && since >= bodies.length * DROP_GAP) drop(bodies.length);
-    if (!floorOpen && since > glyphs.length * DROP_GAP + HOLD) {
-      Composite.remove(engine.world, floor);
-      floorOpen = true;
-    }
-    if (floorOpen && bodies.every((body) => body.position.y > HEIGHT + 300)) {
-      Composite.remove(engine.world, bodies);
-      bodies = [];
-      Composite.add(engine.world, floor);
-      floorOpen = false;
-      cycleStart = clock + 500;
-    }
-    Engine.update(engine, STEP);
-  }
-
-  function draw() {
-    const scale = canvas.width / WORLD;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = pink;
-    ctx.font = `600 ${SIZE}px "PP Mori", sans-serif`;
-    for (const body of bodies) {
-      const { advance, cap, char } = body.glyph;
-      ctx.setTransform(scale, 0, 0, scale, body.position.x * scale, body.position.y * scale);
-      ctx.rotate(body.angle);
-      ctx.fillText(char, -advance / 2, cap / 2);
-    }
-  }
-
-  // Where the pointer is on the screen, in world units: the corner markers
-  // show where the tilted screen sits on the page
-  function toWorld(x, y) {
-    const quad = corners.map((corner) => {
-      const r = corner.getBoundingClientRect();
-      return [r.left, r.top];
-    });
-    const [u, v] = quadToSquare(quad, x, y);
-    return u > -0.1 && u < 1.1 && v > -0.1 && v < 1.1 ? { x: u * WORLD, y: v * HEIGHT } : null;
-  }
-
-  // Letters near the pointer get carried along with it and nudged away
-  addEventListener("pointermove", (e) => {
-    if (e.pointerType !== "mouse" || reduceMotion) return;
-    const next = toWorld(e.clientX, e.clientY);
-    if (next && pointer) {
-      const dx = next.x - pointer.x;
-      const dy = next.y - pointer.y;
-      for (const body of bodies) {
-        const ax = body.position.x - next.x;
-        const ay = body.position.y - next.y;
-        const distance = Math.hypot(ax, ay);
-        if (distance > REACH) continue;
-        const strength = 1 - distance / REACH;
-        const push = (strength * 3) / (distance || 1);
-        const vx = body.velocity.x + dx * 0.25 * strength + ax * push;
-        const vy = body.velocity.y + dy * 0.25 * strength + ay * push;
-        const speed = Math.hypot(vx, vy);
-        const cap = Math.min(1, MAX_SHOVE / speed);
-        Body.setVelocity(body, { x: vx * cap, y: vy * cap });
-      }
-    }
-    pointer = next;
-  });
-
-  return {
-    // Called when the screen is laid out: match the canvas to its pixels
-    resize(width, height) {
-      const ratio = devicePixelRatio || 1;
-      canvas.width = Math.round(width * ratio);
-      canvas.height = Math.round(height * ratio);
-      if (!glyphs.length) measure();
-      if (reduceMotion && !bodies.length) {
-        while (clock < glyphs.length * DROP_GAP + 3000) tick();
-      }
-      draw();
-    },
-    // Called every frame from the hero; runs only while it's on screen
-    step(time, active) {
-      const dt = lastTime === null ? 0 : Math.min(100, time - lastTime);
-      lastTime = time;
-      if (!active || reduceMotion || !glyphs.length) return;
-      // Fixed steps, however fast the screen refreshes
-      behind += dt;
-      while (behind >= STEP) {
-        tick();
-        behind -= STEP;
-      }
-      draw();
-    },
-  };
-}
-
 // The perspective warp of a unit square onto a quad (top left, top right,
 // bottom right, bottom left): a point (u, v) lands on
 // ((a u + b v + x0) / (g u + k v + 1), (d u + e v + y0) / (g u + k v + 1))
@@ -891,17 +698,6 @@ function squareToQuad([[x0, y0], [x1, y1], [x2, y2], [x3, y3]]) {
 function quadMatrix(w, h, quad) {
   const { a, b, d, e, g, k, x0, y0 } = squareToQuad(quad);
   return `matrix3d(${a / w},${d / w},0,${g / w},${b / h},${e / h},0,${k / h},0,0,1,0,${x0},${y0},0,1)`;
-}
-
-// The other way: where a point inside the quad sits on the unit square
-function quadToSquare(quad, x, y) {
-  const { a, b, d, e, g, k, x0, y0 } = squareToQuad(quad);
-  const p = a - g * x;
-  const q = b - k * x;
-  const r = d - g * y;
-  const s = e - k * y;
-  const det = p * s - q * r;
-  return [((x - x0) * s - q * (y - y0)) / det, (p * (y - y0) - r * (x - x0)) / det];
 }
 
 // Header: on phones the links fold behind a "Menu" pill, and the pills

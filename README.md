@@ -76,7 +76,9 @@ Add a start and a length in seconds to keep only part of a clip, for example `..
 
 ## Hero phone
 
-The front hero card shows a hand holding a phone. On its screen, over Linn's portrait (`assets/img/hero/phone-photo.jpg`, cropped to the screen's shape), pink letters of LINN HARRVIK drop in one by one (L, I, N, N, then the surname), each with its own physics, and pile up so LINN lands along the bottom. A mouse moving over the screen shoves them. After a few seconds the floor opens, they fall out and drop in again. The physics is [Matter.js](https://brm.io/matter-js/) 0.20.0 from jsDelivr; the settings are at the top of `createPhoneLetters` in `main.js`.
+The front hero card shows a hand holding a phone that plays `assets/video/hero-phone-dog.mp4` (Svedea's dog-puzzle video), warped onto the phone's screen by `main.js`. To show another video, replace that file and its poster; any 9:16 video works, and the sides are cropped slightly to fit the screen.
+
+An earlier version, with Linn's portrait on the screen and her name in pink letters that drop in with physics, is saved on the branch `phone-letters`.
 
 The hand and phone are cut out of the hero photo (`assets/img/hero/phone-hand.webp`), with a hole for the screen. To redo the cut-out:
 
