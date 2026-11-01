@@ -707,9 +707,10 @@ p {
   visibility: hidden;
 }
 
-/* The screen: Linn's name in letters that drop in and pile up (main.js) */
+/* The screen: Linn's portrait, with her name in letters that drop in and
+   pile up on top of it (main.js) */
 .stack-card__screen {
-  background: var(--block-1);
+  background: var(--block-1) url("/assets/img/hero/phone-photo.jpg") center / cover;
 }
 
 .stack-card__screen canvas {

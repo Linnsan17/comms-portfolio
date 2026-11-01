@@ -700,9 +700,9 @@ function createLogoWave(section) {
   };
 }
 
-// The hero phone's screen: the letters of Linn's name drop in one by one,
-// in order (L, I, N, N, then HARRVIK), each its own body, and pile up so
-// LINN lands along the bottom. A pointer moving over the screen shoves
+// The hero phone's screen: over Linn's portrait, the letters of her name
+// drop in one by one, in order (L, I, N, N, then HARRVIK), each its own
+// body, and pile up so LINN lands along the bottom. A pointer moving over the screen shoves
 // them. After a while the floor opens, they fall out, and they drop in
 // again, like the reference. Reduced motion: the settled pile, still.
 // The world is measured in units, WORLD across the screen.
@@ -715,18 +715,20 @@ function createPhoneLetters(screen, aspect) {
   const NAME = "LINNHARRVIK";
   const WORLD = 400;
   const HEIGHT = WORLD / aspect;
-  const SIZE = 130; // font size: LINN spans about three quarters of the screen
+  const SIZE = 160; // font size: LINN just fits across the screen
   const EDGE = 12; // keeps letters clear of the bezel
+  const FLOOR = 40; // the floor sits this far up, clear of the screen's round corners
+  const GAP = 3; // between the LINN letters
   const DROP_GAP = 160; // ms between letters
   const HOLD = 6500; // ms the pile stays before the floor opens
   const REACH = 140; // how close the pointer has to come to move a letter
   const MAX_SHOVE = 22; // fastest a shove sends a letter, units per step
   const STEP = 1000 / 60;
-  const pink = getComputedStyle(screen).backgroundColor;
+  const pink = getComputedStyle(document.documentElement).getPropertyValue("--block-1").trim();
 
   const engine = Engine.create({ gravity: { y: 1.6 } });
   const wall = { isStatic: true };
-  const floor = Bodies.rectangle(WORLD / 2, HEIGHT - EDGE + 100, WORLD * 3, 200, wall);
+  const floor = Bodies.rectangle(WORLD / 2, HEIGHT - FLOOR + 100, WORLD * 3, 200, wall);
   Composite.add(engine.world, [
     Bodies.rectangle(EDGE - 100, 0, 200, HEIGHT * 4, wall),
     Bodies.rectangle(WORLD - EDGE + 100, 0, 200, HEIGHT * 4, wall),
@@ -749,11 +751,11 @@ function createPhoneLetters(screen, aspect) {
     const cap = SIZE * 0.7;
     glyphs = [...NAME].map((char) => ({ char, advance: ctx.measureText(char).width, cap }));
     const first = glyphs.slice(0, 4);
-    const span = first.reduce((sum, glyph) => sum + glyph.advance, 0) + 3 * 6;
+    const span = first.reduce((sum, glyph) => sum + glyph.advance, 0) + 3 * GAP;
     let x = (WORLD - span) / 2;
     first.forEach((glyph) => {
       glyph.x = x + glyph.advance / 2;
-      x += glyph.advance + 6;
+      x += glyph.advance + GAP;
     });
   }
 
@@ -794,9 +796,8 @@ function createPhoneLetters(screen, aspect) {
   function draw() {
     const scale = canvas.width / WORLD;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = pink;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#000";
     ctx.font = `600 ${SIZE}px "PP Mori", sans-serif`;
     for (const body of bodies) {
       const { advance, cap, char } = body.glyph;

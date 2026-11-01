@@ -74,7 +74,7 @@ swiftc -O tools/transcode.swift -o /tmp/transcode
 
 ## Hero phone
 
-The front hero card shows a hand holding a phone. On its pink screen the letters of LINN HARRVIK drop in one by one (L, I, N, N, then the surname), each with its own physics, and pile up so LINN lands along the bottom. A mouse moving over the screen shoves them. After a few seconds the floor opens, they fall out and drop in again. The physics is [Matter.js](https://brm.io/matter-js/) 0.20.0 from jsDelivr; the settings are at the top of `createPhoneLetters` in `main.js`.
+The front hero card shows a hand holding a phone. On its screen, over Linn's portrait (`assets/img/hero/phone-photo.jpg`, cropped to the screen's shape), pink letters of LINN HARRVIK drop in one by one (L, I, N, N, then the surname), each with its own physics, and pile up so LINN lands along the bottom. A mouse moving over the screen shoves them. After a few seconds the floor opens, they fall out and drop in again. The physics is [Matter.js](https://brm.io/matter-js/) 0.20.0 from jsDelivr; the settings are at the top of `createPhoneLetters` in `main.js`.
 
 The hand and phone are cut out of the hero photo (`assets/img/hero/phone-hand.webp`), with a hole for the screen. To redo the cut-out:
 
