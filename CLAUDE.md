@@ -30,7 +30,7 @@ The "Selected work" section (case cards and filter) is removed for now; it's in 
 
 ## Decisions to keep
 
-- **Header:** the pink pill is "Download CV" (just "CV" on phones) with a download icon (`assets/img/icons/cv.png`, used as a mask so it takes the pill's ink); it links to `assets/cv.pdf`, which is still to come. The nav is Services, About, Work, Contact.
+- **Header:** the pink pill is "Download CV" (just "CV" on phones narrower than 383px); it links to `assets/cv.pdf`, which is still to come. The nav is Services, About, Work, Contact.
 - **Rounded media:** every photo and video box (service and work cards, footer portrait, case page images) has 10px corners (`--radius-media`). The hero cards, which are bigger, have 16px corners on screen.
 - **Saved for later:** the phone screen with Linn's portrait and her name in falling pink letters (Matter.js physics), and the hero cards' earlier "pillow" shape, are on the branch `phone-letters`.
 - **Section labels:** every section after the hero opens with a semibold label (no brackets) on the left and, where there is one, an underlined link on the right on the same baseline (`.section-head` in `style.css`, after wearemotto.com).

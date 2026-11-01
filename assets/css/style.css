@@ -277,19 +277,13 @@ a {
   font-size: var(--text-small);
 }
 
-/* Download CV: the icon is a mask over the text colour, so it follows the
-   pill's ink (black, and on the colour blocks too). The pill's top padding
-   lowers the capitals to centre them; the icon is lifted back the same. */
-.site-header__cta {
-  gap: 0.4em;
-}
-
-/* Phones show just "CV", so the pill clears the logo */
+/* Narrow phones show just "CV", so the pill clears the centred logo:
+   the full label needs a screen at least 383px wide for a 12px gap */
 .site-header__cta-label--short {
   display: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 382px) {
   .site-header__cta-label--long {
     display: none;
   }
@@ -297,16 +291,6 @@ a {
   .site-header__cta-label--short {
     display: inline;
   }
-}
-
-.site-header__cta-icon {
-  flex: none;
-  width: 1.15em;
-  height: 1.15em;
-  margin-top: -0.15em;
-  background: currentColor;
-  -webkit-mask: url("/assets/img/icons/cv.png") center / contain no-repeat;
-  mask: url("/assets/img/icons/cv.png") center / contain no-repeat;
 }
 
 .site-header__logo {
