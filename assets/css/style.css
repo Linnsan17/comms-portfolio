@@ -952,8 +952,7 @@ html.lenis body {
 }
 
 /* Underlined text links: the line sits 0.61em under the baseline */
-.section-head__link,
-.area__link {
+.section-head__link {
   display: inline-block;
   padding-bottom: 0.31em;
   border-bottom: 1px solid currentColor;
@@ -1289,11 +1288,11 @@ html.lenis body {
   object-fit: cover;
 }
 
-/* Two lists and the link, bottom-aligned on their last baselines */
+/* Two lists, bottom-aligned on their last baselines */
 .area__foot {
   grid-column: 1;
   display: grid;
-  grid-template-columns: 24.07vw 22.87vw auto;
+  grid-template-columns: 24.07vw 22.87vw;
   align-items: end;
   margin-top: 9.33vw;
   font-size: var(--areas-small);
@@ -1304,10 +1303,6 @@ html.lenis body {
   padding: 0 0 calc(0.185em + 1px);
   list-style: none;
   line-height: 1.4;
-}
-
-.area__link {
-  justify-self: start;
 }
 
 @media (max-width: 760px) {
@@ -1339,10 +1334,6 @@ html.lenis body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8vw 4vw;
     margin-top: 10vw;
-  }
-
-  .area__link {
-    grid-column: 1 / -1;
   }
 }
 
