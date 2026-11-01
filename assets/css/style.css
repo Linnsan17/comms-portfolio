@@ -1339,6 +1339,8 @@ html.lenis body {
    or section that opened it. */
 .sheet {
   --sheet-top: 12px;
+  --sheet-radius: 38px;
+  --close-size: clamp(44px, 3.33vw, 52px);
   --sheet-pad: clamp(16px, 2.6vw, 48px);
   --sheet-gap: clamp(40px, 4.2vw, 80px);
   --sheet-open: 800ms var(--roll-ease);
@@ -1381,7 +1383,7 @@ html.has-sheet {
   margin-inline: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-radius: 38px 38px 0 0;
+  border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
   background: var(--paper);
   transform: translate3d(0, calc(100% + var(--sheet-top)), 0);
   transition: transform var(--sheet-close);
@@ -1393,7 +1395,7 @@ html.has-sheet {
    circle, like Figma's iOS corner smoothing. Elsewhere it's that circle. */
 @supports (corner-shape: superellipse(2)) {
   .sheet__panel {
-    border-radius: 60.8px 60.8px 0 0;
+    border-radius: calc(var(--sheet-radius) * 1.6) calc(var(--sheet-radius) * 1.6) 0 0;
     corner-shape: superellipse(1.78);
   }
 }
@@ -1407,7 +1409,9 @@ html.has-sheet {
   transition: transform var(--sheet-open);
 }
 
-/* Title in the middle, Close on the right */
+/* Title in the middle, Close tucked into the top right corner. The header
+   is as tall as the corner is wide twice over, so the title's middle lines
+   up with Close's */
 .sheet__head {
   position: sticky;
   top: 0;
@@ -1415,8 +1419,8 @@ html.has-sheet {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  height: clamp(72px, 6.5vw, 100px);
-  padding: 0 var(--sheet-pad);
+  height: calc(var(--sheet-radius) * 2);
+  padding: 0 calc(var(--sheet-radius) + var(--close-size) / 2);
   background: var(--paper);
   cursor: grab;
   touch-action: none;
@@ -1425,21 +1429,23 @@ html.has-sheet {
 .sheet__title {
   grid-column: 2;
   margin: 0;
-  font-size: var(--text-large);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.03em;
+  font-size: var(--text-medium);
+  font-weight: 600;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
-/* Close: an X in a round beige button, the way iOS does it */
+/* Close: an X in a round beige button, the way iOS does it, concentric
+   with the sheet's corner: it sits the corner's radius minus its own from
+   the top and right edges, so its curve and the corner's share a centre */
 .sheet__close {
-  grid-column: 3;
-  justify-self: end;
+  position: absolute;
+  top: calc(var(--sheet-radius) - var(--close-size) / 2);
+  right: calc(var(--sheet-radius) - var(--close-size) / 2);
   display: grid;
   place-items: center;
-  width: clamp(44px, 3.33vw, 52px);
-  height: clamp(44px, 3.33vw, 52px);
+  width: var(--close-size);
+  height: var(--close-size);
   padding: 0;
   border: 0;
   border-radius: 50%;
