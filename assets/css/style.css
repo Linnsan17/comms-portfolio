@@ -766,7 +766,7 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* Section heads, after wearemotto.com: a "(Label)" on the left and an
+/* Section heads, after wearemotto.com: a semibold label on the left and an
    optional underlined link on the right. The label keeps the same space
    under its text as the link's padding and underline, so both sit on one
    baseline. Each section sets the spacing around its head. */
@@ -783,7 +783,7 @@ html.lenis body {
   margin: 0;
   padding-bottom: calc(0.31em + 1px);
   font-size: inherit;
-  font-weight: 400;
+  font-weight: 600;
   line-height: inherit;
   letter-spacing: 0;
 }
