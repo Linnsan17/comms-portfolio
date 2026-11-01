@@ -23,10 +23,10 @@ Paths start with `/` (for example `/assets/css/style.css`). This works on `<user
 From this folder, run:
 
 ```bash
-python3 -m http.server 8796
+python3 tools/serve.py
 ```
 
-Then open http://localhost:8796.
+Then open http://localhost:8796. The script turns browser caching off, so a reload always shows the latest CSS and JS. With `python3 -m http.server` a reload can mix new HTML with an old stylesheet and look broken.
 
 ## Set up on a new computer
 

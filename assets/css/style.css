@@ -610,15 +610,17 @@ p {
 }
 
 /* Cards are drawn at the back card's size (3.6x the front card) and only
-   ever scaled down, so they stay sharp. */
+   ever scaled down, so they stay sharp. The front card is drawn at its own
+   size instead (--shrink, set by main.js): scaling a card down that far
+   leaves its edges and photo pixelated. */
 .stack-card {
   --w: clamp(432px, 46.8vw, 1008px);
   position: absolute;
   top: 50%;
   left: 50%;
-  width: var(--w);
+  width: calc(var(--w) / var(--shrink, 1));
   aspect-ratio: 1.45;
-  margin: calc(var(--w) / -2.9) 0 0 calc(var(--w) / -2);
+  margin: calc(var(--w) / var(--shrink, 1) / -2.9) 0 0 calc(var(--w) / var(--shrink, 1) / -2);
   overflow: hidden;
   background: var(--c);
   clip-path: url(#pillow);
@@ -646,8 +648,8 @@ p {
 
 /* Front card: a hand holding a phone that plays a reel, cut out of the
    hero photo. The card's colour sits behind, the arm is cut off by the
-   card, and the top of the phone pokes out above it (#pillow-pop is the
-   card's shape plus everything above its top edge). */
+   card, and the top of the phone pokes out above it: main.js clips the
+   layer to the card's shape plus everything above its top edge. */
 .stack-card--phone {
   overflow: visible;
   background: none;
@@ -665,7 +667,7 @@ p {
 .stack-card__phone {
   position: absolute;
   inset: 0;
-  clip-path: url(#pillow-pop);
+  clip-path: inset(-40% 0 0 0);
 }
 
 /* The phone's face is as tall as the card, with its top quarter above
@@ -677,23 +679,24 @@ p {
   width: 106%;
 }
 
+/* Above the screen: the screen shows through a hole in the photo, so the
+   bezel's smooth inner edge comes from the photo */
 .stack-card .stack-card__art img {
+  position: relative;
   display: block;
   width: 100%;
   height: auto;
   border-radius: 0;
 }
 
-/* Laid out at a phone screen's own shape, then warped onto the photo's
-   screen by main.js (matrix3d), so it follows the phone's tilt */
+/* Laid out at a phone screen's own shape and about its size on the page,
+   then warped onto the photo's screen by main.js (matrix3d), so it follows
+   the phone's tilt. Its edges sit under the bezel. */
 .stack-card__screen {
   position: absolute;
   top: 0;
   left: 0;
-  width: 460px;
-  height: 1000px;
   overflow: hidden;
-  border-radius: 62px;
   transform-origin: 0 0;
 }
 

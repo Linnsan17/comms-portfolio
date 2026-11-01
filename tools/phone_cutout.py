@@ -6,8 +6,10 @@ usage: python3 phone_cutout.py <photo.png> <photo-mask.png> <out.webp>
 The photo's background is a purely vertical gradient, so each row's colour
 is known: pixels that match it are dropped (the gap between thumb and
 phone), and edge pixels have the background's share taken back out, so no
-pink fringe is left. Prints the screen's corners inside the bezel, as
-fractions of the cut-out, for PHONE_SCREEN in main.js.
+pink fringe is left. The screen becomes a smooth, anti-aliased hole inside
+the bezel, so the video can play underneath and its edges stay hidden.
+Prints the video's corners (a little bigger than the hole, under the
+bezel) as fractions of the cut-out, for PHONE_SCREEN in main.js.
 """
 import sys
 from PIL import Image
@@ -101,10 +103,55 @@ def warp(P):
 
 
 onto = warp(P)
-bx = 0.032  # bezel, as a share of the face's width
-by = bx * 0.487  # on a phone face 0.487 as wide as it is tall
+ASPECT = 0.487  # a phone's face is 0.487 as wide as it is tall
+BEZEL = 0.032  # the hole's inset, as a share of the face's width
+RADIUS = 0.115  # the screen's corner radius, same units
+UNDER = 0.012  # the video's inset: it reaches under the bezel
+
+# Cut the screen out: each pixel goes back to the face's own flat
+# coordinates (the inverse of the warp), measured against a rounded
+# rectangle, 4x4 samples per pixel for a smooth edge
+(x0, y0), (x1, y1), (x2, y2), (x3, y3) = P
+dx1, dx2, dx3 = x1 - x2, x3 - x2, x0 - x1 + x2 - x3
+dy1, dy2, dy3 = y1 - y2, y3 - y2, y0 - y1 + y2 - y3
+den = dx1 * dy2 - dx2 * dy1
+g = (dx3 * dy2 - dx2 * dy3) / den
+k = (dx1 * dy3 - dx3 * dy1) / den
+M = [[x1 - x0 + g * x1, x3 - x0 + k * x3, x0], [y1 - y0 + g * y1, y3 - y0 + k * y3, y0], [g, k, 1]]
+det = (M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0])
+       + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]))
+inv = [[(M[(r + 1) % 3][(c + 1) % 3] * M[(r + 2) % 3][(c + 2) % 3] - M[(r + 1) % 3][(c + 2) % 3] * M[(r + 2) % 3][(c + 1) % 3]) / det
+        for r in range(3)] for c in range(3)]
+
+
+def flat(x, y):
+    X = inv[0][0] * x + inv[0][1] * y + inv[0][2]
+    Y = inv[1][0] * x + inv[1][1] * y + inv[1][2]
+    W = inv[2][0] * x + inv[2][1] * y + inv[2][2]
+    return X / W, Y / W / ASPECT  # in face widths, both ways
+
+
+H = 1 / ASPECT
+
+
+def inside(u, v):
+    ax = max(BEZEL + RADIUS - u, 0, u - (1 - BEZEL - RADIUS))
+    ay = max(BEZEL + RADIUS - v, 0, v - (H - BEZEL - RADIUS))
+    return (ax * ax + ay * ay) ** 0.5 <= RADIUS and BEZEL <= u <= 1 - BEZEL and BEZEL <= v <= H - BEZEL
+
+
+cp = cut.load()
+xs_face = [p[0] for p in P]; ys_face = [p[1] for p in P]
+for y in range(int(min(ys_face)), int(max(ys_face)) + 2):
+    for x in range(int(min(xs_face)), int(max(xs_face)) + 2):
+        hits = sum(inside(*flat(x + (i + 0.5) / 4, y + (j + 0.5) / 4)) for i in range(4) for j in range(4))
+        if hits:
+            r, gg, b, a = cp[x, y]
+            cp[x, y] = (r, gg, b, round(a * (1 - hits / 16)))
+
 cw, ch = cut.size
-screen = [onto(u, v) for u, v in ((bx, by), (1 - bx, by), (1 - bx, 1 - by), (bx, 1 - by))]
+uv = UNDER * ASPECT
+screen = [onto(u, v) for u, v in ((UNDER, uv), (1 - UNDER, uv), (1 - UNDER, 1 - uv), (UNDER, 1 - uv))]
 print("PHONE_SCREEN =", [[round(x / cw, 5), round(y / ch, 5)] for x, y in screen])
 
 web = cut.resize((760, round(760 * ch / cw)), Image.LANCZOS)

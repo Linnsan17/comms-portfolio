@@ -380,7 +380,6 @@ function createHero(hero) {
   const cards = [...hero.querySelectorAll(".stack-card")]; // front first
   const cardsWrap = hero.querySelector("[data-hero-cards]");
   const pillow = hero.querySelector("#pillow path");
-  const pillowPop = hero.querySelector("#pillow-pop path");
   const copy = hero.querySelector("[data-hero-copy]");
   const rotator = hero.querySelector("[data-rotator]");
   const count = cards.length;
@@ -417,10 +416,13 @@ function createHero(hero) {
   };
   let lastPinch = null;
 
-  // Front card's phone: the reel is warped onto the photo's screen. Its
-  // corners inside the bezel (top left, top right, bottom right, bottom
-  // left), as fractions of the cut-out, traced from the blacked-out screen.
-  const PHONE_SCREEN = [[0.06683, 0.01247], [0.34567, 0.02533], [0.3982, 0.69488], [0.14172, 0.70216]];
+  // Front card's phone: the reel plays under a hole in the photo, warped
+  // onto the phone's screen. Its corners (top left, top right, bottom right,
+  // bottom left), a little under the bezel, as fractions of the cut-out;
+  // from tools/phone_cutout.py.
+  const PHONE_SCREEN = [[0.05982, 0.00468], [0.35087, 0.01835], [0.40403, 0.70095], [0.1368, 0.70877]];
+  const SCREEN_ASPECT = 0.487; // a phone's face, width to height
+  const phoneLayer = hero.querySelector(".stack-card__phone");
   const phoneArt = hero.querySelector("[data-phone]");
   const phoneScreen = hero.querySelector("[data-phone-screen]");
   const placeScreen = () => {
@@ -428,10 +430,38 @@ function createHero(hero) {
     const h = phoneArt.offsetHeight;
     if (!w || !h) return;
     const quad = PHONE_SCREEN.map(([x, y]) => [x * w, y * h]);
-    phoneScreen.style.transform = quadMatrix(phoneScreen.offsetWidth, phoneScreen.offsetHeight, quad);
+    // About its size on the page, so the warp barely scales it and the
+    // reel stays sharp
+    const width = Math.hypot(quad[1][0] - quad[0][0], quad[1][1] - quad[0][1]);
+    phoneScreen.style.width = `${width}px`;
+    phoneScreen.style.height = `${width / SCREEN_ASPECT}px`;
+    phoneScreen.style.borderRadius = `${width * 0.13}px`;
+    phoneScreen.style.transform = quadMatrix(width, width / SCREEN_ASPECT, quad);
     phoneScreen.classList.add("is-placed");
   };
   if (phoneArt && phoneScreen) new ResizeObserver(placeScreen).observe(phoneArt);
+
+  // The phone layer's clip: the card's shape with its curved edges traced
+  // as a polygon, plus everything above the top edge so the phone pokes out
+  const popPolygon = (pinch) => {
+    const x = 0.035 * pinch;
+    const y = 0.05 * pinch;
+    const pts = [[-0.2, -1], [1.2, -1], [1.2, 0.06]];
+    const curve = (a, c, b) => {
+      for (let i = 0; i <= 8; i++) {
+        const t = i / 8;
+        const s = 1 - t;
+        pts.push([s * s * a[0] + 2 * s * t * c[0] + t * t * b[0], s * s * a[1] + 2 * s * t * c[1] + t * t * b[1]]);
+      }
+    };
+    curve([1, 0.087], [1 - x, 0.5], [1, 0.913]);
+    curve([1, 0.913], [1, 1], [0.94, 1]);
+    curve([0.94, 1], [0.5, 1 - y], [0.06, 1]);
+    curve([0.06, 1], [0, 1], [0, 0.913]);
+    curve([0, 0.913], [x, 0.5], [0, 0.087]);
+    pts.push([-0.2, 0.06]);
+    return `polygon(${pts.map(([px, py]) => `${(px * 100).toFixed(2)}% ${(py * 100).toFixed(2)}%`).join(",")})`;
+  };
 
   const pointer = { x: 0, y: 0 };
   const current = { x: 0, y: 0 };
@@ -441,12 +471,20 @@ function createHero(hero) {
   let done = false;
   let inView = true;
   let cardWidth, heroWidth, heroHeight;
+  // The front card is drawn at its own size (see .stack-card in the CSS);
+  // the rest at the back card's. Each card's scale makes up the difference.
+  cards[0].style.setProperty("--shrink", MAX_SCALE);
+  let drawn = [];
   const measure = () => {
-    cardWidth = cards[0].offsetWidth / MAX_SCALE; // the front card's width
+    const full = Math.max(...cards.map((card) => card.offsetWidth));
+    drawn = cards.map((card) => full / card.offsetWidth);
+    cardWidth = full / MAX_SCALE; // the front card's width
     heroWidth = hero.offsetWidth;
     heroHeight = hero.offsetHeight;
   };
   measure();
+  // Measure again if the styles settle after this has run
+  new ResizeObserver(measure).observe(cards[0]);
 
   cards.forEach((card, i) => (card.style.zIndex = count - i));
 
@@ -485,7 +523,7 @@ function createHero(hero) {
     const rounded = Math.round(pinch * 100) / 100;
     if (pillow && rounded !== lastPinch) {
       pillow.setAttribute("d", pillowPath(rounded));
-      pillowPop?.setAttribute("d", pillowPath(rounded));
+      if (phoneLayer) phoneLayer.style.clipPath = popPolygon(rounded);
       lastPinch = rounded;
     }
 
@@ -520,7 +558,7 @@ function createHero(hero) {
 
     cards.forEach((card, i) => {
       const grow = hard((t - GROW_AT - i * 0.03) / GROW);
-      const scale = (appear * (1 + i * step * grow)) / MAX_SCALE;
+      const scale = ((appear * (1 + i * step * grow)) / MAX_SCALE) * drawn[i];
       const x = driftX + (mid - i) * gap * current.x;
       const y = driftY + (mid - i) * gap * current.y;
       card.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
