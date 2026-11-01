@@ -868,7 +868,8 @@ document.querySelectorAll("[data-copy]").forEach((link) => {
 // open one shared sheet, filled from the card or section around the button
 // ([data-sheet-source]): its title, its video or picture
 // ([data-sheet-media], or a template of one), its text ([data-sheet-intro]),
-// its two fact lists ([data-sheet-facts]) and the sheet-only blocks in its
+// its two fact lists ([data-sheet-facts]), a list of tools built from the
+// toolbox's badges ([data-sheet-tools]) and the sheet-only blocks in its
 // <template data-sheet-more>. Close, Escape, a click on the dimmed page or
 // dragging the header down closes it; the page stays still underneath.
 const sheet = document.querySelector("[data-sheet]");
@@ -916,6 +917,25 @@ if (sheet) {
       facts.className = "sheet__facts";
       lists.forEach((list) => facts.append(list.cloneNode(true)));
       body.append(facts);
+    }
+    const logos = source.querySelectorAll("[data-sheet-tools] > :not([data-clone]) img");
+    if (logos.length) {
+      const tools = document.createElement("ul");
+      tools.className = "sheet__tools";
+      tools.setAttribute("role", "list");
+      logos.forEach((logo) => {
+        const tool = document.createElement("li");
+        const frame = document.createElement("span");
+        frame.className = "sheet__tool-logo";
+        const img = logo.cloneNode();
+        img.alt = "";
+        frame.append(img);
+        const name = document.createElement("span");
+        name.textContent = logo.alt;
+        tool.append(frame, name);
+        tools.append(tool);
+      });
+      body.append(tools);
     }
     const more = source.querySelector("template[data-sheet-more]");
     if (more) body.append(more.content.cloneNode(true));

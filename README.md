@@ -91,7 +91,7 @@ The logo wave after the introduction shows the tools in `assets/img/tools/`. To 
 2. Copy one of the `<li class="logo-wave__item">` lines in `index.html` and change the image and its `alt`.
 3. Set `--w` to the logo's width as a share of the badge. The default, 0.36, suits a square icon; a wide wordmark needs more (Canva is 0.56).
 
-The script repeats the badges to fill the screen, so any number of logos works.
+The script repeats the badges to fill the screen, so any number of logos works. "View all" lists the same logos with their names (taken from each `alt`) in a sheet, so there's nothing else to update.
 
 ## Handwritten logo
 
