@@ -1649,48 +1649,16 @@ html.has-sheet {
   letter-spacing: -0.03em;
 }
 
-/* The post on a phone, after the spinning phones in Svedea's reel: it
-   spins in when it scrolls into view (main.js adds .is-in), then sways
-   slowly, on the box's beige */
-.sheet__phone {
-  display: grid;
-  place-items: center;
-  padding: clamp(8px, 1.6vw, 28px) 0;
-  perspective: 1400px;
-}
-
-.sheet__phone img {
+.sheet__feature-media {
   display: block;
-  width: clamp(180px, 54%, 300px);
+  width: 62%;
   height: auto;
-  filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.16));
-  opacity: 0;
-  transform: rotateY(-80deg) scale(0.9);
-  transition: transform 1400ms var(--roll-ease), opacity 500ms ease;
+  border-radius: var(--radius-media);
 }
 
-.sheet__phone.is-in img {
-  opacity: 1;
-  transform: none;
-  animation: phone-sway 8s ease-in-out 1400ms infinite alternate;
-}
-
-@keyframes phone-sway {
-  from {
-    transform: none;
-  }
-  to {
-    transform: rotateY(-14deg) rotateX(2deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sheet__phone img,
-  .sheet__phone.is-in img {
-    opacity: 1;
-    transform: none;
-    transition: none;
-    animation: none;
+@media (max-width: 760px) {
+  .sheet__feature-media {
+    width: 100%;
   }
 }
 
