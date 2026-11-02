@@ -982,6 +982,17 @@ if (sheet) {
   }
   addEventListener("resize", () => sheet.open && fitNumbers());
 
+  // A phone in a sheet spins in once it has scrolled into view (.sheet__phone)
+  const phoneIn = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in");
+        phoneIn.unobserve(entry.target);
+      }),
+    { root: content, threshold: 0.35 }
+  );
+
   function openSheet(trigger) {
     clearTimeout(closeTimer);
     fill(trigger.closest("[data-sheet-source]"));
@@ -995,6 +1006,7 @@ if (sheet) {
     sheet.getBoundingClientRect(); // start the slide from below
     sheet.classList.add("is-open");
     content.querySelector("video")?.play().catch(() => {});
+    content.querySelectorAll("[data-sheet-phone]").forEach((phone) => phoneIn.observe(phone));
   }
 
   function finishClose() {
