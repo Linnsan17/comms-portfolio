@@ -1613,6 +1613,82 @@ html.has-sheet {
   white-space: nowrap;
 }
 
+/* One project picked out of a case, on the site's beige: its title, the
+   story, then the post itself beside its numbers (stacked on phones) */
+.sheet__feature {
+  display: grid;
+  gap: clamp(20px, 2.2vw, 40px);
+  padding: clamp(20px, 2.6vw, 48px);
+  border-radius: 16px;
+  background: var(--paper-alt);
+}
+
+.sheet__feature-title {
+  margin: 0;
+  font-size: var(--text-large);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.sheet__feature-body {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(20px, 2.6vw, 48px);
+  margin-top: clamp(4px, 0.8vw, 16px);
+}
+
+.sheet__feature-media {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-media);
+}
+
+/* The three numbers share the post's height, each under a hairline */
+.sheet__feature-stats {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet__feature-stats li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding-top: clamp(12px, 1.1vw, 20px);
+  border-top: 1px solid var(--rule);
+}
+
+.sheet__feature-number {
+  font-size: var(--text-large);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.sheet__feature-label {
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+@media (max-width: 760px) {
+  .sheet__feature-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sheet__feature-stats {
+    grid-template-rows: none;
+  }
+
+  .sheet__feature-stats li {
+    padding-bottom: 20px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sheet,
   .sheet__panel,

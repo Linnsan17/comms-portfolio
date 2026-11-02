@@ -46,7 +46,7 @@ The cases live on the home page; there are no case pages.
 1. In `index.html`, copy one `<article class="area">` in the Selected work section.
 2. Change the title, its `id`, the number, the text and the lists.
 3. Cut the case's film to the card's shape (see Videos) and point the `<video>` at it, or use a still in `assets/img/work/`.
-4. Fill in the `<template data-sheet-more>` at the end of the article: the story of the work as one text block, and three numbers with their labels. "View case" shows them in the case's sheet, under the card's film, summary and facts.
+4. Fill in the `<template data-sheet-more>` at the end of the article: the story of the work as one text block, and three numbers with their labels (or, to pick out one project with its own title, picture and numbers, a beige `sheet__feature` box like Svedea's). "View case" shows them in the case's sheet, under the card's film, summary and facts.
 
 ## Videos
 
