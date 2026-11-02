@@ -65,7 +65,7 @@ Add a start and a length in seconds to keep only part of a clip, for example `..
 
 ## Hero phone
 
-The front hero card shows a hand holding a phone that plays `assets/video/hero-phone-dog.mp4` (Svedea's dog-puzzle video), warped onto the phone's screen by `main.js`. To show another video, replace that file and its poster; any 9:16 video works, and the sides are cropped slightly to fit the screen.
+The front hero card shows a hand holding a phone that plays `assets/video/hero-phone-boneo.mp4` (Boneo's campaign ad, `boneo_kampanj.mp4`, all 7 seconds at 360×640), warped onto the phone's screen by `main.js`. To show another video, replace that file and its poster; any 9:16 video works, and the sides are cropped slightly to fit the screen.
 
 An earlier version, with Linn's portrait on the screen and her name in pink letters that drop in with physics, is saved on the branch `phone-letters`.
 
