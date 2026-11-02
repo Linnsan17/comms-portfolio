@@ -62,6 +62,7 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
   - **Services stack:** a card slows to 43.6% of scroll speed once its top passes 27% of the viewport.
 - **Logo:** `assets/img/linn-logo.svg` is Linn's handwritten signature. `assets/img/linn-logo-write.svg` is a generated version that writes itself in, left to right per line. Regenerate it with the scripts in `tools/` if the logo changes (see README).
 - **Videos:** `assets/video/` holds compressed work reels. Add new ones with `tools/transcode.swift` (see README).
+- **CV (`cv/`):** Linn's Swedish CV in English, every fact as she wrote it, on one A4 page, white with black text (Markus, 2026-11-02: no pink). It borrows the site's type: the signature and "Digital communicator" top left, "About me" as the Introduction's semibold statement, contact and skills as big footer-style lists, employers at display size like the work cards with the dates on their baseline, semibold labels under hairlines. Its own five sizes for A4 are in `cv/cv.css`. Export `assets/cv.pdf` with `cv/export_pdf.swift` (WebKit, see README "CV"), not Chrome. Where the Swedish CV and the work cards differ (Nilar's title, start month and company name, Svedea's 15 vs 12 accounts, the degree's name, Bilbolaget's months), the CV follows the Swedish CV until Linn says which is right.
 
 ## Source material
 

@@ -11,7 +11,8 @@ assets/css/style.css       design tokens at the top, in :root
 assets/js/main.js          all the motion and interaction
 assets/img/                logo, portrait, hero cut-out, tool logos, work stills
 assets/video/              compressed videos (see Videos)
-assets/cv.pdf
+assets/cv.pdf              exported from cv/ (see CV)
+cv/                        Linn's CV as a page: one A4 sheet, and the script that exports the PDF
 robots.txt
 ```
 
@@ -104,6 +105,17 @@ The script repeats the badges to fill the screen, so any number of logos works. 
 3. Run `tools/build_write.py`, which fixes up coverage, times the left-to-right sweep and writes the SVG.
 
 `tools/coverage.py` draws a check image.
+
+## CV
+
+`cv/index.html` is Linn's CV, translated from her Swedish CV, laid out as one A4 page (`cv/cv.css`). With the preview running it's at http://localhost:8796/cv/. "Download CV" on the site links to `assets/cv.pdf`, which is exported from that page:
+
+```bash
+swiftc -O cv/export_pdf.swift -o /tmp/export_pdf
+/tmp/export_pdf http://localhost:8796/cv/ assets/cv.pdf
+```
+
+It uses WebKit, because Chrome's "Save as PDF" turns PP Mori into outlines and the text then copies out broken. If an edit makes the text run past the bottom margin, the script stops and says by how much. The PDF embeds PP Mori, so it falls under the font licence below.
 
 ## Before launch
 
