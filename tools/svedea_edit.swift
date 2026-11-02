@@ -1,5 +1,4 @@
 // usage: svedea_edit <source.mp4> <out.mp4> <poster.jpg> <image 1> <image 2> <image 3>
-//                    <fall.txt> <story 1> <story 2> <story 3> <story 4> <story 5>
 //                    <screen.txt> <dog puzzle clip>
 //
 // Svedea's reel for the case card (896x752, 60 fps, the middle of each frame):
@@ -10,10 +9,6 @@
 //   in every frame (phone_track.swift, then phone_screen.py), and the clip
 //   goes on in that perspective, inside the screen's rounded corners and
 //   around the Dynamic Island
-// - the pet photos that fall onto the reel's white and pile up (22.02-28.775 s):
-//   five of Linn's stories fall there instead, as worked out by a Matter.js
-//   simulation (fall.txt: each card's centre and angle in every frame, from
-//   svedea_fall.js), and drop out the bottom the same way
 // - 28.775-34.3 s (the wind turbine and the forest, with the boat-crew photo
 //   between them), which is cut, and in its place a frame of Linn's employer
 //   branding work: three images that fly up into a loose, tilted collage on
@@ -27,14 +22,10 @@ let srcURL = URL(fileURLWithPath: args[1])
 let outURL = URL(fileURLWithPath: args[2])
 let posterURL = URL(fileURLWithPath: args[3])
 let imageURLs = args[4...6].map { URL(fileURLWithPath: $0) }
-let fallURL = URL(fileURLWithPath: args[7])
-let storyURLs = args[8...12].map { URL(fileURLWithPath: $0) }
-let screenURL = URL(fileURLWithPath: args[13])
-let clipURL = URL(fileURLWithPath: args[14])
+let screenURL = URL(fileURLWithPath: args[7])
+let clipURL = URL(fileURLWithPath: args[8])
 
 let W = 896, H = 752, FPS: Int32 = 60
-// the pet photos' first frame is 22.0167 s; they end where the cut starts
-let FALL_FROM = 22.008
 let CUT = (from: 28.775, to: 34.3)
 
 // MARK: reading the reel
@@ -172,38 +163,6 @@ func drawPhone(_ buffer: CVPixelBuffer, screen: [CGPoint], clipTime: Double) {
   drawReelImage(ciContext.createCGImage(frame, from: base.extent, format: .BGRA8, colorSpace: ctx.colorSpace!)!)
 }
 
-// MARK: the falling stories
-
-let stories = storyURLs.map { NSImage(contentsOf: $0)!.cgImage(forProposedRect: nil, context: nil, hints: nil)! }
-let STORY_W: CGFloat = 186 // as wide as the simulation's cards
-// one line per frame: each card's centre (from the top left) and angle
-// (clockwise, in radians), or "-" before it drops in
-let fall: [[(x: CGFloat, y: CGFloat, a: CGFloat)?]] = try! String(contentsOf: fallURL, encoding: .utf8)
-  .split(separator: "\n").filter { !$0.hasPrefix("#") }
-  .map { line in
-    line.split(separator: " ").map { card in
-      let v = card.split(separator: ",").compactMap { Double($0) }
-      return v.count == 3 ? (CGFloat(v[0]), CGFloat(v[1]), CGFloat(v[2])) : nil
-    }
-  }
-
-func drawFall(frame: Int) {
-  ctx.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
-  ctx.fill(CGRect(x: 0, y: 0, width: W, height: H))
-  for (story, card) in zip(stories, fall[frame]) {
-    guard let card else { continue }
-    let h = STORY_W * CGFloat(story.height) / CGFloat(story.width)
-    let rect = CGRect(x: -STORY_W / 2, y: -h / 2, width: STORY_W, height: h)
-    ctx.saveGState()
-    ctx.translateBy(x: card.x, y: CGFloat(H) - card.y)
-    ctx.rotate(by: -card.a)
-    ctx.addPath(CGPath(roundedRect: rect, cornerWidth: 8, cornerHeight: 8, transform: nil))
-    ctx.clip()
-    ctx.draw(story, in: rect)
-    ctx.restoreGState()
-  }
-}
-
 // MARK: the employer branding frame
 
 let images = imageURLs.map { NSImage(contentsOf: $0)!.cgImage(forProposedRect: nil, context: nil, hints: nil)! }
@@ -278,7 +237,7 @@ func emit() {
   written += 1
 }
 
-readFrames(from: 0, to: FALL_FROM) { buffer, time in
+readFrames(from: 0, to: CUT.from) { buffer, time in
   let frame = Int((time * 60).rounded())
   if let screen = screens[frame] {
     drawPhone(buffer, screen: screen, clipTime: CLIP_FROM + Double(frame - screenFirst) / 60)
@@ -287,9 +246,6 @@ readFrames(from: 0, to: FALL_FROM) { buffer, time in
   }
   emit()
 }
-let fallStart = written
-for f in fall.indices { drawFall(frame: f); emit() }
-print("stories fall from", Double(fallStart) / Double(FPS), "s, for", Double(fall.count) / Double(FPS), "s")
 let ebStart = written
 for f in 0..<Int((LENGTH * Double(FPS)).rounded()) { drawEmployerBranding(at: Double(f) / Double(FPS)); emit() }
 print("employer branding frame from", Double(ebStart) / Double(FPS), "s, for", LENGTH, "s")
