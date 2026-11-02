@@ -89,6 +89,21 @@ function updateAreas() {
   });
 }
 
+// Every work card is as tall as the one with the longest summary, so the
+// stack keeps one rhythm whatever the copy: each summary gets the room the
+// longest one needs (--desc-h; on phones the cards simply grow)
+const summaries = [...document.querySelectorAll(".area__desc")];
+function evenSummaries() {
+  const areas = document.querySelector(".areas");
+  if (!areas || !summaries.length) return;
+  areas.style.removeProperty("--desc-h");
+  const tallest = Math.max(...summaries.map((summary) => summary.getBoundingClientRect().height));
+  areas.style.setProperty("--desc-h", `${Math.ceil(tallest)}px`);
+}
+evenSummaries();
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(evenSummaries);
+addEventListener("resize", evenSummaries);
+
 // Line reveal: split text into lines, each in its own mask, and slide them
 // up with a 60ms stagger when the block is 90% of the way up the viewport.
 const revealBlocks = [...document.querySelectorAll("[data-reveal]")];

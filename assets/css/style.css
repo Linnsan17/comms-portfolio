@@ -207,8 +207,11 @@ a {
    so the padding is 0.19em; measured in Chrome, that puts the capitals
    within a quarter pixel of the middle at every size. Every element holding a label is a flex
    container, so no inherited line height can push the label off centre. */
+/* Buttons are a step up from the small text: --text-medium in a 52px pill
+   (44px on phones) */
 :root {
-  --pill-h: 42px;
+  --pill-h: 52px;
+  --pill-text: var(--text-medium);
 }
 
 .pill,
@@ -230,7 +233,7 @@ a {
 .pill-link {
   display: inline-flex;
   color: var(--ink);
-  font-size: var(--text-small);
+  font-size: var(--pill-text);
   text-decoration: none;
 }
 
@@ -269,19 +272,19 @@ a {
 
 @media (max-width: 760px) {
   :root {
-    --pill-h: 36px;
+    --pill-h: 44px;
   }
 }
 
 .site-header__cta {
   justify-self: start;
-  font-size: var(--text-small);
+  font-size: var(--pill-text);
 }
 
 /* The label holders are flex boxes too, so they don't pick up the page's
    1.55 line height and push the text off centre. Narrow phones show just
    "CV", so the pill clears the centred logo: the full label needs a screen
-   at least 383px wide for a 12px gap. */
+   at least 433px wide for a 12px gap. */
 .site-header__cta-label {
   display: flex;
 }
@@ -290,7 +293,7 @@ a {
   display: none;
 }
 
-@media (max-width: 382px) {
+@media (max-width: 432px) {
   .site-header__cta-label--long {
     display: none;
   }
@@ -363,7 +366,7 @@ a {
 
 /* Nav text is the same size as the buttons */
 .site-nav__label {
-  font-size: var(--text-small);
+  font-size: var(--pill-text);
 }
 
 /* The nav is white, no outline, so it stands out on the beige hero */
@@ -374,11 +377,11 @@ a {
 }
 
 .site-nav__links {
-  gap: 20px;
+  gap: 24px;
   margin: 0;
-  padding-inline: 29px;
+  padding-inline: 34px;
   list-style: none;
-  font-size: var(--text-small);
+  font-size: var(--pill-text);
 }
 
 .site-nav__links li,
@@ -1173,12 +1176,12 @@ html.lenis body {
   border-top: 1px solid var(--areas-rule);
 }
 
-/* Room for four lines whatever the summary's length, so every card is the
-   same height */
+/* As tall as the longest summary on the page (main.js sets --desc-h), and
+   at least four lines, so every card is the same height */
 .area__desc {
   grid-column: 1;
   max-width: 17.85em;
-  min-height: 4em;
+  min-height: var(--desc-h, 4em);
   margin: 0.08vw 0 0;
   font-size: var(--text-large);
   line-height: 1;
