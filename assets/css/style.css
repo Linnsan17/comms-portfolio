@@ -1614,20 +1614,20 @@ html.has-sheet {
   white-space: nowrap;
 }
 
-/* One project picked out of a case, on the site's beige: a small label and
-   its title, the story, then the post itself beside its numbers (stacked on
-   phones) */
+/* One project picked out of a case, on the site's beige, with room around
+   each part: a small label and its title, the story, its numbers (the same
+   big rows as Boneo's, sized together by fitNumbers), then the post itself */
 .sheet__feature {
   display: grid;
-  gap: clamp(20px, 2.2vw, 40px);
-  padding: clamp(20px, 2.6vw, 48px);
+  gap: clamp(36px, 3.6vw, 64px);
+  padding: clamp(28px, 3.6vw, 64px) clamp(24px, 3.2vw, 56px);
   border-radius: 16px;
   background: var(--paper-alt);
 }
 
 .sheet__feature-head {
   display: grid;
-  gap: clamp(10px, 1vw, 18px);
+  gap: clamp(12px, 1.1vw, 20px);
   margin: 0;
 }
 
@@ -1646,61 +1646,16 @@ html.has-sheet {
   letter-spacing: -0.03em;
 }
 
-.sheet__feature-body {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: clamp(20px, 2.6vw, 48px);
-  margin-top: clamp(4px, 0.8vw, 16px);
-}
-
 .sheet__feature-media {
   display: block;
-  width: 100%;
+  width: 62%;
   height: auto;
   border-radius: var(--radius-media);
 }
 
-/* The numbers share the post's height, each under a hairline */
-.sheet__feature-stats {
-  display: grid;
-  grid-auto-rows: 1fr;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.sheet__feature-stats li {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  padding-top: clamp(12px, 1.1vw, 20px);
-  border-top: 1px solid var(--rule);
-}
-
-.sheet__feature-number {
-  font-size: var(--text-large);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-}
-
-.sheet__feature-label {
-  font-size: var(--text-small);
-  font-weight: 600;
-  line-height: 1.4;
-}
-
 @media (max-width: 760px) {
-  .sheet__feature-body {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .sheet__feature-stats {
-    grid-auto-rows: auto;
-  }
-
-  .sheet__feature-stats li {
-    padding-bottom: 20px;
+  .sheet__feature-media {
+    width: 100%;
   }
 }
 
