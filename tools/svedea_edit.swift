@@ -7,7 +7,6 @@
 // tilted collage on the reel's white, hold, and fly out.
 import AVFoundation
 import AppKit
-import CoreImage
 
 let args = CommandLine.arguments
 let srcURL = URL(fileURLWithPath: args[1])
@@ -22,9 +21,8 @@ let CUT = (from: 28.775, to: 34.3)
 
 let asset = AVURLAsset(url: srcURL)
 let track = asset.tracks(withMediaType: .video).first!
-let ciContext = CIContext(options: [.cacheIntermediates: false])
 
-func readFrames(from start: Double, to end: Double, _ body: (CGImage) -> Void) {
+func readFrames(from start: Double, to end: Double, _ body: (CVPixelBuffer) -> Void) {
   let reader = try! AVAssetReader(asset: asset)
   let output = AVAssetReaderTrackOutput(track: track, outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA])
   output.alwaysCopiesSampleData = false
@@ -33,8 +31,7 @@ func readFrames(from start: Double, to end: Double, _ body: (CGImage) -> Void) {
   reader.startReading()
   while let sample = output.copyNextSampleBuffer() {
     guard let buffer = CMSampleBufferGetImageBuffer(sample) else { continue }
-    let image = CIImage(cvPixelBuffer: buffer)
-    if let cg = ciContext.createCGImage(image, from: image.extent) { body(cg) }
+    body(buffer)
   }
 }
 
@@ -45,8 +42,17 @@ let ctx = CGContext(data: nil, width: W, height: H, bitsPerComponent: 8, bytesPe
                     bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue)!
 ctx.interpolationQuality = .high
 
-/// The middle of a reel frame, cropped to the card's shape
-func drawReel(_ image: CGImage) {
+/// The middle of a reel frame, cropped to the card's shape. Its pixels go in
+/// as they are, with no colour conversion, and the output is tagged with the
+/// reel's own colour (BT.709), so it keeps the reel's colours exactly.
+func drawReel(_ buffer: CVPixelBuffer) {
+  CVPixelBufferLockBaseAddress(buffer, .readOnly)
+  defer { CVPixelBufferUnlockBaseAddress(buffer, .readOnly) }
+  let bpr = CVPixelBufferGetBytesPerRow(buffer), bh = CVPixelBufferGetHeight(buffer)
+  let bytes = Data(bytes: CVPixelBufferGetBaseAddress(buffer)!, count: bpr * bh)
+  let image = CGImage(width: CVPixelBufferGetWidth(buffer), height: bh, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: bpr,
+                      space: ctx.colorSpace!, bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue),
+                      provider: CGDataProvider(data: bytes as CFData)!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)!
   let s = CGFloat(H) / CGFloat(image.height), dw = CGFloat(image.width) * s
   ctx.draw(image, in: CGRect(x: (CGFloat(W) - dw) / 2, y: 0, width: dw, height: CGFloat(H)))
 }
@@ -92,6 +98,7 @@ writer.shouldOptimizeForNetworkUse = true
 let input = AVAssetWriterInput(mediaType: .video, outputSettings: [
   AVVideoCodecKey: AVVideoCodecType.h264, AVVideoWidthKey: W, AVVideoHeightKey: H,
   AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: 2_000_000, AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel, AVVideoMaxKeyFrameIntervalKey: 60],
+  AVVideoColorPropertiesKey: [AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2, AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2, AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2],
 ])
 input.expectsMediaDataInRealTime = false
 let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input, sourcePixelBufferAttributes: [
@@ -112,6 +119,10 @@ func emit() {
   let dbpr = CVPixelBufferGetBytesPerRow(pb!)
   for y in 0..<H { memcpy(dst + y * dbpr, data + y * ctx.bytesPerRow, W * 4) }
   CVPixelBufferUnlockBaseAddress(pb!, [])
+  // already the reel's BT.709 colour, so the encoder leaves it as it is
+  CVBufferSetAttachment(pb!, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, .shouldPropagate)
+  CVBufferSetAttachment(pb!, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, .shouldPropagate)
+  CVBufferSetAttachment(pb!, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, .shouldPropagate)
   adaptor.append(pb!, withPresentationTime: CMTime(value: CMTimeValue(written), timescale: FPS))
   if written == Int(FPS) / 2 { // the poster: half a second in
     let rep = NSBitmapImageRep(cgImage: ctx.makeImage()!)
