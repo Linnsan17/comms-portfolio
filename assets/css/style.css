@@ -185,6 +185,9 @@ a {
   z-index: 10;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
+  /* on tablets the nav is wider than its share and nudges the logo over;
+     this keeps them apart */
+  column-gap: 16px;
   align-items: center;
   padding: max(6px, calc(clamp(14px, 1.75vw, 27px) - (var(--logo-h) - var(--pill-h)) / 2)) var(--header-pad-x) 0;
   color: var(--ink);
