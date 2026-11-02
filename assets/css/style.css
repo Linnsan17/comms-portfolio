@@ -70,6 +70,7 @@
   --block-3-ink: #ffffff;
   --block-4: #bfcef7;             /* light blue */
   --block-4-ink: #000000;
+  --block-neutral: #b8ab9b;       /* taupe, behind the hero's hand */
   --pill: #fbbad4;                /* buttons */
   --pill-ink: #000000;
   --pill-on-blocks: #f2f0ec;      /* buttons over a colour block */
@@ -581,7 +582,7 @@ p {
 }
 
 /* Front card: a hand holding a phone that plays a reel, cut out of the
-   hero photo, over a sky loop (pink until it loads), the arm is cut off by the
+   hero photo, over plain taupe (--block-neutral); the arm is cut off by the
    card, and the top of the phone pokes out above it: main.js clips the
    layer to the card's shape plus everything above its top edge. */
 .stack-card--phone {
@@ -598,8 +599,8 @@ p {
   clip-path: inset(0 round var(--corner, 16px));
 }
 
-/* Footage behind the hand, in the card's shape; the pink under it shows
-   until it loads */
+/* A picture or footage behind the hand, if the card is given one, in the
+   card's shape; the card's colour shows under it */
 .stack-card__backdrop {
   position: absolute;
   inset: 0;
