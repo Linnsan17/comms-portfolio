@@ -581,7 +581,7 @@ p {
 }
 
 /* Front card: a hand holding a phone that plays a reel, cut out of the
-   hero photo. The card's colour (the pink) sits behind, the arm is cut off by the
+   hero photo, over a sky loop (pink until it loads), the arm is cut off by the
    card, and the top of the phone pokes out above it: main.js clips the
    layer to the card's shape plus everything above its top edge. */
 .stack-card--phone {
@@ -595,6 +595,14 @@ p {
   position: absolute;
   inset: 0;
   background: var(--c);
+  clip-path: inset(0 round var(--corner, 16px));
+}
+
+/* Footage behind the hand, in the card's shape; the pink under it shows
+   until it loads */
+.stack-card__backdrop {
+  position: absolute;
+  inset: 0;
   clip-path: inset(0 round var(--corner, 16px));
 }
 

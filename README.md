@@ -50,7 +50,7 @@ The cases live on the home page; there are no case pages.
 
 ## Videos
 
-The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-turbines`). The hand on the front card sits on the site's pink. The service cards play their own films (`service-*`), and a Selected work card plays its case's own film (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the hero clips are 960×540 at about 1.5 Mbps, the service films 960×640 at 2 Mbps (the service card's 3:2 media box) and the case films 896×752 at 1.5–2 Mbps (the case card's media box). `transcode` crops the middle to fit. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
+The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-turbines`). `hero-sky` (clouds and sun from Nilar's Almedalen film) plays behind the hand on the front card. The service cards play their own films (`service-*`), and a Selected work card plays its case's own film (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the hero clips are 960×540 at about 1.5 Mbps, the service films 960×640 at 2 Mbps (the service card's 3:2 media box) and the case films 896×752 at 1.5–2 Mbps (the case card's media box). `transcode` crops the middle to fit. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
 
 To add or replace a reel, compress it first. This Mac has no ffmpeg, so use the Swift transcoder in `tools/`:
 
