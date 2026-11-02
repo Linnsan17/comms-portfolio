@@ -1,8 +1,15 @@
 // usage: svedea_edit <source.mp4> <out.mp4> <poster.jpg> <image 1> <image 2> <image 3>
 //                    <fall.txt> <story 1> <story 2> <story 3> <story 4> <story 5>
+//                    <screen.txt> <dog puzzle clip>
 //
 // Svedea's reel for the case card (896x752, 60 fps, the middle of each frame):
 // the reel as it is, except
+// - the phone on white that plays the dog-puzzle clip (7.13-13.25 s): its
+//   screen plays the clip from its 11th second instead of its start (the dog
+//   at work rather than the setting up). screen.txt has the screen's corners
+//   in every frame (phone_track.swift, then phone_screen.py), and the clip
+//   goes on in that perspective, inside the screen's rounded corners and
+//   around the Dynamic Island
 // - the pet photos that fall onto the reel's white and pile up (22.02-28.775 s):
 //   five of Linn's stories fall there instead, as worked out by a Matter.js
 //   simulation (fall.txt: each card's centre and angle in every frame, from
@@ -13,6 +20,7 @@
 //   the reel's white, hold, and fly out.
 import AVFoundation
 import AppKit
+import CoreImage
 
 let args = CommandLine.arguments
 let srcURL = URL(fileURLWithPath: args[1])
@@ -21,6 +29,8 @@ let posterURL = URL(fileURLWithPath: args[3])
 let imageURLs = args[4...6].map { URL(fileURLWithPath: $0) }
 let fallURL = URL(fileURLWithPath: args[7])
 let storyURLs = args[8...12].map { URL(fileURLWithPath: $0) }
+let screenURL = URL(fileURLWithPath: args[13])
+let clipURL = URL(fileURLWithPath: args[14])
 
 let W = 896, H = 752, FPS: Int32 = 60
 // the pet photos' first frame is 22.0167 s; they end where the cut starts
@@ -32,7 +42,7 @@ let CUT = (from: 28.775, to: 34.3)
 let asset = AVURLAsset(url: srcURL)
 let track = asset.tracks(withMediaType: .video).first!
 
-func readFrames(from start: Double, to end: Double, _ body: (CVPixelBuffer) -> Void) {
+func readFrames(from start: Double, to end: Double, _ body: (CVPixelBuffer, Double) -> Void) {
   let reader = try! AVAssetReader(asset: asset)
   let output = AVAssetReaderTrackOutput(track: track, outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA])
   output.alwaysCopiesSampleData = false
@@ -41,7 +51,7 @@ func readFrames(from start: Double, to end: Double, _ body: (CVPixelBuffer) -> V
   reader.startReading()
   while let sample = output.copyNextSampleBuffer() {
     guard let buffer = CMSampleBufferGetImageBuffer(sample) else { continue }
-    body(buffer)
+    body(buffer, CMSampleBufferGetPresentationTimeStamp(sample).seconds)
   }
 }
 
@@ -63,8 +73,103 @@ func drawReel(_ buffer: CVPixelBuffer) {
   let image = CGImage(width: CVPixelBufferGetWidth(buffer), height: bh, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: bpr,
                       space: ctx.colorSpace!, bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue),
                       provider: CGDataProvider(data: bytes as CFData)!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)!
+  drawReelImage(image)
+}
+
+func drawReelImage(_ image: CGImage) {
   let s = CGFloat(H) / CGFloat(image.height), dw = CGFloat(image.width) * s
   ctx.draw(image, in: CGRect(x: (CGFloat(W) - dw) / 2, y: 0, width: dw, height: CGFloat(H)))
+}
+
+// MARK: the toilet-roll phone's screen
+
+let CLIP_FROM = 11.0
+// as measured on the reel's front-facing frame (an iPhone 15 Pro): the
+// screen's shape, its corner radius and the Dynamic Island, as shares of
+// the screen's width and height
+let SCREEN_ASPECT = 315.0 / 684.0
+let SCREEN_RADIUS = 0.14
+let ISLAND = (width: 0.305, top: 0.0175, bottom: 0.057)
+
+// no colour management, so the reel's pixels and the clip's go through as they are
+let ciContext = CIContext(options: [.workingColorSpace: NSNull(), .outputColorSpace: NSNull()])
+let screens: [Int: [CGPoint]] = Dictionary(uniqueKeysWithValues: try! String(contentsOf: screenURL, encoding: .utf8)
+  .split(separator: "\n").filter { !$0.hasPrefix("#") }
+  .map { line -> (Int, [CGPoint]) in
+    let parts = line.split(separator: " ")
+    let pts = parts.dropFirst().map { p -> CGPoint in
+      let v = p.split(separator: ",").map { Double($0)! }
+      return CGPoint(x: v[0], y: v[1])
+    }
+    return (Int(parts[0])!, pts)
+  })
+let screenFirst = screens.keys.min()!
+
+// the clip, read forward from its 11th second as the phone needs it
+let clipAsset = AVURLAsset(url: clipURL)
+let clipReader = try! AVAssetReader(asset: clipAsset)
+let clipOutput = AVAssetReaderTrackOutput(track: clipAsset.tracks(withMediaType: .video).first!,
+                                          outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA])
+clipReader.add(clipOutput)
+clipReader.timeRange = CMTimeRange(start: CMTime(seconds: CLIP_FROM, preferredTimescale: 6000), end: clipAsset.duration)
+clipReader.startReading()
+var clipNow = clipOutput.copyNextSampleBuffer()!
+var clipNext = clipOutput.copyNextSampleBuffer()
+
+func clipFrame(at t: Double) -> CVPixelBuffer {
+  while let next = clipNext, CMSampleBufferGetPresentationTimeStamp(next).seconds <= t + 0.0001 {
+    clipNow = next
+    clipNext = clipOutput.copyNextSampleBuffer()
+  }
+  return CMSampleBufferGetImageBuffer(clipNow)!
+}
+
+// the screen's shape in the clip's pixels: its middle, as tall as the clip
+let clipSize = CVImageBufferGetDisplaySize(CMSampleBufferGetImageBuffer(clipNow)!)
+let cropW = (clipSize.height * SCREEN_ASPECT).rounded(), cropX = ((clipSize.width - cropW) / 2).rounded()
+/// A white shape on black, in the screen's own pixels
+func localMask(_ draw: (CGContext, CGFloat, CGFloat) -> Void) -> CIImage {
+  let w = Int(cropW), h = Int(clipSize.height)
+  let m = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w,
+                    space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue)!
+  m.setFillColor(gray: 1, alpha: 1)
+  draw(m, CGFloat(w), CGFloat(h))
+  m.fillPath()
+  return CIImage(cgImage: m.makeImage()!, options: [.colorSpace: NSNull()])
+}
+// the screen with its rounded corners
+let screenMask = localMask { m, w, h in
+  let r = w * SCREEN_RADIUS
+  m.addPath(CGPath(roundedRect: CGRect(x: 0, y: 0, width: w, height: h), cornerWidth: r, cornerHeight: r, transform: nil))
+}
+// the Dynamic Island, drawn onto the clip, so it sits where this screen
+// says, rather than letting the reel's own show through
+let islandMask = localMask { m, w, h in
+  let iw = w * ISLAND.width, ih = h * (ISLAND.bottom - ISLAND.top)
+  m.addPath(CGPath(roundedRect: CGRect(x: (w - iw) / 2, y: h * (1 - ISLAND.bottom), width: iw, height: ih),
+                   cornerWidth: ih / 2, cornerHeight: ih / 2, transform: nil))
+}
+let black = CIImage(color: CIColor(red: 0, green: 0, blue: 0)).cropped(to: CGRect(x: 0, y: 0, width: cropW, height: clipSize.height))
+
+/// The reel frame with the clip on the phone's screen (corners from the top left)
+func drawPhone(_ buffer: CVPixelBuffer, screen: [CGPoint], clipTime: Double) {
+  let base = CIImage(cvPixelBuffer: buffer, options: [.colorSpace: NSNull()])
+  let reelH = base.extent.height
+  let picture = CIImage(cvPixelBuffer: clipFrame(at: clipTime), options: [.colorSpace: NSNull()])
+    .cropped(to: CGRect(x: cropX, y: 0, width: cropW, height: clipSize.height))
+    .transformed(by: CGAffineTransform(translationX: -cropX, y: 0))
+  let clip = black.applyingFilter("CIBlendWithMask", parameters: [kCIInputBackgroundImageKey: picture, kCIInputMaskImageKey: islandMask])
+  // Core Image counts from the bottom left
+  let corners: [String: Any] = [
+    "inputTopLeft": CIVector(x: screen[0].x, y: reelH - screen[0].y),
+    "inputTopRight": CIVector(x: screen[1].x, y: reelH - screen[1].y),
+    "inputBottomRight": CIVector(x: screen[2].x, y: reelH - screen[2].y),
+    "inputBottomLeft": CIVector(x: screen[3].x, y: reelH - screen[3].y),
+  ]
+  let onScreen = clip.applyingFilter("CIPerspectiveTransform", parameters: corners)
+  let mask = screenMask.applyingFilter("CIPerspectiveTransform", parameters: corners)
+  let frame = onScreen.applyingFilter("CIBlendWithMask", parameters: [kCIInputBackgroundImageKey: base, kCIInputMaskImageKey: mask])
+  drawReelImage(ciContext.createCGImage(frame, from: base.extent, format: .BGRA8, colorSpace: ctx.colorSpace!)!)
 }
 
 // MARK: the falling stories
@@ -173,14 +278,22 @@ func emit() {
   written += 1
 }
 
-readFrames(from: 0, to: FALL_FROM) { drawReel($0); emit() }
+readFrames(from: 0, to: FALL_FROM) { buffer, time in
+  let frame = Int((time * 60).rounded())
+  if let screen = screens[frame] {
+    drawPhone(buffer, screen: screen, clipTime: CLIP_FROM + Double(frame - screenFirst) / 60)
+  } else {
+    drawReel(buffer)
+  }
+  emit()
+}
 let fallStart = written
 for f in fall.indices { drawFall(frame: f); emit() }
 print("stories fall from", Double(fallStart) / Double(FPS), "s, for", Double(fall.count) / Double(FPS), "s")
 let ebStart = written
 for f in 0..<Int((LENGTH * Double(FPS)).rounded()) { drawEmployerBranding(at: Double(f) / Double(FPS)); emit() }
 print("employer branding frame from", Double(ebStart) / Double(FPS), "s, for", LENGTH, "s")
-readFrames(from: CUT.to, to: 36) { drawReel($0); emit() }
+readFrames(from: CUT.to, to: 36) { buffer, _ in drawReel(buffer); emit() }
 print("total", Double(written) / Double(FPS), "s")
 
 input.markAsFinished()
