@@ -4,7 +4,7 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
 
 ## Working on it
 
-- **Preview:** from this folder, run `python3 tools/serve.py` and open http://localhost:8796 (it turns caching off; plain `http.server` can serve stale CSS after a change). Opening the HTML files directly doesn't work, because paths start at `/`.
+- **Preview:** from this folder, run `python3 tools/serve.py` and open http://localhost:8796 (it turns caching off for pages, styles and scripts, since plain `http.server` can serve stale CSS after a change, and answers byte-range requests like GitHub Pages; without ranges, videos can't be skipped through and stutter, in Safari especially. Videos and images may be cached but are checked against the file each time). Opening the HTML files directly doesn't work, because paths start at `/`.
 - **Fonts:** PP Mori (Pangram Pangram) is not in git. The free personal-use licence forbids uploading it. On a new computer, download "PP Mori – Free for personal use" from pangrampangram.com and copy these files into `assets/fonts/`:
   - `PPMori-Regular.otf`
   - `PPMori-RegularItalic.otf`

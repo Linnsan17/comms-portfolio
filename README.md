@@ -26,7 +26,7 @@ From this folder, run:
 python3 tools/serve.py
 ```
 
-Then open http://localhost:8796. The script turns browser caching off, so a reload always shows the latest CSS and JS. With `python3 -m http.server` a reload can mix new HTML with an old stylesheet and look broken.
+Then open http://localhost:8796. The script turns browser caching off for pages, styles and scripts, so a reload always shows the latest CSS and JS (with `python3 -m http.server` a reload can mix new HTML with an old stylesheet and look broken). It also answers byte-range requests, as GitHub Pages does, so the videos load in pieces and play and loop smoothly; restart it after pulling a new `serve.py`.
 
 ## Set up on a new computer
 
@@ -50,7 +50,7 @@ The cases live on the home page; there are no case pages.
 
 ## Videos
 
-The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-turbines`). Behind the hand on the front card is a still of clouds (`assets/img/hero/hero-clouds.jpg`, the cloud sea at 1.2 s of Nilar's Almedalen film, 1600×900). The service cards play their own films (`service-*`), and a Selected work card plays its case's own film (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the hero clips are 960×540 at about 1.5 Mbps, the service films 960×640 at 2 Mbps (the service card's 3:2 media box) and the case films 896×752 at 1.5–2 Mbps (the case card's media box). `transcode` crops the middle to fit. They are muted, looping and inline, so they autoplay everywhere. They only load and play near the screen. On phones only the front hero card plays.
+The hero cards behind the phone play footage from Linn's work, edge to edge (`hero-boat`, `hero-dog`, `hero-tree`, `hero-turbines`). Behind the hand on the front card is a still of clouds (`assets/img/hero/hero-clouds.jpg`, the cloud sea at 1.2 s of Nilar's Almedalen film, 1600×900). The service cards play their own films (`service-*`), and a Selected work card plays its case's own film (`case-*`). All are in `assets/video/`. Each is an H.264 file with no sound, plus a poster still: the hero clips are 960×540 at about 1.5 Mbps, the service films 960×640 at 2 Mbps (the service card's 3:2 media box) and the case films 896×752 at 1.5–2 Mbps (the case card's media box). `transcode` crops the middle to fit. They are muted, looping and inline, so they autoplay everywhere. Each starts loading a little before it reaches the screen and only plays while it's on screen; in the stacked sections a film also pauses once the next card hides most of it, so the browser never decodes more films than you can see. On phones only the front hero card plays.
 
 To add or replace a reel, compress it first. This Mac has no ffmpeg, so use the Swift transcoder in `tools/`:
 

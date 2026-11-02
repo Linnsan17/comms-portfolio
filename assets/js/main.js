@@ -807,22 +807,55 @@ function startRotator(slots) {
   }, HOLD);
 }
 
-// Work reels: muted, looping, inline videos that only load and play while
-// near the screen, to save data and battery. On phones only the front hero
-// card plays; the cards behind it keep their poster. Reduced motion keeps
-// every video on its poster.
+// Work reels: muted, looping, inline videos. Each starts loading a little
+// before it reaches the screen and only plays while it's on screen, to save
+// data, battery and the browser's video decoding (the more films play at
+// once, the likelier the ones you see stutter). In the services stack and
+// selected work a reel also pauses once the next card hides most of it. On
+// phones only the front hero card plays; the cards behind it keep their
+// poster. Reduced motion keeps every video on its poster.
 const reels = [...document.querySelectorAll("video[data-autoplay]")].filter((video) => {
   const card = video.closest(".stack-card");
   return !(smallScreen.matches && card && card !== card.parentElement.firstElementChild);
 });
+const nearReels = new Set();
+// what slides over each reel: the next service card, the next work card, or
+// what follows the last one
+const reelCovers = new Map(
+  reels.map((video) => {
+    const card = video.closest("[data-stack] [data-card]");
+    if (card) return [video, stackCards[stackCards.indexOf(card) + 1] ?? null];
+    const area = video.closest("[data-area]");
+    if (area) return [video, areaFollowers[areaCards.indexOf(area)] ?? null];
+    return [video, null];
+  })
+);
+
+function syncReels() {
+  nearReels.forEach((video) => {
+    const box = video.getBoundingClientRect();
+    const cover = reelCovers.get(video);
+    // how much of the film shows above whatever slides over it
+    const shown = cover ? Math.min(Math.max(cover.getBoundingClientRect().top - box.top, 0), box.height) : box.height;
+    const play = box.bottom > 0 && box.top < innerHeight && shown >= box.height * 0.3;
+    if (!play && !video.paused) video.pause();
+    else if (play && video.paused) video.play().catch(() => {});
+  });
+}
 
 if (reels.length && !reduceMotion && "IntersectionObserver" in window) {
   const reelObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach(({ target, isIntersecting }) => {
-        if (isIntersecting) target.play().catch(() => {});
-        else target.pause();
+        if (isIntersecting) {
+          target.preload = "auto"; // start loading, ready to play when it's on screen
+          nearReels.add(target);
+        } else {
+          nearReels.delete(target);
+          target.pause();
+        }
       });
+      syncReels();
     },
     { rootMargin: "200px 0px" }
   );
@@ -1089,6 +1122,7 @@ requestAnimationFrame(function frame(time) {
     updateStack();
     updateAreas();
     updateHeaderTone();
+    if (nearReels.size) syncReels();
     if (pendingRows.size) showPassedRows();
     if (pendingCounts.size) showPassedCounts();
   }
