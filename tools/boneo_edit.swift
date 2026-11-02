@@ -1,12 +1,16 @@
 // usage: boneo_edit <source.mp4> <out.mp4> <poster.jpg> <first post> <second post>
 //
 // Boneo's reel for the case card (896x752, 60 fps, the middle of each frame):
-// the reel as it is, except the purple stretch (17.0-20.1 s), where Facebook
-// ads for two homes slide past one at a time (Gotland, Brösarp, Gotland
-// again). There, two Instagram posts take their places in the same motion:
-// the first post where Brösarp was, the second where Gotland was, each as
-// tall as the ad it replaces. The ads' positions are measured from every
-// frame, so the slide keeps the reel's timing and ease.
+// the reel as it is, except
+// - the purple stretch (17.0-20.1 s), where Facebook ads for two homes slide
+//   past one at a time (Gotland, Brösarp, Gotland again). There, two
+//   Instagram posts take their places in the same motion: the first post
+//   where Brösarp was, the second where Gotland was, each as tall as the ad
+//   it replaces. The ads' positions are measured from every frame, so the
+//   slide keeps the reel's timing and ease.
+// - the collage of screenshots on black after it (20.15-26.27 s, TikTok
+//   statistics among them), which is cut, so the purple cuts straight to the
+//   coral phone.
 import AVFoundation
 import AppKit
 
@@ -17,6 +21,8 @@ let posterURL = URL(fileURLWithPath: args[3])
 let postURLs = args[4...5].map { URL(fileURLWithPath: $0) }
 
 let W = 896, H = 752, FPS: Int32 = 60
+// the black collage: its first frame is 20.15 s, the coral phone's 26.283 s
+let CUT = (from: 20.14, to: 26.275)
 
 // MARK: the reel's purple stretch, in source pixels (1920x1080)
 
@@ -168,6 +174,8 @@ var first: Double? = nil // the Brösarp ad's centre, followed frame to frame
 var replaced = 0
 while let sample = output.copyNextSampleBuffer() {
   guard let buffer = CMSampleBufferGetImageBuffer(sample) else { continue }
+  let time = CMSampleBufferGetPresentationTimeStamp(sample).seconds
+  if time >= CUT.from && time < CUT.to { continue }
   if let (runs, purple) = adRuns(buffer), !runs.isEmpty {
     let width = Double(CVPixelBufferGetWidth(buffer))
     let seen = runs.map { centre(of: $0, frameWidth: width) }
