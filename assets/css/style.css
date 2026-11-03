@@ -1618,8 +1618,9 @@ html.has-sheet {
 }
 
 /* One project picked out of a case, on the site's beige, with room around
-   each part: a small label and its title, the story, its numbers (the same
-   big rows as Boneo's, sized together by fitNumbers), then the post itself */
+   each part: a small label and its title, a picture of the post on a phone,
+   the story, then its numbers (the same big rows as Boneo's, sized together
+   by fitNumbers) */
 .sheet__feature {
   display: grid;
   gap: clamp(36px, 3.6vw, 64px);
@@ -1651,15 +1652,9 @@ html.has-sheet {
 
 .sheet__feature-media {
   display: block;
-  width: 62%;
+  width: 100%;
   height: auto;
   border-radius: var(--radius-media);
-}
-
-@media (max-width: 760px) {
-  .sheet__feature-media {
-    width: 100%;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
