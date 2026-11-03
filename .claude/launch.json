@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "comms-portfolio",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/private/tmp/claude-502/-Users-markusharrvik-Documents/049424ba-902f-41e0-87ec-1a0354789d94/scratchpad/serve.py",
+        "8796",
+        "/private/tmp/claude-502/-Users-markusharrvik-Documents/049424ba-902f-41e0-87ec-1a0354789d94/scratchpad/site"
+      ],
+      "port": 8796
+    },
+    {
+      "name": "comms-portfolio-cv",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/private/tmp/claude-502/-Users-markusharrvik-Documents/45bd89a7-cd80-43ff-949a-ec52a635c919/scratchpad/serve.py",
+        "8797",
+        "/private/tmp/claude-502/-Users-markusharrvik-Documents/45bd89a7-cd80-43ff-949a-ec52a635c919/scratchpad/site"
+      ],
+      "port": 8797
+    }
+  ]
+}
