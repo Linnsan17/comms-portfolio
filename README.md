@@ -30,7 +30,7 @@ Then open http://localhost:8796. The script turns browser caching off for pages,
 
 ## Set up on a new computer
 
-1. **Get access.** The repo `Linnsan17/comms-portfolio` is private, so the owner first adds you as a collaborator on GitHub: Settings → Collaborators → Add people.
+1. **Get access.** The repo `Linnsan17/comms-portfolio` is public, so anyone can clone it, but only collaborators can push: the owner adds you on GitHub under Settings → Collaborators → Add people.
 2. **Clone.** Install GitHub Desktop, sign in, then choose File → Clone repository → `Linnsan17/comms-portfolio`.
 3. **Add the fonts.** PP Mori isn't in git (licence), so put your own copy of the free personal-use files in `assets/fonts/`. `CLAUDE.md` lists the exact file names.
 4. **Preview** as described above.
@@ -119,13 +119,12 @@ It uses WebKit, because Chrome's "Save as PDF" turns PP Mori into outlines and t
 
 ## Before launch
 
-Done: the site is findable (no `noindex` except on the 404 page, `robots.txt` allows everything and points to `sitemap.xml`), has link previews (Open Graph tags and `og-image.jpg`: Linn's portrait and signature on the beige), a favicon (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`) and the `CNAME` for linncomms.xyz. Still to do:
+Done: the site is findable (no `noindex` except on the 404 page, `robots.txt` allows everything and points to `sitemap.xml`), has link previews (Open Graph tags and `og-image.jpg`: Linn's portrait and signature on the beige), a favicon (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`) and the `CNAME` for linncomms.xyz. The repository is public, as free GitHub Pages needs, so the whole repo and its history can be read, including these notes and earlier CVs; keep personal paths and work email addresses out of it. Still to do:
 
 - **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git, and the live site falls back to a system font until:
   1. A web licence is bought at pangrampangram.com (the CV PDF embeds PP Mori too, so it falls under the same licence).
   2. The licensed `.woff2` files go in `assets/fonts/` and the `@font-face` rules in `style.css` point at them.
   3. `assets/fonts/` comes out of `.gitignore`.
-- **A public repository.** Free GitHub Pages only publishes public repositories (or private ones with GitHub Pro). Public means the whole repo and its history can be read, including these notes and earlier CVs.
 
 ## Publish
 
