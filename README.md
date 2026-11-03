@@ -133,10 +133,10 @@ GitHub Pages publishes this repository, `Linnsan17/comms-portfolio`, from the `m
 
 ## Custom domain: linncomms.xyz
 
-1. **The domain:** linncomms.xyz is registered at Truehost, domain only, no web hosting (about 21.70 USD a year to renew; keep auto-renew on). Keep WHOIS privacy on, so Linn's address isn't public. The DNS records below go in Truehost's DNS settings for the domain.
-2. **DNS at the registrar** (on Cloudflare, set the records to "DNS only", the grey cloud):
+1. **The domain:** linncomms.xyz is registered at Truehost, domain only, no web hosting (about 21.70 USD a year to renew; keep auto-renew on). Keep WHOIS privacy on, so Linn's address isn't public, and the registrar lock on. Truehost has no DNS editor for a domain without hosting, so the DNS is at Cloudflare, on the free plan: Cloudflare gives two nameservers, and they go in at Truehost under "Ändra namnservrarna din domän pekar till", in place of Truehost's own.
+2. **DNS records at Cloudflare** (DNS → Records). Set each to "DNS only", the grey cloud, or GitHub can't issue the HTTPS certificate:
    - `A` records for the root domain (`@`): `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
    - `AAAA` records for `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
    - `CNAME` for `www`: `linnsan17.github.io`
-3. **Verify the domain** on GitHub: github.com/settings/pages, **Add a domain**, enter `linncomms.xyz`, add the `TXT` record it shows at the registrar, then **Verify**. This stops anyone else's GitHub site from claiming the domain.
+3. **Verify the domain** on GitHub: github.com/settings/pages, **Add a domain**, enter `linncomms.xyz`, add the `TXT` record it shows at Cloudflare, then **Verify**. This stops anyone else's GitHub site from claiming the domain.
 4. **Turn on Pages:** the repository's **Settings → Pages**, Source **Deploy from a branch**, `main`, `/ (root)`, **Save**. The custom domain field fills in from `CNAME`. When the DNS check passes, tick **Enforce HTTPS** (the certificate can take up to a day).

@@ -14,7 +14,7 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
   - `PPMori-ExtralightItalic.otf`
 
   Without them the site falls back to a system font. A paid web licence is needed before launch.
-- **GitHub and the domain:** `Linnsan17/comms-portfolio`, published by GitHub Pages (main branch, root folder) at **linncomms.xyz** (two m's; the `CNAME` file; Linn's choice of 2026-11-03, registered at Truehost, domain only), so no rename to `Linnsan17.github.io` is needed. `og-image.jpg`, `sitemap.xml`, the canonical links and the CV's web address all use that domain. Pages needs the repo public (or GitHub Pro). README "Custom domain" has the DNS records and the order to do things in.
+- **GitHub and the domain:** `Linnsan17/comms-portfolio`, published by GitHub Pages (main branch, root folder) at **linncomms.xyz** (two m's; the `CNAME` file; Linn's choice of 2026-11-03, registered at Truehost, domain only; its DNS is at Cloudflare, since Truehost has no DNS editor without hosting), so no rename to `Linnsan17.github.io` is needed. `og-image.jpg`, `sitemap.xml`, the canonical links and the CV's web address all use that domain. Pages needs the repo public (or GitHub Pro). README "Custom domain" has the DNS records and the order to do things in.
 - **Code:** all behaviour is in `assets/js/main.js` and all styling is in `assets/css/style.css`. Every colour comes from the role tokens at the top of `style.css`.
 
 ## Home page, top to bottom
