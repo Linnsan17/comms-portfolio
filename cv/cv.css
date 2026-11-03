@@ -1,9 +1,10 @@
 /* Linn's CV: one A4 page, white with black text, in the portfolio's
-   type: PP Mori, the about text as the Introduction's statement
-   (semibold, tight), contact and skills as the footer's lists, employers
-   as the work cards' titles, semibold labels under hairlines. The five
-   sizes are the CV's own, set for A4 (794px wide at 96dpi), where the
-   site's viewport sizes would be far too big. */
+   type: PP Mori, "Digital communicator" as a headline, the about text as
+   the Introduction's statement (semibold, tight), contact and skills as
+   the footer's lists, employers as the work cards' titles, semibold
+   labels under hairlines. The five sizes are the CV's own, set for A4
+   (794px wide at 96dpi), where the site's viewport sizes would be far
+   too big. */
 
 /* The same PP Mori files as the site (free personal-use version, kept
    out of git; see CLAUDE.md "Fonts"). */
@@ -30,11 +31,11 @@
   --radius-media: 10px;
 
   /* Type scale for the A4 sheet (px at 96dpi) */
+  --text-title: 36px;   /* "Digital communicator" */
   --text-display: 24px; /* employers and schools */
   --text-large: 15.5px; /* the about statement */
-  --text-medium: 13px;  /* contact and skills lists, roles */
+  --text-medium: 13px;  /* everything in the left column, roles */
   --text-small: 11px;   /* body, labels, dates */
-  --text-xsmall: 9.5px; /* labels inside other information */
 
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
@@ -115,13 +116,16 @@ ul {
   border-bottom: 1px solid currentColor;
 }
 
-/* The A4 sheet: the name and the statement across the top, then a
-   narrow column on the left and the work on the right. On screen a
-   hairline marks the paper's edge. */
+/* The A4 sheet: a narrow column on the left (the signature, then the
+   portrait right under it) and the headline, the statement and the work
+   on the right. The two columns run independently: the header's parts
+   are placed straight on the sheet's grid, and the statement spans the
+   signature's row and the next, so the portrait doesn't wait for it.
+   On screen a hairline marks the paper's edge. */
 .sheet {
   display: grid;
   grid-template-columns: var(--side-w) minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   align-content: start;
   column-gap: var(--col-gap);
   width: var(--sheet-w);
@@ -134,33 +138,45 @@ ul {
 }
 
 .cv-head {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: subgrid;
-  margin-bottom: 8mm;
+  display: contents;
+}
+
+.cv-name {
+  grid-column: 1;
+  grid-row: 1;
+  margin-bottom: var(--block-gap);
+  line-height: 0;
+}
+
+/* The signature as wide as the portrait under it, ink to ink (the
+   SVG's drawing fills its whole viewBox) */
+.cv-name img {
+  width: 100%;
+}
+
+.cv-lead {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin-bottom: 7mm;
 }
 
 .cv-side {
   grid-column: 1;
+  grid-row: 2 / span 2;
 }
 
 .cv-main {
   grid-column: 2;
+  grid-row: 3;
 }
 
-.cv-id__name {
-  line-height: 0;
-}
-
-.cv-id__name img {
-  width: 44mm;
-}
-
-.cv-id__role {
-  margin-top: 3mm;
-  font-size: var(--text-medium);
-  font-weight: 600;
-  line-height: 1.15;
+/* The headline, regular and tight like the site's display type */
+.cv-title {
+  margin-bottom: 5mm;
+  font-size: var(--text-title);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
 }
 
 /* The Introduction's statement */
@@ -202,8 +218,10 @@ ul {
   margin-bottom: var(--block-gap);
 }
 
-/* Contact and skills: big and tight, as the footer's lists */
-.cv-big-list {
+/* Contact, skills and other information: big and tight, as the
+   footer's lists, all one size */
+.cv-big-list,
+.cv-facts {
   font-size: var(--text-medium);
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -216,11 +234,10 @@ ul {
 }
 
 .cv-facts > div + div {
-  margin-top: 1.8mm;
+  margin-top: 2.4mm;
 }
 
 .cv-facts dt {
-  font-size: var(--text-xsmall);
   font-weight: 600;
 }
 
@@ -229,7 +246,7 @@ ul {
    items, so the space between them stays in the PDF's text ("Svedea
    Nov 2023", not "SvedeaNov 2023"). */
 .cv-job + .cv-job {
-  margin-top: 5mm;
+  margin-top: 4.5mm;
 }
 
 .cv-job__head {
@@ -268,7 +285,7 @@ ul {
 }
 
 .cv-job__list li + li {
-  margin-top: 0.8mm;
+  margin-top: 0.6mm;
 }
 
 .cv-job__list li::before {
@@ -281,11 +298,11 @@ ul {
    dissolves so other information can come last. */
 @media screen and (max-width: 840px) {
   :root {
+    --text-title: 44px;
     --text-display: 40px;
     --text-large: 24px;
     --text-medium: 18px;
     --text-small: 15px;
-    --text-xsmall: 14px;
     --block-gap: 36px;
   }
 
@@ -326,12 +343,20 @@ ul {
     margin-top: var(--block-gap);
   }
 
-  .cv-id__name img {
+  .cv-name {
+    margin-bottom: 24px;
+  }
+
+  .cv-name img {
     width: min(220px, 60vw);
   }
 
-  .cv-id__role {
-    margin: 12px 0 var(--block-gap);
+  .cv-lead {
+    margin: 0;
+  }
+
+  .cv-title {
+    margin-bottom: var(--block-gap);
   }
 
   .cv-label,
