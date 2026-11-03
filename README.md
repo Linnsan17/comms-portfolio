@@ -122,7 +122,7 @@ It uses WebKit, because Chrome's "Save as PDF" turns PP Mori into outlines and t
 - Remove `<meta name="robots" content="noindex">` from every page.
 - In `robots.txt`, change `Disallow: /` to `Allow: /`.
 - Add `sitemap.xml` with the real URLs, and a `Sitemap:` line in `robots.txt`.
-- Add Open Graph tags, `og-image.jpg` and a favicon.
+- Add Open Graph tags and `og-image.jpg` (the favicon is done: `favicon.svg`, `favicon-32.png` and `apple-touch-icon.png`, Linn's signature on the site's pink).
 - Replace every placeholder: name, email, LinkedIn.
 - **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git. Before launch:
   1. Buy a web licence at pangrampangram.com.
