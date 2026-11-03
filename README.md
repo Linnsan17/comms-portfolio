@@ -119,28 +119,25 @@ It uses WebKit, because Chrome's "Save as PDF" turns PP Mori into outlines and t
 
 ## Before launch
 
-- Remove `<meta name="robots" content="noindex">` from every page.
-- In `robots.txt`, change `Disallow: /` to `Allow: /`.
-- Add `sitemap.xml` with the real URLs, and a `Sitemap:` line in `robots.txt`.
-- Add Open Graph tags and `og-image.jpg` (the favicon is done: `favicon.svg`, `favicon-32.png` and `apple-touch-icon.png`, Linn's signature on the site's pink).
-- Replace every placeholder: name, email, LinkedIn.
-- **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git. Before launch:
-  1. Buy a web licence at pangrampangram.com.
-  2. Put the licensed `.woff2` files in `assets/fonts/` and point the `@font-face` rules in `style.css` at them.
-  3. Remove `assets/fonts/` from `.gitignore`.
+Done: the site is findable (no `noindex` except on the 404 page, `robots.txt` allows everything and points to `sitemap.xml`), has link previews (Open Graph tags and `og-image.jpg`: Linn's portrait and signature on the beige), a favicon (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`) and the `CNAME` for linncoms.xyz. Still to do:
+
+- **LinkedIn.** The footer's link goes to linkedin.com, and the CV says `linkedin.com/linnharrvik`. Put Linn's real profile address (`linkedin.com/in/…`) in both, then export the CV again.
+- **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git, and the live site falls back to a system font until:
+  1. A web licence is bought at pangrampangram.com (the CV PDF embeds PP Mori too, so it falls under the same licence).
+  2. The licensed `.woff2` files go in `assets/fonts/` and the `@font-face` rules in `style.css` point at them.
+  3. `assets/fonts/` comes out of `.gitignore`.
+- **A public repository.** Free GitHub Pages only publishes public repositories (or private ones with GitHub Pro). Public means the whole repo and its history can be read, including these notes and earlier CVs.
 
 ## Publish
 
-The repo is `<username>.github.io`. In its settings, Pages is set to deploy from the `main` branch, root folder. Every push to `main` goes live within a minute or two.
+GitHub Pages publishes this repository, `Linnsan17/comms-portfolio`, from the `main` branch, root folder, at the custom domain in `CNAME`: **linncoms.xyz**. With a custom domain the repository doesn't have to be called `<username>.github.io`; the site still sits at the domain's root, so the paths starting with `/` work. Every push to `main` goes live within a minute or two.
 
-## Custom domain (later)
+## Custom domain: linncoms.xyz
 
-1. Buy the domain.
-2. Add DNS records at the registrar:
-   - Four `A` records for the root domain: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - A `CNAME` for `www` pointing to `<username>.github.io`
-3. Add a `CNAME` file to this folder that contains only the domain.
-4. In the repo's Pages settings:
-   - Enter the domain.
-   - Verify it under your account's Pages settings.
-   - Tick **Enforce HTTPS** once the certificate is ready.
+1. **Buy linncoms.xyz** at a registrar (Porkbun or Cloudflare are cheapest to renew). Turn on WHOIS privacy, so Linn's address isn't public.
+2. **DNS at the registrar** (on Cloudflare, set the records to "DNS only", the grey cloud):
+   - `A` records for the root domain (`@`): `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+   - `AAAA` records for `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
+   - `CNAME` for `www`: `linnsan17.github.io`
+3. **Verify the domain** on GitHub: github.com/settings/pages, **Add a domain**, enter `linncoms.xyz`, add the `TXT` record it shows at the registrar, then **Verify**. This stops anyone else's GitHub site from claiming the domain.
+4. **Turn on Pages:** the repository's **Settings → Pages**, Source **Deploy from a branch**, `main`, `/ (root)`, **Save**. The custom domain field fills in from `CNAME`. When the DNS check passes, tick **Enforce HTTPS** (the certificate can take up to a day).
