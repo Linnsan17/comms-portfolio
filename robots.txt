@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://linncoms.xyz/sitemap.xml
+Sitemap: https://linncomms.xyz/sitemap.xml
