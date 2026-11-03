@@ -49,7 +49,7 @@ A personal portfolio for Linn Harrvik, aimed at in-house content, social media, 
   - `--text-small` 19 / 15: labels, lists, links, buttons, nav, small print.
   - `--text-xsmall` 15 / 14: service lists.
 
-  Use a token for any new text instead of a new size. Buttons and nav are 600 weight. Labels are cap-centred: pills get 0.19em top padding, and every label holder is a flex container.
+  Use a token for any new text instead of a new size. Buttons and nav are 600 weight, and every button and the nav pill are 62px tall (54px on phones; `--pill-h`, made 10px taller on 2026-11-03 at Linn's request). Labels are cap-centred: pills get 0.19em top padding, and every label holder is a flex container.
 - **No arrows or icons** on buttons. The one exception is the sheet's Close: an X in a round beige button, as Linn asked.
 - **Motion:**
   - **Roll:** `--roll-ease` cubic-bezier(0.76, 0, 0.24, 1) over 620ms, used for the headline word and every button hover (the label rolls down).

@@ -211,10 +211,10 @@ a {
    so the padding is 0.19em; measured in Chrome, that puts the capitals
    within a quarter pixel of the middle at every size. Every element holding a label is a flex
    container, so no inherited line height can push the label off centre. */
-/* Buttons are a step up from the small text: --text-medium in a 52px pill
-   (44px on phones) */
+/* Buttons are a step up from the small text: --text-medium in a 62px pill
+   (54px on phones); the nav pill is as tall */
 :root {
-  --pill-h: 52px;
+  --pill-h: 62px;
   --pill-text: var(--text-medium);
 }
 
@@ -276,7 +276,7 @@ a {
 
 @media (max-width: 760px) {
   :root {
-    --pill-h: 44px;
+    --pill-h: 54px;
   }
 }
 
@@ -505,7 +505,7 @@ p {
 .button {
   display: inline-flex;
   align-items: center;
-  padding: calc(0.7rem + 0.075em) 1.2rem calc(0.7rem - 0.075em);
+  padding: calc(0.7rem + 5px + 0.075em) 1.2rem calc(0.7rem + 5px - 0.075em);
   background: var(--ink);
   color: var(--paper);
   font-weight: 600;
