@@ -379,6 +379,11 @@ function createHero(hero) {
   const DRIFT = 0.05; // whole stack leans toward the pointer
   const TILT = 6; // degrees
   const FOLLOW_EASE = 3; // how quickly the stack catches up with the pointer
+  // The clouds behind the hand: drawn 18% bigger than the card, they shift
+  // against the card as it follows the pointer and sink as the page scrolls,
+  // so they seem further away than the card (shares of their own size)
+  const PARALLAX = { scale: 1.18, pointer: 5, scroll: 4 };
+  const backdrop = hero.querySelector("[data-parallax]");
 
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   // Hard ease-in-out, the same curve as --roll-ease: cubic-bezier(0.76, 0, 0.24, 1)
@@ -578,6 +583,11 @@ function createHero(hero) {
         phoneLayer.style.clipPath = popPolygon(Math.min(0.5, r / cards[0].offsetWidth), Math.min(0.5, r / cards[0].offsetHeight));
         lastClip = corner;
       }
+    }
+
+    if (backdrop && !reduceMotion) {
+      const sink = clamp(scrollY / heroHeight, 0, 1) * PARALLAX.scroll;
+      backdrop.style.transform = `translate3d(${(-current.x * PARALLAX.pointer).toFixed(2)}%, ${(-current.y * PARALLAX.pointer + sink).toFixed(2)}%, 0) scale(${PARALLAX.scale})`;
     }
 
     const settle = 1 - growAll;

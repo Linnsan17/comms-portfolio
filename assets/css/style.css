@@ -603,11 +603,19 @@ p {
 }
 
 /* A picture or footage behind the hand, if the card is given one, in the
-   card's shape; the card's colour shows under it */
+   card's shape; the card's colour shows under it. The clouds are a little
+   bigger than the card, so main.js can shift them for a parallax: against
+   the card as it follows the mouse, and behind as the page scrolls. */
 .stack-card__backdrop {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   clip-path: inset(0 round var(--corner, 16px));
+}
+
+.stack-card__backdrop img {
+  transform: scale(1.18);
+  will-change: transform;
 }
 
 .stack-card__phone {
