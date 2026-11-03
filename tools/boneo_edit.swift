@@ -1,6 +1,6 @@
 // usage: boneo_edit <source.mp4> <out.mp4> <poster.jpg> <first post> <second post>
 //
-// Boneo's reel for the case card (896x752, 60 fps, the middle of each frame):
+// Boneo's reel for the case card (896x752, 30 fps, the middle of each frame):
 // the reel as it is, except
 // - the purple stretch (17.0-20.1 s), where Facebook ads for two homes slide
 //   past one at a time (Gotland, Brösarp, Gotland again). There, two
@@ -21,6 +21,9 @@ let posterURL = URL(fileURLWithPath: args[3])
 let postURLs = args[4...5].map { URL(fileURLWithPath: $0) }
 
 let W = 896, H = 752, FPS: Int32 = 60
+// written at 30 fps: the reel is 30 fps stored twice over at 60, so every
+// other frame is kept (half the decoding for the browser, nothing lost)
+let OUT_FPS: Int32 = 30
 // the black collage: its first frame is 20.15 s, the coral phone's 26.283 s
 let CUT = (from: 20.14, to: 26.275)
 
@@ -131,7 +134,7 @@ let writer = try! AVAssetWriter(outputURL: outURL, fileType: .mp4)
 writer.shouldOptimizeForNetworkUse = true
 let input = AVAssetWriterInput(mediaType: .video, outputSettings: [
   AVVideoCodecKey: AVVideoCodecType.h264, AVVideoWidthKey: W, AVVideoHeightKey: H,
-  AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: 2_000_000, AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel, AVVideoMaxKeyFrameIntervalKey: 60],
+  AVVideoCompressionPropertiesKey: [AVVideoAverageBitRateKey: 2_000_000, AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel, AVVideoMaxKeyFrameIntervalKey: 30],
   AVVideoColorPropertiesKey: [AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2, AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2, AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2],
 ])
 input.expectsMediaDataInRealTime = false
@@ -142,9 +145,12 @@ writer.add(input)
 writer.startWriting()
 writer.startSession(atSourceTime: .zero)
 var written = 0
+var tick = 0 // frames offered, at 60 fps
 let data = ctx.data!.bindMemory(to: UInt8.self, capacity: ctx.bytesPerRow * H)
 
 func emit() {
+  tick += 1
+  if tick % 2 == 0 { return }
   while !input.isReadyForMoreMediaData { usleep(2000) }
   var pb: CVPixelBuffer?
   CVPixelBufferPoolCreatePixelBuffer(nil, adaptor.pixelBufferPool!, &pb)
@@ -157,8 +163,8 @@ func emit() {
   CVBufferSetAttachment(pb!, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, .shouldPropagate)
   CVBufferSetAttachment(pb!, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, .shouldPropagate)
   CVBufferSetAttachment(pb!, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, .shouldPropagate)
-  adaptor.append(pb!, withPresentationTime: CMTime(value: CMTimeValue(written), timescale: FPS))
-  if written == Int(FPS) / 2 { // the poster: half a second in
+  adaptor.append(pb!, withPresentationTime: CMTime(value: CMTimeValue(written), timescale: OUT_FPS))
+  if written == Int(OUT_FPS) / 2 { // the poster: half a second in
     let rep = NSBitmapImageRep(cgImage: ctx.makeImage()!)
     try! rep.representation(using: .jpeg, properties: [.compressionFactor: 0.72])!.write(to: posterURL)
   }
@@ -199,7 +205,7 @@ while let sample = output.copyNextSampleBuffer() {
   }
   emit()
 }
-print("posts drawn over", replaced, "frames; total", Double(written) / Double(FPS), "s")
+print("posts drawn over", replaced, "frames; total", Double(written) / Double(OUT_FPS), "s")
 
 input.markAsFinished()
 let done = DispatchSemaphore(value: 0)
