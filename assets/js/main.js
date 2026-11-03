@@ -1,7 +1,3 @@
-document.querySelectorAll("[data-year]").forEach((el) => {
-  el.textContent = new Date().getFullYear();
-});
-
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Smooth scroll. Measured from serious.business: the page eases to a stop
