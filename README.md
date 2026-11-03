@@ -121,7 +121,6 @@ It uses WebKit, because Chrome's "Save as PDF" turns PP Mori into outlines and t
 
 Done: the site is findable (no `noindex` except on the 404 page, `robots.txt` allows everything and points to `sitemap.xml`), has link previews (Open Graph tags and `og-image.jpg`: Linn's portrait and signature on the beige), a favicon (`favicon.svg`, `favicon-32.png`, `apple-touch-icon.png`) and the `CNAME` for linncomms.xyz. Still to do:
 
-- **LinkedIn.** The footer's link goes to linkedin.com, and the CV says `linkedin.com/linnharrvik`. Put Linn's real profile address (`linkedin.com/in/…`) in both, then export the CV again.
 - **Font licence.** The site uses PP Mori by Pangram Pangram. The files in `assets/fonts/` are the free personal-use version. That version can't be used on a public website or uploaded online, so the folder is kept out of git, and the live site falls back to a system font until:
   1. A web licence is bought at pangrampangram.com (the CV PDF embeds PP Mori too, so it falls under the same licence).
   2. The licensed `.woff2` files go in `assets/fonts/` and the `@font-face` rules in `style.css` point at them.
