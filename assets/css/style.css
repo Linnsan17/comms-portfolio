@@ -96,9 +96,9 @@
      on phones). Everything on the home page and the footer uses these. */
   --text-display: clamp(56px, 8vw, 168px); /* 115 / 56: hero headline, service and case titles */
   --text-large: clamp(24px, 3.41vw, 66px); /* 49 / 28: intro statement, case descriptions, footer */
-  --text-medium: clamp(18px, 1.6vw, 29px); /* 23 / 18: service descriptions */
-  --text-small: clamp(15px, 1.32vw, 22px); /* 19 / 15: labels, lists, links, buttons, nav, small print */
-  --text-xsmall: clamp(14px, 1.05vw, 19px); /* 15 / 14: service lists */
+  --text-medium: clamp(18px, 1.6vw, 29px); /* 23 / 18: buttons, nav, the sheets' text */
+  --text-small: clamp(15px, 1.32vw, 22px); /* 19 / 15: labels, lists, links, small print, the service cards' text */
+  --text-xsmall: clamp(14px, 1.05vw, 19px); /* 15 / 14: not used at the moment (was the service lists) */
 
   --font-body: "PP Mori", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-body);
@@ -972,20 +972,21 @@ html.lenis body {
   padding-top: var(--space-m);
 }
 
-/* One step up from the reference's sizes (22px / 14px at 1548px) */
+/* Description and list in the same style as the facts on the work cards
+   (--text-small, line height 1.4; Linn's choice of 2026-11-03) */
 .service__desc {
   max-width: 30.5vw;
   margin: 0;
-  font-size: var(--text-medium);
-  line-height: 1.3;
+  font-size: var(--text-small);
+  line-height: 1.4;
 }
 
 .service__list {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: var(--text-xsmall);
-  line-height: 1.28;
+  font-size: var(--text-small);
+  line-height: 1.4;
 }
 
 
